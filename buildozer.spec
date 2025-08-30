@@ -4,10 +4,10 @@ prebuild_python_packages = urllib3==1.26.15
 
 
 # (str) Title of your application
-title = Foodi Woodi
+title = Weather Tether
 
 # (str) Package name
-package.name = foodiwoodi
+package.name = weathertether
 
 # (str) Package domain (needed for android/ios packaging)
 package.domain = com.arjunits
@@ -304,7 +304,7 @@ android.allow_backup = True
 # android.no-byte-compile-python = False
 
 # (str) The format used to package the app for release mode (aab or apk or aar).
-android.release_artifact = aab
+# android.release_artifact = aab
 
 # (str) The format used to package the app for debug mode (apk or aar).
 # android.debug_artifact = apk
