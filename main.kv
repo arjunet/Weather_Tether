@@ -1,0 +1,254 @@
+<SignupScreen>:
+
+    FloatLayout:
+
+        # Signup Label:
+
+        CLabel:
+            text: "Signup For Weather Tether"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+
+            CTextInputHelperText:
+                text: "Enter An Email That You Would Like to Use"
+
+        # Password Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Password"
+
+            CTextInputHelperText:
+                text: "Enter A Password That You Would Like to Use"
+
+        # Login Button (users already have an account):
+
+        CButtonGhost:
+            text: "Already Have An Account? Login Here"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--close--filled"
+            on_press: 
+                root.manager.current = 'Login'
+                root.manager.transition.direction = 'left'
+
+        # Forgot Password Button:
+
+        CButtonGhost:
+            text: "Forgot Your Password?"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "help--filled"
+            on_press:
+                root.manager.current = 'Forgot'
+                root.manager.transition.direction = 'left'
+
+        # Signup Button:
+
+        CButtonPrimary:
+            text: "Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "login"
+            on_press:
+                root.manager.current = 'Setup'
+
+# ---------------------------------------------------------------------------------
+
+<LoginScreen>:
+
+    FloatLayout:
+
+        # Login Label:
+
+        CLabel:
+            text: "Login To Weather Tether"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+
+            CTextInputHelperText:
+                text: "Enter Your Email"
+
+        # Password Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Password"
+
+            CTextInputHelperText:
+                text: "Enter Your Password"
+
+        # Back To Signup Button:
+
+        CButtonGhost:
+            text: "Back To Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Signup'
+                root.manager.transition.direction = 'right'
+
+        # Forgot Password Button:
+
+        CButtonGhost:
+            text: "Forgot Your Password?"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "help--filled"
+            on_press:
+                root.manager.current = 'Forgot'
+                root.manager.transition.direction = 'left'
+
+        # Login Button:
+
+        CButtonPrimary:
+            text: "Login"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "login"
+
+# ---------------------------------------------------------------------------------
+
+<ForgotScreen>:
+
+    FloatLayout:
+
+        # Forgot Password Label:
+
+        CLabel:
+            text: "Forgot Your Password?"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+
+            CTextInputHelperText:
+                text: "Enter Your Email And We'll Send You A Code"
+
+        # Back To Signup Label:
+
+        CButtonGhost:
+            text: "Back To Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Signup'
+                root.manager.transition.direction = 'right'
+
+        # Back To Login Button:
+
+        CButtonGhost:
+            text: "Back To Login"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Login'
+                root.manager.transition.direction = 'right'
+
+        # Send Email Button:
+
+        CButtonPrimary:
+            text: "Send Email"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "send--alt"
+
+# ---------------------------------------------------------------------------------
+
+<SetupScreen>:
+
+    FloatLayout:
+
+        # Setup Label:
+
+        CLabel:
+            text: "Setup"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Address Text Input:
+
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "City or Zip Code"
+                on_text: root.Setup(self.text)
+                id: address_input
+
+            CTextInputHelperText:
+                text: "Enter Your City or Zip Code"
+
+        # Search Result Button:
+
+        CButtonTertiary:
+            text: "Start typing"
+            id: address_button
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            size_hint_x: 0.8
+            disabled: True
+            icon: "home"
+            on_press:
+                root.on_address_button_press(self.text)
