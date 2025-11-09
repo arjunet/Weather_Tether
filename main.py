@@ -57,7 +57,7 @@ class SetupScreen(Screen):
         # Request for JSON and raise exceptions on errors:
 
         # Api url (google cloud run):
-        url = f"https://weather-tether-app-318359636878.us-central1.run.app/places?query={search_query}"
+        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
 
         try:
             response = requests.get(url)
@@ -104,4 +104,5 @@ class MainApp(CarbonApp):
         return sm
 
 if __name__ == "__main__":
+
     MainApp().run()
