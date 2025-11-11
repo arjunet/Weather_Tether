@@ -52,7 +52,7 @@ class SetupScreen(Screen):
 
     def Request_City(self, text): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
-        search_query = text.strip() 
+        search_query = self.ids.address_input.text.strip() 
 
         # Request for JSON and raise exceptions on errors:
 
