@@ -44,11 +44,10 @@ class SetupScreen(Screen):
     def make_request_when_ready(self, text):
         now = time.time()
         # Timer Config (again):
-        if now - self._last_request_time < 4:
+        if now - self._last_request_time < 2.5:
             return
         self._last_request_time = now
         self.Request_City(text)
-        self.ids.address_button.disabled = False
 
     def Request_City(self, text): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
@@ -66,7 +65,12 @@ class SetupScreen(Screen):
             if data.get("results"):
                 formatted_address = data["results"][0].get("formatted_address")
                 print(formatted_address)
+                self.ids.address_button.disabled = False
                 self.ids.address_button.text = formatted_address
+
+            else:
+                self.ids.address_button.disabled = True
+                self.ids.address_button.text = "No results found."
      
         # Error Handling:
         except requests.exceptions.RequestException as e:
@@ -78,7 +82,7 @@ class SetupScreen(Screen):
     # Fills in to textinput fild when address button is pressed:
     def on_address_button_press(self, text):
         # ignore if it's still the placeholder text
-        if text == "Start typing":
+        if text == "Start typing" or text == "No results found.":
              return
     
         # otherwise, fill the text field
@@ -106,4 +110,3 @@ class MainApp(CarbonApp):
 if __name__ == "__main__":
 
     MainApp().run()
-
