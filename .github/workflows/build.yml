@@ -1,15 +1,18 @@
-# Sample repository at https://github.com/Novfensec/SAMPLE-KIVYMD-APP
-# Tic Tac Toe Game at https://github.com/Novfensec/Tic-Tac-Toe-Android
-
 name: Android Build
 
 on:
   push:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/build.yml'
   pull_request:
     branches:
       - main
+    paths-ignore:
+      - 'README.md'
+      - '.github/workflows/build.yml'
 
 jobs:
   build:
