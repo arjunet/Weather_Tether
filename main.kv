@@ -234,7 +234,7 @@
 
             CTextInput:
                 hint_text: "City or Zip Code"
-                on_text: root.Setup(self.text)
+                on_text: root.Setup(self.text.strip())
                 id: address_input
 
             CTextInputHelperText:
@@ -246,9 +246,12 @@
             text: "Start typing"
             id: address_button
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            size_hint_x: 0.8
+            pos_hint: {'center_x': 0.5, 'center_y': 0.22}
+            size_hint_x: 1
+            size_hint_y: 0.25
+            height: dp(80)  # fixed height large enough for 2 lines
+            text_size: self.width - dp(20), None  # force text wrapping
             disabled: True
             icon: "home"
             on_press:
-                root.on_address_button_press(self.text)
+                root.on_address_button_press(self.text.strip())
