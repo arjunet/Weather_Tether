@@ -1,5 +1,4 @@
 # Imports:
-
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
@@ -12,15 +11,22 @@ import requests
 import json
 import time
 
+# ---------------------------------------------------------------------------------
 
-# Screen Python Code:
 class SignupScreen(Screen):
-    def Signup(self):
-        pass
+    def Signup(self, email_input, password_input):
+        url = "https://firebase-hash-service-318359636878.us-central1.run.app/register"
+        data = {"email": email_input, "password": password_input}
+        r = requests.post(url, json=data)
+        print(r.json())
+
+# ---------------------------------------------------------------------------------
 
 class LoginScreen(Screen):
     def Login(self):
         pass
+
+# ---------------------------------------------------------------------------------
 
 class ForgotScreen(Screen):
     def Send_Forgot_Email(self):
@@ -35,21 +41,21 @@ class SetupScreen(Screen):
         self._last_request_time = 0
         self._debounce_event = None  
 
-    def Setup(self, text):
+    def Setup(self):
         # Timer Config (again):
         if self._debounce_event:
             self._debounce_event.cancel()
-        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(text), 0.9)
+        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
 
-    def make_request_when_ready(self, text):
+    def make_request_when_ready(self):
         now = time.time()
         # Timer Config (again):
         if now - self._last_request_time < 2.5:
             return
         self._last_request_time = now
-        self.Request_City(text)
+        self.Request_City()
 
-    def Request_City(self, text): # Text is here for the text typing on textinput field
+    def Request_City(self): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
         search_query = self.ids.address_input.text.strip() 
 
@@ -108,5 +114,4 @@ class MainApp(CarbonApp):
         return sm
 
 if __name__ == "__main__":
-
     MainApp().run()
