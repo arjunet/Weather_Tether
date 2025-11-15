@@ -6,6 +6,7 @@ from kivy.clock import Clock
 from carbonkivy.app import CarbonApp
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
+from carbonkivy.uix.notification import CNotificationInline, CNotificationToast
 
 import requests
 import json
@@ -23,8 +24,33 @@ class SignupScreen(Screen):
 # ---------------------------------------------------------------------------------
 
 class LoginScreen(Screen):
-    def Login(self):
-        pass
+    def Login(self, email_input, password_input):
+        # API Request to login user:
+        url = "https://firebase-hash-service-318359636878.us-central1.run.app/login"
+        data = {"email": email_input, "password": password_input}
+        r = requests.post(url, json=data)
+        print(r.json())
+
+        # Success Notification:
+        result = r.json()
+        if result.get("success"):
+            self.notification = (
+                CNotificationInline(
+                title="Success",
+                subtitle="Successfully signed in",
+                status="Success",
+            ).open()
+        )
+
+        # Error Notification:   
+        else:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Invalid email or password",
+                status="Error",
+            ).open()
+        )
 
 # ---------------------------------------------------------------------------------
 

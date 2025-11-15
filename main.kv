@@ -103,6 +103,7 @@
 
             CTextInput:
                 hint_text: "Email"
+                id: email_input
 
             CTextInputHelperText:
                 text: "Enter Your Email"
@@ -116,6 +117,8 @@
 
             CTextInput:
                 hint_text: "Password"
+                password: True
+                id: password_input
 
             CTextInputHelperText:
                 text: "Enter Your Password"
@@ -149,6 +152,8 @@
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
+            on_press:
+                root.Login(root.ids.email_input.text, root.ids.password_input.text)
 
 # ---------------------------------------------------------------------------------
 
