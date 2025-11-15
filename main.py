@@ -12,6 +12,12 @@ import requests
 import json
 import time
 
+import os, sys
+from kivy.resources import resource_add_path
+
+sys.path.insert(0, os.path.dirname(__file__))
+resource_add_path(os.path.dirname(__file__))
+
 # ---------------------------------------------------------------------------------
 
 class SignupScreen(Screen):
