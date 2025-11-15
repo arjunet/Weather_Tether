@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.3.1, https://github.com/kivymd/KivyMD/archive/master.zip, exceptiongroup, asynckivy, asyncgui, materialyoucolor, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, certifi==2025.10.5, charset-normalizer==3.4.4, docutils==0.22.3, filetype==1.2.0, idna==3.11, Kivy-Garden==0.1.5, Pygments==2.19.2, requests==2.32.5, setuptools==65.5.0, urllib3==2.5.0
+requirements = python3, kivy==2.3.1, https://github.com/kivymd/KivyMD/archive/master.zip, exceptiongroup, asynckivy, asyncgui, materialyoucolor, android, carbonkivy, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, certifi==2025.10.5, charset-normalizer==3.4.4, docutils==0.22.3, filetype==1.2.0, idna==3.11, Kivy-Garden==0.1.5, Pygments==2.19.2, requests==2.32.5, setuptools==65.5.0, urllib3==2.5.0
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
