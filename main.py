@@ -6,7 +6,7 @@ from kivy.clock import Clock
 from carbonkivy.app import CarbonApp
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
-from carbonkivy.uix.notification import CNotificationInline, CNotificationToast
+from carbonkivy.uix.notification import CNotificationInline
 
 import requests
 import json
