@@ -12,12 +12,6 @@ import requests
 import json
 import time
 
-import os, sys
-from kivy.resources import resource_add_path
-
-sys.path.insert(0, os.path.dirname(__file__))
-resource_add_path(os.path.dirname(__file__))
-
 # ---------------------------------------------------------------------------------
 
 class SignupScreen(Screen):
@@ -26,6 +20,26 @@ class SignupScreen(Screen):
         data = {"email": email_input, "password": password_input}
         r = requests.post(url, json=data)
         print(r.json())
+
+        result = r.json()
+        if result.get("success"):
+            self.notification = (
+                CNotificationInline(
+                title="Success",
+                subtitle="Successfully signed up",
+                status="Success",
+            ).open()
+        )
+
+        # Error Notification:   
+        else:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Email already in use",
+                status="Error",
+            ).open()
+        )
 
 # ---------------------------------------------------------------------------------
 
