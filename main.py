@@ -165,6 +165,5 @@ class MainApp(CarbonApp):
         sm.add_widget(SetupScreen(name='Setup'))
         return sm
 
-
 if __name__ == "__main__":
     MainApp().run()
