@@ -73,8 +73,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.manager.current = 'Setup'
-                root.Signup(root.ids.email_input.text, root.ids.password_input.text)
+                root.Signup(root.ids.email_input.text.strip(), root.ids.password_input.text.strip())
 
 # ---------------------------------------------------------------------------------
 

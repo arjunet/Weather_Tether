@@ -22,12 +22,33 @@ import time
 
 class SignupScreen(Screen):
     def Signup(self, email_input, password_input):
+        # Client Validation:
+        if email_input == "" or password_input == "":
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Email Or Password Fields Cannot Be Empty",
+                status="Error",
+            ).open()
+            )
+            return
+        
+        elif "@" not in email_input:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Invalid Email Format",
+                status="Error",
+            ).open()
+            )
+            return
+
         url = "https://firebase-hash-service-318359636878.us-central1.run.app/register"
         data = {"email": email_input, "password": password_input}
         r = requests.post(url, json=data)
         print(r.json())
-
         result = r.json()
+
         if result.get("success"):
             self.notification = (
                 CNotificationInline(
@@ -36,16 +57,19 @@ class SignupScreen(Screen):
                 status="Success",
             ).open()
         )
+            self.manager.current = "Setup"
 
-        # Error Notification:   
-        else:
+        # Error Notification:  
+
+        elif "error" in result and "User already exists" in result["error"]:
             self.notification = (
                 CNotificationInline(
                 title="Error",
-                subtitle="Email already in use",
+                subtitle="User already exists",
                 status="Error",
             ).open()
-        )
+            )
+            return
 
 # ---------------------------------------------------------------------------------
 
