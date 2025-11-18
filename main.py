@@ -27,7 +27,7 @@ class SignupScreen(Screen):
             self.notification = (
                 CNotificationInline(
                 title="Error",
-                subtitle="Email Or Password Fields Cannot Be Empty",
+                subtitle="Please type in all fields",
                 status="Error",
             ).open()
             )
