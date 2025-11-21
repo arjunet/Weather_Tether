@@ -146,7 +146,6 @@ class SetupScreen(Screen):
             data = response.json()
             if data.get("results"):
                 formatted_address = data["results"][0].get("formatted_address")
-                print(formatted_address)
                 self.ids.address_button.disabled = False
                 self.ids.address_button.text = formatted_address
 
@@ -155,11 +154,25 @@ class SetupScreen(Screen):
                 self.ids.address_button.text = "No results found."
      
         # Error Handling:
-        except requests.exceptions.RequestException as e:
-            print(f"Error making API request: {e}")
+        except requests.exceptions.RequestException:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Network error occurred",
+                status="Error",
+            ).open()
+            )
+            return
 
         except json.JSONDecodeError:
-            print("Error decoding JSON response.")
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Error reading server responce",
+                status="Error",
+            ).open()
+            )
+            return
 
     # Fills in to textinput fild when address button is pressed:
     def on_address_button_press(self, text):
