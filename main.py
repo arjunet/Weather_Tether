@@ -20,6 +20,16 @@ import time
 
 # ---------------------------------------------------------------------------------
 
+# Firebase Cofig:
+class FirebaseAuth:
+    def __init__(self, api_key):
+        self.api_key = api_key
+        self.signup_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={api_key}"
+        self.login_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
+firebase = FirebaseAuth("AIzaSyDpMQo5r4gHxQHMAy9niIUjs9kgerBf5pI")
+
+# ---------------------------------------------------------------------------------
+
 class SignupScreen(Screen):
     def Signup(self, email_input, password_input):
         # Client Validation:
@@ -42,14 +52,15 @@ class SignupScreen(Screen):
             ).open()
             )
             return
-
-        url = "https://firebase-hash-service-318359636878.us-central1.run.app/register"
-        data = {"email": email_input, "password": password_input}
-        r = requests.post(url, json=data)
-        print(r.json())
+        
+        payload = {
+            "email": email_input,
+            "password": password_input,
+        }
+        r = requests.post(firebase.signup_url, json=payload)
         result = r.json()
 
-        if result.get("success"):
+        if "idToken" in result:
             self.notification = (
                 CNotificationInline(
                 title="Success",
@@ -59,9 +70,8 @@ class SignupScreen(Screen):
         )
             self.manager.current = "Setup"
 
-        # Error Notification:  
-
-        elif "error" in result and "User already exists" in result["error"]:
+        # Error Notifications:  
+        elif "EMAIL_EXISTS" in result.get("error", {}).get("message", ""):
             self.notification = (
                 CNotificationInline(
                 title="Error",
@@ -70,37 +80,66 @@ class SignupScreen(Screen):
             ).open()
             )
             return
+        
+        else:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Server Error, please try again later",
+                status="Error",
+            ).open()
+            )
+            return
+        
 
 # ---------------------------------------------------------------------------------
 
 class LoginScreen(Screen):
     def Login(self, email_input, password_input):
-        # API Request to login user:
-        url = "https://firebase-hash-service-318359636878.us-central1.run.app/login"
-        data = {"email": email_input, "password": password_input}
-        r = requests.post(url, json=data)
-        print(r.json())
-
-        # Success Notification:
+        # Client Validation:
+        if email_input == "" or password_input == "":
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Please type in all fields",
+                status="Error",
+            ).open()
+            )
+            return
+        
+        elif "@" not in email_input:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Invalid Email Format",
+                status="Error",
+            ).open()
+            )
+            return
+        
+        payload = {
+            "email": email_input,
+            "password": password_input,
+        }
+        r = requests.post(firebase.login_url, json=payload)
         result = r.json()
-        if result.get("success"):
+
+        if "idToken" in result:
             self.notification = (
                 CNotificationInline(
                 title="Success",
-                subtitle="Successfully signed in",
+                subtitle="Successfully logged in",
                 status="Success",
             ).open()
         )
 
-        # Error Notification:   
-        else:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Invalid email or password",
-                status="Error",
-            ).open()
-        )
+        # Error Notification:  
+        elif r.status_code == 400:
+                self.notification = CNotificationInline(
+                    title="Error",
+                    subtitle="Invalid password or server error",
+                    status="Error",
+                ).open()
 
 # ---------------------------------------------------------------------------------
 
