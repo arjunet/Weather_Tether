@@ -225,18 +225,17 @@ class SetupScreen(Screen):
         # Api url (google cloud run):
         url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
 
-        try:
-            response = requests.get(url)
-            response.raise_for_status() 
-            data = response.json()
-            if data.get("results"):
-                formatted_address = data["results"][0].get("formatted_address")
-                self.ids.address_button.disabled = False
-                self.ids.address_button.text = formatted_address
+        response = requests.get(url)
+        response.raise_for_status() 
+        data = response.json()
+        if data.get("results"):
+            formatted_address = data["results"][0].get("formatted_address")
+            self.ids.address_button.disabled = False
+            self.ids.address_button.text = formatted_address
 
-            else:
-                self.ids.address_button.disabled = True
-                self.ids.address_button.text = "No results found."
+        else:
+            self.ids.address_button.disabled = True
+            self.ids.address_button.text = "No results found."
 
     # Fills in to textinput fild when address button is pressed:
     def on_address_button_press(self, text):
