@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 
-# Soft Input Config (for edge-to-edge displays on Android, must come before carrbonkivy imports):
+# Soft Input Config (for edge-to-edge displays on Android, must come before carbonkivy imports):
 def set_softinput(*args) -> None:
     Window.keyboard_anim_args = {"d": 0.2, "t": "in_out_expo"}
     Window.softinput_mode = "below_target"
@@ -15,7 +15,6 @@ from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
 
 import requests
-import json
 import time
 
 # ---------------------------------------------------------------------------------
@@ -31,7 +30,7 @@ class SignupScreen(Screen):
             self.notification = (
                 CNotificationInline(
                 title="Error",
-                subtitle="Please type in all fields",
+                subtitle="Please Type In All Fields",
                 status="Error",
             ).open()
             )
@@ -61,7 +60,7 @@ class SignupScreen(Screen):
             self.notification = (
                 CNotificationInline(
                 title="Success",
-                subtitle="Successfully signed up",
+                subtitle="Successfully Signed Up",
                 status="Success",
             ).open()
         )
@@ -75,7 +74,7 @@ class SignupScreen(Screen):
                 self.notification = (
                     CNotificationInline(
                     title="Error",
-                    subtitle="User already exists",
+                    subtitle="User Already Exists",
                     status="Error",
                 ).open()
                 )
@@ -123,6 +122,7 @@ class LoginScreen(Screen):
             "password": password_input
        }
         r = requests.post(url, json=payload)
+        result = r.json()
 
         # Success Notification:
         if r.status_code == 200:
@@ -135,16 +135,29 @@ class LoginScreen(Screen):
         )
             self.manager.current = "Setup"
 
-        # Error Notification:  
-        else:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Invalid Email Or Password",
-                status="Error",
-            ).open()
-            )
-            return
+        # Error Notifications:  
+        elif r.status_code == 400:
+            error_code = result.get("detail", "")
+
+            if error_code == "EMAIL_EXISTS":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="User Already Exists",
+                    status="Error",
+                ).open()
+                )
+                return
+            
+            elif error_code == "WEAK_PASSWORD":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="Password Is Too Weak",
+                    status="Error",
+                ).open()
+                )
+                return
 
 # ---------------------------------------------------------------------------------
 
@@ -154,7 +167,31 @@ class ForgotScreen(Screen):
         payload = {"email": email_input}
 
         r = requests.post(url, json=payload)
-        data = r.json()
+        result = r.json()
+
+        if r.status_code == 200:
+            self.notification = (
+                CNotificationInline(
+                title="Success",
+                subtitle="Successfully Sent Reset Email",
+                status="Success",
+            ).open()
+        )
+            self.manager.current = "Setup"
+
+        # Error Notifications:  
+        elif r.status_code == 400:
+            error_code = result.get("detail", "")
+
+            if error_code == "INVALID_EMAIL":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="Email Does Not Exist",
+                    status="Error",
+                ).open()
+                )
+                return
 
 # ---------------------------------------------------------------------------------
 
@@ -200,39 +237,22 @@ class SetupScreen(Screen):
             else:
                 self.ids.address_button.disabled = True
                 self.ids.address_button.text = "No results found."
-     
-        # Error Handling:
-        except requests.exceptions.RequestException:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Network error occurred",
-                status="Error",
-            ).open()
-            )
-            return
-
-        except json.JSONDecodeError:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Error reading server responce",
-                status="Error",
-            ).open()
-            )
-            return
 
     # Fills in to textinput fild when address button is pressed:
     def on_address_button_press(self, text):
         # ignore if it's still the placeholder text
         if text == "Start typing" or text == "No results found.":
              return
-    
+        
         # otherwise, fill the text field
         self.ids.address_input.text = text
 
 # ---------------------------------------------------------------------------------
 
+class AppScreen(Screen):
+    pass
+
+# ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
     def __init__(self, *args, **kwargs) -> None:
@@ -248,6 +268,7 @@ class MainApp(CarbonApp):
         sm.add_widget(LoginScreen(name='Login'))
         sm.add_widget(ForgotScreen(name='Forgot'))
         sm.add_widget(SetupScreen(name='Setup'))
+        sm.add_widget(AppScreen(name='App'))
         return sm
 
 if __name__ == "__main__":
