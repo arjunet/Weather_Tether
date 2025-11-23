@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 
-# Soft Input Config (for edge-to-edge displays on Android):
+# Soft Input Config (for edge-to-edge displays on Android, must come before carrbonkivy imports):
 def set_softinput(*args) -> None:
     Window.keyboard_anim_args = {"d": 0.2, "t": "in_out_expo"}
     Window.softinput_mode = "below_target"
@@ -19,14 +19,8 @@ import json
 import time
 
 # ---------------------------------------------------------------------------------
-
-# Firebase Cofig:
-class FirebaseAuth:
-    def __init__(self, api_key):
-        self.api_key = api_key
-        self.signup_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signUp?key={api_key}"
-        self.login_url = f"https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key={api_key}"
-firebase = FirebaseAuth("AIzaSyDpMQo5r4gHxQHMAy9niIUjs9kgerBf5pI")
+ # Firebase Auth Service URL:
+FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
 # ---------------------------------------------------------------------------------
 
@@ -53,14 +47,17 @@ class SignupScreen(Screen):
             )
             return
         
+        # Server Request:
+        url = f"{FIREBASE_URL}/signup"
         payload = {
             "email": email_input,
-            "password": password_input,
-        }
-        r = requests.post(firebase.signup_url, json=payload)
-        result = r.json()
+            "password": password_input
+       }
+        r = requests.post(url, json=payload)
+        result = r.json() 
 
-        if "idToken" in result:
+        # Success Notification:
+        if r.status_code == 200:
             self.notification = (
                 CNotificationInline(
                 title="Success",
@@ -71,26 +68,28 @@ class SignupScreen(Screen):
             self.manager.current = "Setup"
 
         # Error Notifications:  
-        elif "EMAIL_EXISTS" in result.get("error", {}).get("message", ""):
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="User already exists",
-                status="Error",
-            ).open()
-            )
-            return
-        
-        else:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Server Error, please try again later",
-                status="Error",
-            ).open()
-            )
-            return
-        
+        elif r.status_code == 400:
+            error_code = result.get("detail", "")
+
+            if error_code == "EMAIL_EXISTS":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="User already exists",
+                    status="Error",
+                ).open()
+                )
+                return
+            
+            elif error_code == "WEAK_PASSWORD":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="Password Is Too Weak",
+                    status="Error",
+                ).open()
+                )
+                return
 
 # ---------------------------------------------------------------------------------
 
@@ -101,7 +100,7 @@ class LoginScreen(Screen):
             self.notification = (
                 CNotificationInline(
                 title="Error",
-                subtitle="Please type in all fields",
+                subtitle="Please Type In All Fields",
                 status="Error",
             ).open()
             )
@@ -117,35 +116,45 @@ class LoginScreen(Screen):
             )
             return
         
+        # Server Request:
+        url = f"{FIREBASE_URL}/login"
         payload = {
             "email": email_input,
-            "password": password_input,
-        }
-        r = requests.post(firebase.login_url, json=payload)
-        result = r.json()
+            "password": password_input
+       }
+        r = requests.post(url, json=payload)
 
-        if "idToken" in result:
+        # Success Notification:
+        if r.status_code == 200:
             self.notification = (
                 CNotificationInline(
                 title="Success",
-                subtitle="Successfully logged in",
+                subtitle="Successfully Logged In",
                 status="Success",
             ).open()
         )
+            self.manager.current = "Setup"
 
         # Error Notification:  
-        elif r.status_code == 400:
-                self.notification = CNotificationInline(
-                    title="Error",
-                    subtitle="Invalid password or server error",
-                    status="Error",
-                ).open()
+        else:
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Invalid Email Or Password",
+                status="Error",
+            ).open()
+            )
+            return
 
 # ---------------------------------------------------------------------------------
 
 class ForgotScreen(Screen):
-    def Send_Forgot_Email(self):
-        pass
+    def Send_Forgot_Email(self, email_input):
+        url = f"{FIREBASE_URL}/reset_password"
+        payload = {"email": email_input}
+
+        r = requests.post(url, json=payload)
+        data = r.json()
 
 # ---------------------------------------------------------------------------------
 

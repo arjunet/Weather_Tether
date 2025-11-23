@@ -181,6 +181,7 @@
 
             CTextInput:
                 hint_text: "Email"
+                id: email_input
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
@@ -214,6 +215,8 @@
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "send--alt"
+            on_press:
+                root.Send_Forgot_Email(root.ids.email_input.text.strip())
 
 # ---------------------------------------------------------------------------------
 
@@ -263,3 +266,19 @@
             icon: "home"
             on_press:
                 root.on_address_button_press(self.text.strip())
+
+# ---------------------------------------------------------------------------------
+<MainApp>:
+
+    FloatLayout:
+
+        CLabel:
+            text: "Welcome to Weather Tether!"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            font_size: sp(24)
+
