@@ -54,6 +54,7 @@ class SignupScreen(Screen):
        }
         r = requests.post(url, json=payload)
         result = r.json() 
+        print(result)
 
         # Success Notification:
         if r.status_code == 200:
@@ -80,7 +81,7 @@ class SignupScreen(Screen):
                 )
                 return
             
-            elif error_code == "WEAK_PASSWORD":
+            elif "WEAK_PASSWORD" in error_code:
                 self.notification = (
                     CNotificationInline(
                     title="Error",
@@ -139,21 +140,11 @@ class LoginScreen(Screen):
         elif r.status_code == 400:
             error_code = result.get("detail", "")
 
-            if error_code == "EMAIL_EXISTS":
+            if error_code == "INVALID_LOGIN_CREDENTIALS":
                 self.notification = (
                     CNotificationInline(
                     title="Error",
-                    subtitle="User Already Exists",
-                    status="Error",
-                ).open()
-                )
-                return
-            
-            elif error_code == "WEAK_PASSWORD":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Password Is Too Weak",
+                    subtitle="Invalid Email Or Password",
                     status="Error",
                 ).open()
                 )
