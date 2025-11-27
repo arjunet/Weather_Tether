@@ -3,7 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 
-# Soft Input Config (for edge-to-edge displays on Android, must come before carbonkivy imports):
+# Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
     Window.keyboard_anim_args = {"d": 0.2, "t": "in_out_expo"}
     Window.softinput_mode = "below_target"
@@ -13,11 +13,13 @@ from carbonkivy.app import CarbonApp
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
+from carbonkivy.uix.notification import CNotificationToast
 
 import requests
 import time
 
 # ---------------------------------------------------------------------------------
+
  # Firebase Auth Service URL:
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
@@ -36,16 +38,6 @@ class SignupScreen(Screen):
             )
             return
         
-        elif "@" not in email_input:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Invalid Email Format",
-                status="Error",
-            ).open()
-            )
-            return
-        
         # Server Request:
         url = f"{FIREBASE_URL}/signup"
         payload = {
@@ -54,21 +46,9 @@ class SignupScreen(Screen):
        }
         r = requests.post(url, json=payload)
         result = r.json() 
-        print(result)
-
-        # Success Notification:
-        if r.status_code == 200:
-            self.notification = (
-                CNotificationInline(
-                title="Success",
-                subtitle="Successfully Signed Up",
-                status="Success",
-            ).open()
-        )
-            self.manager.current = "Setup"
 
         # Error Notifications:  
-        elif r.status_code == 400:
+        if r.status_code == 400:
             error_code = result.get("detail", "")
 
             if error_code == "EMAIL_EXISTS":
@@ -90,6 +70,27 @@ class SignupScreen(Screen):
                 ).open()
                 )
                 return
+            
+            elif error_code == "INVALID_EMAIL":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="Invalid Email Format",
+                    status="Error",
+                ).open()
+                )
+                return
+            
+        # Success Notification:
+        if r.status_code == 200:
+            self.notification = (
+                CNotificationInline(
+                title="Success",
+                subtitle="Successfully Signed Up",
+                status="Success",
+            ).open()
+        )
+            self.manager.current = "Setup"
 
 # ---------------------------------------------------------------------------------
 
@@ -106,16 +107,6 @@ class LoginScreen(Screen):
             )
             return
         
-        elif "@" not in email_input:
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Invalid Email Format",
-                status="Error",
-            ).open()
-            )
-            return
-        
         # Server Request:
         url = f"{FIREBASE_URL}/login"
         payload = {
@@ -124,20 +115,11 @@ class LoginScreen(Screen):
        }
         r = requests.post(url, json=payload)
         result = r.json()
-
-        # Success Notification:
-        if r.status_code == 200:
-            self.notification = (
-                CNotificationInline(
-                title="Success",
-                subtitle="Successfully Logged In",
-                status="Success",
-            ).open()
-        )
-            self.manager.current = "Setup"
+        data = result.get("data", {})
+        email_verified = data.get("emailVerified", False)
 
         # Error Notifications:  
-        elif r.status_code == 400:
+        if r.status_code == 400:
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
@@ -149,41 +131,83 @@ class LoginScreen(Screen):
                 ).open()
                 )
                 return
+            
+            elif error_code == "INVALID_EMAIL":
+                self.notification = (
+                    CNotificationInline(
+                    title="Error",
+                    subtitle="Invalid Email Format",
+                    status="Error",
+                ).open()
+                )
+                return
+            
+        if not email_verified:
+            self.notification = (
+                CNotificationInline(
+                    title="Error",
+                    subtitle="Please Go to Your Email And Verify Your Account Before Logging In.",
+                    status="Error",
+                ).open()
+            )
+            return
+
+        # Success Notification:
+        if r.status_code == 200:
+            self.notification = (
+                CNotificationInline(
+                title="Success",
+                subtitle="Successfully Logged In",
+                status="Success",
+            ).open()
+        )
+            self.manager.current = "App"
 
 # ---------------------------------------------------------------------------------
 
 class ForgotScreen(Screen):
     def Send_Forgot_Email(self, email_input):
+        # Client Validation:
+        if email_input == "":
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Please Type In All Fields",
+                status="Error",
+            ).open()
+            )
+            return
+        
+        # Server Request:
         url = f"{FIREBASE_URL}/reset_password"
         payload = {"email": email_input}
-
         r = requests.post(url, json=payload)
         result = r.json()
 
-        if r.status_code == 200:
-            self.notification = (
-                CNotificationInline(
-                title="Success",
-                subtitle="Successfully Sent Reset Email",
-                status="Success",
-            ).open()
-        )
-            self.manager.current = "Setup"
-
-        # Error Notifications:  
-        elif r.status_code == 400:
+        # Error Notification:  
+        if r.status_code == 400:
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_EMAIL":
                 self.notification = (
                     CNotificationInline(
                     title="Error",
-                    subtitle="Email Does Not Exist",
+                    subtitle="Invalid Email Format",
                     status="Error",
                 ).open()
                 )
                 return
-
+            
+        # Success Notification:
+        if r.status_code == 200:
+            self.notification = (
+                CNotificationToast(
+                title="Success",
+                subtitle="Successfully Sent Reset Email. If You Don't See It, Check Your Spam Folder. If You Still Don't See It, The Email May Not Be Registered.",
+                status="Success",
+                pos_hint={"center_x": 0.5, "y": 0.57},
+            ).open()
+        )
 # ---------------------------------------------------------------------------------
 
 class SetupScreen(Screen):
