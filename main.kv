@@ -3,7 +3,6 @@
     FloatLayout:
 
         # Signup Label:
-
         CLabel:
             text: "Signup For Weather Tether"
             style: "heading_04"
@@ -15,7 +14,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.7}
             size_hint_x: None
@@ -29,7 +27,6 @@
                 text: "Enter An Email That You Would Like to Use"
 
         # Password Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -44,7 +41,6 @@
                 text: "Enter A Password That You Would Like to Use"
 
         # Login Button (users already have an account):
-
         CButtonGhost:
             text: "Already Have An Account? Login Here"
             role: "Large Productive"
@@ -55,7 +51,6 @@
                 root.manager.transition.direction = 'left'
 
         # Forgot Password Button:
-
         CButtonGhost:
             text: "Forgot Your Password?"
             role: "Large Productive"
@@ -66,7 +61,6 @@
                 root.manager.transition.direction = 'left'
 
         # Signup Button:
-
         CButtonPrimary:
             text: "Signup"
             role: "Large Productive"
@@ -82,7 +76,6 @@
     FloatLayout:
 
         # Login Label:
-
         CLabel:
             text: "Login To Weather Tether"
             style: "heading_04"
@@ -94,7 +87,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.7}
             size_hint_x: None
@@ -108,7 +100,6 @@
                 text: "Enter Your Email"
 
         # Password Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -123,7 +114,6 @@
                 text: "Enter Your Password"
 
         # Back To Signup Button:
-
         CButtonGhost:
             text: "Back To Signup"
             role: "Large Productive"
@@ -134,7 +124,6 @@
                 root.manager.transition.direction = 'right'
 
         # Forgot Password Button:
-
         CButtonGhost:
             text: "Forgot Your Password?"
             role: "Large Productive"
@@ -145,7 +134,6 @@
                 root.manager.transition.direction = 'left'
 
         # Login Button:
-
         CButtonPrimary:
             text: "Login"
             role: "Large Productive"
@@ -161,7 +149,6 @@
     FloatLayout:
 
         # Forgot Password Label:
-
         CLabel:
             text: "Forgot Your Password?"
             style: "heading_04"
@@ -173,7 +160,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -187,7 +173,6 @@
                 text: "Enter Your Email And We'll Send You A Code"
 
         # Back To Signup Label:
-
         CButtonGhost:
             text: "Back To Signup"
             role: "Large Productive"
@@ -198,7 +183,6 @@
                 root.manager.transition.direction = 'right'
 
         # Back To Login Button:
-
         CButtonGhost:
             text: "Back To Login"
             role: "Large Productive"
@@ -209,7 +193,6 @@
                 root.manager.transition.direction = 'right'
 
         # Send Email Button:
-
         CButtonPrimary:
             text: "Send Email"
             role: "Large Productive"
@@ -224,8 +207,10 @@
 
     FloatLayout:
 
-        # Setup Label:
+        padding: 0
+        spacing: 0
 
+        # Setup Label:
         CLabel:
             text: "Setup"
             style: "heading_04"
@@ -237,7 +222,6 @@
             font_size: sp(24)
 
         # Address Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -252,21 +236,29 @@
                 text: "Enter Your City or Zip Code (This will be stored on our servers)"
 
         # Search Result Button:
-
         CButtonTertiary:
             text: "Start typing"
             id: address_button
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.22}
-            size_hint_x: 1
-            size_hint_y: 0.25
-            height: dp(80)  # fixed height large enough for 2 lines
-            text_size: self.width - dp(20), None  # force text wrapping
+            size_hint_x: 1          
+            size_hint_y: None
+            height: dp(150)
+            pos_hint: {'y': 0}  
+            text_size: self.width - dp(20), None
             disabled: True
             icon: "home"
             on_press:
                 root.on_address_button_press(self.text.strip())
+                root.suggestion_pressed()
 
+        # Continue Button:
+        CButtonPrimary:
+            icon: "right-panel--close--filled"
+            role: "2XL"
+            spacing: 0
+            pos_hint: {'center_y': 0.5, 'center_x': 0.75}
+            on_press:
+                root.countinue_pressed()
 # ---------------------------------------------------------------------------------
 <AppScreen>:
 
@@ -281,4 +273,3 @@
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             font_size: sp(24)
-

@@ -90,7 +90,20 @@ class SignupScreen(Screen):
                 status="Success",
             ).open()
         )
+            
             self.manager.current = "Setup"
+
+            login_payload = {
+                "email": email_input,
+                "password": password_input
+            }
+            login_r = requests.post(f"{FIREBASE_URL}/login", json=login_payload)
+            login_res = login_r.json()
+
+            self.manager.id_token = login_res["data"]["idToken"]
+            self.manager.local_id = login_res["data"]["localId"]
+            self.manager.refresh_token = login_res["data"]["refreshToken"]
+
 
 # ---------------------------------------------------------------------------------
 
@@ -213,6 +226,7 @@ class ForgotScreen(Screen):
 class SetupScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.suggestion_was_pressed = False
         # Timer Config:
         self._last_request_time = 0
         self._debounce_event = None  
@@ -261,6 +275,24 @@ class SetupScreen(Screen):
         # otherwise, fill the text field
         self.ids.address_input.text = text
 
+    # Button config for countinuing to app:
+    def suggestion_pressed(self):
+        self.suggestion_was_pressed = True
+
+    def countinue_pressed(self):
+        if not self.suggestion_was_pressed == True:
+            return
+        
+        # Sends the location to Firestore:
+        location_input = self.ids.address_input.text
+        id_token = self.manager.id_token
+        payload = {"location": location_input}
+        headers = {"Authorization": f"Bearer {id_token}"}
+        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        print(r.json())
+
+        # Goes to main app screen:
+        self.manager.current = "App"
 # ---------------------------------------------------------------------------------
 
 class AppScreen(Screen):
