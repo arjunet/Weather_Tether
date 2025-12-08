@@ -2,6 +2,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
+from kivy.app import App
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -17,6 +18,8 @@ from carbonkivy.uix.notification import CNotificationToast
 
 import requests
 import time
+import json
+import os
 
 # ---------------------------------------------------------------------------------
 
@@ -90,9 +93,9 @@ class SignupScreen(Screen):
                 status="Success",
             ).open()
         )
-            
             self.manager.current = "Setup"
 
+            # Login after signup for idtoken retrieval:
             login_payload = {
                 "email": email_input,
                 "password": password_input
@@ -104,6 +107,20 @@ class SignupScreen(Screen):
             self.manager.local_id = login_res["data"]["localId"]
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
+            self.save_credentials(email_input, self.manager.refresh_token,)
+
+    def save_credentials(self, email_input, refresh_token,):
+        app = App.get_running_app()
+        path = os.path.join(app.app_dir, "data", "auth.json")
+        os.makedirs(os.path.dirname(path), exist_ok=True)
+
+        data = {
+            "email": email_input,
+            "refresh_token": refresh_token
+        }
+
+        with open(path, "w", encoding="utf-8") as f:
+            json.dump(data, f)
 
 # ---------------------------------------------------------------------------------
 
@@ -307,6 +324,8 @@ class MainApp(CarbonApp):
     def build(self):
         # Light Mode:
         Window.clearcolor = (1, 1, 1, 1)
+        self.app_dir = self.user_data_dir
+
 
         # Screen Manager Config:
         sm = CScreenManager()
