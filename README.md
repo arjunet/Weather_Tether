@@ -14,4 +14,8 @@ Part 2 of Weather Tether was completed on: 11/23/2025
   - Signup screen  
   - Signin screen  
   - Forgot Password screen  
-- 📦 **APK successfully compiled** with Buildozer  
+- 📦 **APK successfully compiled** with Buildozer
+
+## Join the discord:
+
+https://discord.gg/DpnfkYBd
