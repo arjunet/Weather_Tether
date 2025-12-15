@@ -18,6 +18,7 @@ from carbonkivy.uix.notification import CNotificationToast
 
 import requests
 import time
+from secure_auth_store import save_auth
 import json
 import os
 
@@ -107,20 +108,11 @@ class SignupScreen(Screen):
             self.manager.local_id = login_res["data"]["localId"]
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
-            self.save_credentials(email_input, self.manager.refresh_token,)
-
-    def save_credentials(self, email_input, refresh_token,):
-        app = App.get_running_app()
-        path = os.path.join(app.app_dir, "data", "auth.json")
-        os.makedirs(os.path.dirname(path), exist_ok=True)
-
-        data = {
-            "email": email_input,
-            "refresh_token": refresh_token
-        }
-
-        with open(path, "w", encoding="utf-8") as f:
-            json.dump(data, f)
+            # Save Auth Locally:
+            save_auth(
+                email_input,
+                result.get("refreshToken"),
+            )
 
 # ---------------------------------------------------------------------------------
 
@@ -191,6 +183,13 @@ class LoginScreen(Screen):
                 status="Success",
             ).open()
         )
+            
+            # Save Auth Locally:
+            save_auth(
+                email_input,
+                result.get("refreshToken"),
+            )
+
             self.manager.current = "App"
 
 # ---------------------------------------------------------------------------------
