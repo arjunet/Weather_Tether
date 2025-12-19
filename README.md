@@ -18,4 +18,4 @@ Part 2 of Weather Tether was completed on: 11/23/2025
 
 ## Join the discord:
 
-https://discord.gg/DpnfkYBd
+https://discord.gg/MJP7dAtY3D
