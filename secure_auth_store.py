@@ -65,9 +65,11 @@ if ANDROID:
     def _encrypt(data: bytes) -> str:
         key = _get_or_create_key()
         cipher = Cipher.getInstance(AES_MODE)
-        cipher.init(Cipher.ENCRYPT_MODE, key)
+        iv = os.urandom(12)  # GCM IV
+        GCMParameterSpec = autoclass("javax.crypto.spec.GCMParameterSpec")
+        spec = GCMParameterSpec(128, iv)
+        cipher.init(Cipher.ENCRYPT_MODE, key, spec)
         encrypted = cipher.doFinal(data)
-        iv = cipher.getIV()
         combined = iv + encrypted
         return Base64.encodeToString(combined, Base64.NO_WRAP)
 
@@ -76,8 +78,9 @@ if ANDROID:
         iv, encrypted = raw[:12], raw[12:]
         key = _get_or_create_key()
         cipher = Cipher.getInstance(AES_MODE)
-        IvSpec = autoclass("javax.crypto.spec.IvParameterSpec")(iv)
-        cipher.init(Cipher.DECRYPT_MODE, key, IvSpec)
+        GCMParameterSpec = autoclass("javax.crypto.spec.GCMParameterSpec")
+        spec = GCMParameterSpec(128, iv)
+        cipher.init(Cipher.DECRYPT_MODE, key, spec)
         return cipher.doFinal(encrypted)
 
 
