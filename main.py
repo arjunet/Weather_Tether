@@ -323,7 +323,6 @@ class MainApp(CarbonApp):
     def build(self):
         # Light Mode:
         Window.clearcolor = (1, 1, 1, 1)
-        self.app_dir = self.user_data_dir
 
 
         # Screen Manager Config:
