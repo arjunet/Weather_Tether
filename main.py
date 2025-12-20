@@ -96,7 +96,7 @@ class SignupScreen(Screen):
         )
             self.manager.current = "Setup"
 
-            # Login after signup for idtoken retrieval:
+            # Login after signup for token retrieval:
             login_payload = {
                 "email": email_input,
                 "password": password_input
@@ -109,10 +109,7 @@ class SignupScreen(Screen):
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
             # Save Auth Locally:
-            secure_save(
-                email_input,
-                result.get("refreshToken"),
-            )
+            secure_save(self.manager.refresh_token)
 
 # ---------------------------------------------------------------------------------
 
@@ -185,11 +182,9 @@ class LoginScreen(Screen):
         )
             
             # Save Auth Locally:
-            secure_save(
-                email_input,
-                result.get("refreshToken"),
-            )
+            secure_save(self.manager.refresh_token)
 
+            # Go to the main app screen:
             self.manager.current = "App"
 
 # ---------------------------------------------------------------------------------
