@@ -18,7 +18,7 @@ from carbonkivy.uix.notification import CNotificationToast
 
 import requests
 import time
-from secure_auth_store import secure_save
+from secure_auth_store import save_auth
 import json
 import os
 
@@ -109,8 +109,11 @@ class SignupScreen(Screen):
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
             # Save Auth Locally:
-            secure_save(self.manager.refresh_token)
-
+            save_auth(
+                email=email_input,
+                refresh_token=self.manager.refresh_token
+            )
+            
 # ---------------------------------------------------------------------------------
 
 class LoginScreen(Screen):
@@ -182,7 +185,10 @@ class LoginScreen(Screen):
         )
             
             # Save Auth Locally:
-            secure_save(self.manager.refresh_token)
+            save_auth(
+                email=email_input,
+                refresh_token=self.manager.refresh_token
+            )
 
             # Go to the main app screen:
             self.manager.current = "App"
