@@ -1,11 +1,12 @@
+# Imports:
 import os
 import json
 
 from kivy.utils import platform
 from kivy.app import App
 
+# Detect Platform:
 ANDROID = platform == "android"
-
 
 # -----------------------------
 # SAFE PATH (AFTER build())
@@ -25,8 +26,10 @@ def _auth_file_path():
 # ANDROID — Android Keystore (NO EXTRA LIBS)
 # ==========================================================
 if ANDROID:
+    # Android Java Imports:
     from jnius import autoclass
 
+    # Java Classes:
     KeyStore = autoclass("java.security.KeyStore")
     KeyGenerator = autoclass("javax.crypto.KeyGenerator")
     Cipher = autoclass("javax.crypto.Cipher")
@@ -41,6 +44,7 @@ if ANDROID:
     ANDROID_KEYSTORE = "AndroidKeyStore"
     AES_MODE = "AES/GCM/NoPadding"
 
+    # Helper Functions:
     def _get_or_create_key():
         ks = KeyStore.getInstance(ANDROID_KEYSTORE)
         ks.load(None)
@@ -90,12 +94,15 @@ if ANDROID:
 # DESKTOP — Keyring + Fernet
 # ==========================================================
 else:
+    # Imports (LOCAL ONLY):
     import keyring
     from cryptography.fernet import Fernet
 
+    # Constants:
     SERVICE = "weather_tether"
     KEY_NAME = "auth_key"
 
+    # Helper Functions:
     def _get_key():
         key = keyring.get_password(SERVICE, KEY_NAME)
         if key:
@@ -115,6 +122,7 @@ else:
 # ==========================================================
 # PUBLIC API
 # ==========================================================
+# Helper Functions:
 def save_auth(email: str, refresh_token: str):
     path = _auth_file_path()
     if not path:
