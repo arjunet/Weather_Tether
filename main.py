@@ -18,8 +18,8 @@ from carbonkivy.uix.notification import CNotificationToast
 
 import requests
 import time
-from secure_auth_store import save_auth
 import json
+from kivy.storage.jsonstore import JsonStore
 import os
 
 # ---------------------------------------------------------------------------------
@@ -108,11 +108,11 @@ class SignupScreen(Screen):
             self.manager.local_id = login_res["data"]["localId"]
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
-            # Save Auth Locally:
-            save_auth(
-                email=email_input,
-                refresh_token=self.manager.refresh_token
-            )
+            def save_refresh_token(refresh_token):
+                store = JsonStore('session.json')
+                store.put('auth', refresh_token=refresh_token)
+
+            save_refresh_token(self.manager.refresh_token)
             
 # ---------------------------------------------------------------------------------
 
@@ -184,11 +184,7 @@ class LoginScreen(Screen):
             ).open()
         )
             
-            # Save Auth Locally:
-            save_auth(
-                email=email_input,
-                refresh_token=self.manager.refresh_token
-            )
+            
 
             # Go to the main app screen:
             self.manager.current = "App"
