@@ -2,7 +2,6 @@
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
-from kivy.app import App
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -16,10 +15,10 @@ from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
 from carbonkivy.uix.notification import CNotificationToast
 
+from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login
 import requests
 import time
 import json
-from kivy.storage.jsonstore import JsonStore
 import os
 
 # ---------------------------------------------------------------------------------
@@ -108,10 +107,6 @@ class SignupScreen(Screen):
             self.manager.local_id = login_res["data"]["localId"]
             self.manager.refresh_token = login_res["data"]["refreshToken"]
 
-            def save_refresh_token(refresh_token):
-                store = JsonStore('session.json')
-                store.put('auth', refresh_token=refresh_token)
-
             save_refresh_token(self.manager.refresh_token)
             
 # ---------------------------------------------------------------------------------
@@ -176,16 +171,19 @@ class LoginScreen(Screen):
 
         # Success Notification:
         if r.status_code == 200:
+            self.manager.refresh_token = result["data"]["refreshToken"]
+            self.manager.id_token = result["data"]["idToken"]
+
+
             self.notification = (
                 CNotificationInline(
                 title="Success",
                 subtitle="Successfully Logged In",
                 status="Success",
             ).open()
-        )
-            
-            
+        ) 
 
+            save_refresh_token(self.manager.refresh_token)
             # Go to the main app screen:
             self.manager.current = "App"
 
@@ -321,15 +319,34 @@ class MainApp(CarbonApp):
         # Light Mode:
         Window.clearcolor = (1, 1, 1, 1)
 
-
         # Screen Manager Config:
-        sm = CScreenManager()
-        sm.add_widget(SignupScreen(name='Signup'))
-        sm.add_widget(LoginScreen(name='Login'))
-        sm.add_widget(ForgotScreen(name='Forgot'))
-        sm.add_widget(SetupScreen(name='Setup'))
-        sm.add_widget(AppScreen(name='App'))
-        return sm
+        self.sm = CScreenManager()
+        self.sm.add_widget(SignupScreen(name='Signup'))
+        self.sm.add_widget(LoginScreen(name='Login'))
+        self.sm.add_widget(ForgotScreen(name='Forgot'))
+        self.sm.add_widget(SetupScreen(name='Setup'))
+        self.sm.add_widget(AppScreen(name='App'))
+        return self.sm
+
+    def on_start(self):
+        token = load_refresh_token()
+
+        if token:
+            result = refresh_login(token)
+
+            if result:
+                self.sm.id_token = result["idToken"]
+                self.sm.refresh_token = result["refreshToken"]
+
+                # rotate token
+                save_refresh_token(result["refreshToken"])
+
+                self.sm.current = "App"
+                return
+            else:
+                clear_refresh_token()
+
+        self.sm.current = "Signup"
 
 if __name__ == "__main__":
     MainApp().run()
