@@ -1,6 +1,11 @@
 <SignupScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Signup Label:
         CLabel:
@@ -25,6 +30,7 @@
 
             CTextInputHelperText:
                 text: "Enter An Email That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
 
         # Password Text Input:
         CTextInputLayout:
@@ -39,9 +45,10 @@
 
             CTextInputHelperText:
                 text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
 
         # Login Button (users already have an account):
-        CButtonGhost:
+        CButtonSecondary:
             text: "Already Have An Account? Login Here"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -51,7 +58,7 @@
                 root.manager.transition.direction = 'left'
 
         # Forgot Password Button:
-        CButtonGhost:
+        CButtonSecondary:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
@@ -73,7 +80,12 @@
 
 <LoginScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Login Label:
         CLabel:
@@ -98,6 +110,7 @@
 
             CTextInputHelperText:
                 text: "Enter Your Email"
+                color: "#000000"
 
         # Password Text Input:
         CTextInputLayout:
@@ -112,9 +125,10 @@
 
             CTextInputHelperText:
                 text: "Enter Your Password"
+                color: "#000000"
 
         # Back To Signup Button:
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -124,7 +138,7 @@
                 root.manager.transition.direction = 'right'
 
         # Forgot Password Button:
-        CButtonGhost:
+        CButtonSecondary:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
@@ -146,7 +160,12 @@
 
 <ForgotScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Forgot Password Label:
         CLabel:
@@ -171,9 +190,11 @@
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
+                color: "#000000"
+                
 
         # Back To Signup Label:
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -183,7 +204,7 @@
                 root.manager.transition.direction = 'right'
 
         # Back To Login Button:
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Login"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
