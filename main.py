@@ -18,18 +18,80 @@ from carbonkivy.uix.notification import CNotificationToast
 from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login
 import requests
 import time
+import threading
 import json
 import os
 
 # ---------------------------------------------------------------------------------
-
- # Firebase Auth Service URL:
+ # Firebase Auth Service URL (global):
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
 # ---------------------------------------------------------------------------------
 
 class SignupScreen(Screen):
-    def Signup(self, email_input, password_input):
+    def start_load(self, email_input, password_input):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Reset the result variables so that the waiter can check for them (overwrite them when the thread is done):
+        self.signup_r = None
+        self.signup_result = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Signup_request, 
+            args=(email_input, password_input), 
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Signup_request(self, email_input, password_input):
+        # Server Request:
+        url = f"{FIREBASE_URL}/signup"
+        payload = {
+            "email": email_input,
+            "password": password_input
+       }
+        r = requests.post(url, json=payload)
+        result = r.json() 
+
+        self.signup_r = r
+        self.signup_result = result
+        self.email_input = email_input
+        self.password_input = password_input
+
+        # If successful signup, login to get the tokens and save them for later:
+        if r.status_code == 200:
+            # Login after signup for token retrieval:
+            login_payload = {
+                "email": email_input,
+                "password": password_input
+            }
+            login_r = requests.post(f"{FIREBASE_URL}/login", json=login_payload)
+            login_res = login_r.json()
+
+            self.manager.id_token = login_res["data"]["idToken"]
+            self.manager.local_id = login_res["data"]["localId"]
+            self.manager.refresh_token = login_res["data"]["refreshToken"]
+
+            # Saves refresh token to file for autologin on app start:
+            save_refresh_token(self.manager.refresh_token)
+
+    def stop_load(self, *args):
+        # Stops thread one done:
+        if self.signup_result is None:
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+
+        # Declares results from signup for notifications:
+        r = self.signup_r
+        result = self.signup_result
+        email_input = self.email_input
+        password_input = self.password_input
+    
         # Client Validation:
         if email_input == "" or password_input == "":
             self.notification = (
@@ -41,15 +103,6 @@ class SignupScreen(Screen):
             )
             return
         
-        # Server Request:
-        url = f"{FIREBASE_URL}/signup"
-        payload = {
-            "email": email_input,
-            "password": password_input
-       }
-        r = requests.post(url, json=payload)
-        result = r.json() 
-
         # Error Notifications:  
         if r.status_code == 400:
             error_code = result.get("detail", "")
@@ -94,21 +147,6 @@ class SignupScreen(Screen):
             ).open()
         )
             self.manager.current = "Setup"
-
-            # Login after signup for token retrieval:
-            login_payload = {
-                "email": email_input,
-                "password": password_input
-            }
-            login_r = requests.post(f"{FIREBASE_URL}/login", json=login_payload)
-            login_res = login_r.json()
-
-            self.manager.id_token = login_res["data"]["idToken"]
-            self.manager.local_id = login_res["data"]["localId"]
-            self.manager.refresh_token = login_res["data"]["refreshToken"]
-
-            save_refresh_token(self.manager.refresh_token)
-            
 # ---------------------------------------------------------------------------------
 
 class LoginScreen(Screen):

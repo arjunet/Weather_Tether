@@ -7,6 +7,11 @@
             size_hint: 1, 1
             fit_mode: "cover"
 
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
         # Signup Label:
         CLabel:
             text: "Signup For Weather Tether"
@@ -74,7 +79,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.Signup(root.ids.email_input.text.strip(), root.ids.password_input.text.strip())
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
 # ---------------------------------------------------------------------------------
 
@@ -226,10 +231,15 @@
 
 <SetupScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
 
         padding: 0
         spacing: 0
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Setup Label:
         CLabel:
@@ -255,9 +265,10 @@
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code (This will be stored on our servers)"
+                color: "#000000"
 
         # Search Result Button:
-        CButtonTertiary:
+        CButtonPrimary:
             text: "Start typing"
             id: address_button
             role: "Large Productive"
