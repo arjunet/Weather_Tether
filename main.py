@@ -362,7 +362,16 @@ class SetupScreen(Screen):
         if now - self._last_request_time < 2.5:
             return
         self._last_request_time = now
-        self.Request_City()
+
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Request_City,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
 
     def Request_City(self): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
@@ -401,7 +410,18 @@ class SetupScreen(Screen):
     def countinue_pressed(self):
         if not self.suggestion_was_pressed == True:
             return
-        
+
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
         # Sends the location to Firestore:
         location_input = self.ids.address_input.text
         id_token = self.manager.id_token
@@ -410,7 +430,24 @@ class SetupScreen(Screen):
         r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
         print(r.json())
 
-        # Goes to main app screen:
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.loader.opacity = 0
+
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
