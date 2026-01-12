@@ -7,11 +7,6 @@
             size_hint: 1, 1
             fit_mode: "cover"
 
-        CLoadingIndicator:
-            role: "Large"
-            opacity: 0
-            id: loader
-
         # Signup Label:
         CLabel:
             text: "Signup For Weather Tether"
@@ -80,6 +75,11 @@
             icon: "login"
             on_press:
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 
@@ -159,7 +159,12 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.Login(root.ids.email_input.text, root.ids.password_input.text)
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 
@@ -225,7 +230,12 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "send--alt"
             on_press:
-                root.Send_Forgot_Email(root.ids.email_input.text.strip())
+                root.start_load(root.ids.email_input.text.strip())
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 

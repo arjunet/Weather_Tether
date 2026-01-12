@@ -27,7 +27,6 @@ import os
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
 # ---------------------------------------------------------------------------------
-
 class SignupScreen(Screen):
     def start_load(self, email_input, password_input):
         # Make the loader visible:
@@ -55,6 +54,7 @@ class SignupScreen(Screen):
         r = requests.post(url, json=payload)
         result = r.json() 
 
+        # Declares results from signup for notifications:
         self.signup_r = r
         self.signup_result = result
         self.email_input = email_input
@@ -78,7 +78,7 @@ class SignupScreen(Screen):
             save_refresh_token(self.manager.refresh_token)
 
     def stop_load(self, *args):
-        # Stops thread one done:
+        # Stops thread once done:
         if self.signup_result is None:
             return True # Keep waiting
         
@@ -148,20 +148,24 @@ class SignupScreen(Screen):
         )
             self.manager.current = "Setup"
 # ---------------------------------------------------------------------------------
-
 class LoginScreen(Screen):
-    def Login(self, email_input, password_input):
-        # Client Validation:
-        if email_input == "" or password_input == "":
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Please Type In All Fields",
-                status="Error",
-            ).open()
-            )
-            return
-        
+    def start_load(self, email_input, password_input):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Reset the result variables so that the waiter can check for them (overwrite them when the thread is done):
+        self.login_r = None
+        self.login_result = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Login_request, 
+            args=(email_input, password_input), 
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Login_request(self, email_input, password_input):  
         # Server Request:
         url = f"{FIREBASE_URL}/login"
         payload = {
@@ -172,6 +176,40 @@ class LoginScreen(Screen):
         result = r.json()
         data = result.get("data", {})
         email_verified = data.get("emailVerified", False)
+
+        # Declares results from login for notifications:
+        self.login_r = r
+        self.login_result = result
+        self.email_verified = email_verified
+        self.email_input = email_input
+        self.password_input = password_input
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.login_result is None:
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+
+        # Declares results from login for notifications:
+        r = self.login_r
+        result = self.login_result
+        email_verified = self.email_verified
+        email_input = self.email_input
+        password_input = self.password_input
+
+        # Client Validation:
+        if email_input == "" or password_input == "":
+            self.notification = (
+                CNotificationInline(
+                title="Error",
+                subtitle="Please Type In All Fields",
+                status="Error",
+            ).open()
+            )
+            return
 
         # Error Notifications:  
         if r.status_code == 400:
@@ -212,7 +250,6 @@ class LoginScreen(Screen):
             self.manager.refresh_token = result["data"]["refreshToken"]
             self.manager.id_token = result["data"]["idToken"]
 
-
             self.notification = (
                 CNotificationInline(
                 title="Success",
@@ -226,9 +263,49 @@ class LoginScreen(Screen):
             self.manager.current = "App"
 
 # ---------------------------------------------------------------------------------
-
 class ForgotScreen(Screen):
-    def Send_Forgot_Email(self, email_input):
+    def start_load(self, email_input):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Reset the result variables so that the waiter can check for them (overwrite them when the thread is done):
+        self.forgot_r = None
+        self.forgot_result = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Send_Forgot_Email, 
+            args=(email_input,), 
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Send_Forgot_Email(self, email_input):   
+        # Server Request:
+        url = f"{FIREBASE_URL}/reset_password"
+        payload = {"email": email_input}
+        r = requests.post(url, json=payload)
+        result = r.json()
+
+        # Declares results from sending for notifications:
+        self.forgot_r = r
+        self.forgot_result = result
+        self.email_input = email_input
+            
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.forgot_result is None:
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+
+        # Declares results from sending for notifications:
+        r = self.forgot_r
+        result = self.forgot_result
+        email_input = self.email_input
+
         # Client Validation:
         if email_input == "":
             self.notification = (
@@ -240,12 +317,6 @@ class ForgotScreen(Screen):
             )
             return
         
-        # Server Request:
-        url = f"{FIREBASE_URL}/reset_password"
-        payload = {"email": email_input}
-        r = requests.post(url, json=payload)
-        result = r.json()
-
         # Error Notification:  
         if r.status_code == 400:
             error_code = result.get("detail", "")
@@ -271,7 +342,6 @@ class ForgotScreen(Screen):
             ).open()
         )
 # ---------------------------------------------------------------------------------
-
 class SetupScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -343,7 +413,6 @@ class SetupScreen(Screen):
         # Goes to main app screen:
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
-
 class AppScreen(Screen):
     pass
 
@@ -376,7 +445,7 @@ class MainApp(CarbonApp):
                 self.sm.id_token = result["idToken"]
                 self.sm.refresh_token = result["refreshToken"]
 
-                # rotate token
+                # save new token
                 save_refresh_token(result["refreshToken"])
 
                 self.sm.current = "App"
