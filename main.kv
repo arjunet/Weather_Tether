@@ -320,3 +320,38 @@
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             font_size: sp(24)
+# ---------------------------------------------------------------------------------
+<VerifyScreen>:
+
+    FloatLayout:
+
+        CLabel:
+            text: "Please Verify Your Email Address Before Continuing"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CButtonPrimary:
+            text: "Resend Verification Email"
+            role: "Large Productive"
+            icon: "send--alt"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            on_press:
+                root.start_load()
+
+        CButtonSecondary:
+            text: "Continue To App"
+            role: "Large Productive"
+            icon: "right-panel--open--filled"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.check_verification()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader

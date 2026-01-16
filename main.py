@@ -450,9 +450,94 @@ class SetupScreen(Screen):
 
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
-class AppScreen(Screen):
-    pass
+class VerifyScreen(Screen):
+    def start_load(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
 
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Send_Verification_Email,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Send_Verification_Email(self):
+        url = f"{FIREBASE_URL}/resend_verification"
+        id_token = self.manager.id_token
+
+        payload = {"id_token": id_token}
+    
+        r = requests.post(url, json=payload, timeout=10)
+        
+        # Check the response
+        if r.status_code == 200:
+            print("Email resent successfully!")
+            print(r.json())
+        else:
+            print(f"Error {r.status_code}: {r.text}")
+
+    def check_verification(self):
+        token = load_refresh_token()
+
+        if token:
+            result = refresh_login(token)
+
+            if result:
+                self.manager.id_token = result["idToken"]
+                self.manager.refresh_token = result["refreshToken"]
+
+                # save new token
+                save_refresh_token(result["refreshToken"])
+
+                if result.get("emailVerified") is True:
+                    self.notification = (
+                        CNotificationToast(
+                        title="Success",
+                        subtitle="Email Verified Successfully",
+                        status="Success",
+                        pos_hint={"center_x": 0.5, "y": 0.57},
+                        ).open()
+                    )
+                    self.manager.current = "App"
+
+                else:
+                    self.notification = (
+                        CNotificationToast(
+                        title="Error",
+                        subtitle="Email Is Not Verified Yet. Please Check Your Email And Click The Link To Verify Your Account.",
+                        status="Error",
+                        pos_hint={"center_x": 0.5, "y": 0.57},
+                        ).open()
+                    )
+                return
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+
+# ---------------------------------------------------------------------------------
+class AppScreen(Screen):
+    def on_enter(self):
+        token = load_refresh_token()
+
+        if token:
+            result = refresh_login(token)
+
+            if result:
+                self.manager.id_token = result["idToken"]
+                self.manager.refresh_token = result["refreshToken"]
+
+                # save new token
+                save_refresh_token(result["refreshToken"])
+
+                if result.get("emailVerified") is True:
+                    pass
+
+                else:
+                    self.manager.current = "Verify"
+                return
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
@@ -470,6 +555,7 @@ class MainApp(CarbonApp):
         self.sm.add_widget(ForgotScreen(name='Forgot'))
         self.sm.add_widget(SetupScreen(name='Setup'))
         self.sm.add_widget(AppScreen(name='App'))
+        self.sm.add_widget(VerifyScreen(name='Verify'))
         return self.sm
 
     def on_start(self):
@@ -485,7 +571,11 @@ class MainApp(CarbonApp):
                 # save new token
                 save_refresh_token(result["refreshToken"])
 
-                self.sm.current = "App"
+                if result.get("emailVerified") is True:
+                    self.sm.current = "App"
+
+                else:
+                    self.sm.current = "Verify"
                 return
             else:
                 clear_refresh_token()
