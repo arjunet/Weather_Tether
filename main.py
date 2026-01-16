@@ -455,6 +455,9 @@ class VerifyScreen(Screen):
         # Make the loader visible:
         self.ids.loader.opacity = 1
 
+        self.r = None
+        self.result = None
+
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
             target=self.Send_Verification_Email,
@@ -469,15 +472,17 @@ class VerifyScreen(Screen):
         payload = {"id_token": id_token}
     
         r = requests.post(url, json=payload, timeout=10)
+        print(r.json())
+        result = r.json()
+        self.r = r
+        self.result = result
         
         # Check the response
         if r.status_code == 200:
             print("Email resent successfully!")
             print(r.json())
-        else:
-            print(f"Error {r.status_code}: {r.text}")
 
-    def check_verification(self):
+    def check_verification(self, r):
         token = load_refresh_token()
 
         if token:
@@ -513,9 +518,39 @@ class VerifyScreen(Screen):
                 return
 
     def stop_load(self, *args):
+        if self.r is None:
+            return True # Keep waiting
+        
         # Stops thread once done:
         Clock.unschedule(self.stop_load)
         self.ids.loader.opacity = 0
+
+        r = self.r
+        result = self.result
+
+        error_code = result.get("detail", "")
+        print(error_code)
+
+        if error_code == "TOO_MANY_ATTEMPTS_TRY_LATER":
+            print("Too many attempts. Please try again later.")
+            self.notification = (
+                CNotificationToast( 
+                title="Error",
+                subtitle="Email verification email should already be in your email inbox. If you don't see it, check your spam folder.",
+                status="Error",
+                pos_hint={"center_x": 0.5, "y": 0.57},
+                ).open()
+            )
+
+        elif r.status_code == 200:
+            self.notification = (
+                CNotificationToast(
+                title="Success",
+                subtitle="Verification Email Sent Successfully. Please Check Your Email And Click The Link To Verify Your Account.",
+                status="Success",
+                pos_hint={"center_x": 0.5, "y": 0.57},
+                ).open()
+            )
 
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
