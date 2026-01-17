@@ -482,7 +482,7 @@ class VerifyScreen(Screen):
             print("Email resent successfully!")
             print(r.json())
 
-    def check_verification(self, r):
+    def check_verification(self, *args):
         token = load_refresh_token()
 
         if token:
