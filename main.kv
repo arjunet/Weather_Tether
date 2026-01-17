@@ -1,9 +1,13 @@
 <SignupScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Signup Label:
-
         CLabel:
             text: "Signup For Weather Tether"
             style: "heading_04"
@@ -15,7 +19,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.7}
             size_hint_x: None
@@ -23,12 +26,13 @@
 
             CTextInput:
                 hint_text: "Email"
+                id: email_input
 
             CTextInputHelperText:
-                text: "Enter An Email That You Would Like to Use"
+                text: "Enter An Email That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
 
         # Password Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -36,13 +40,15 @@
 
             CTextInput:
                 hint_text: "Password"
+                password: True
+                id: password_input
 
             CTextInputHelperText:
-                text: "Enter A Password That You Would Like to Use"
+                text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
 
         # Login Button (users already have an account):
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Already Have An Account? Login Here"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -52,8 +58,7 @@
                 root.manager.transition.direction = 'left'
 
         # Forgot Password Button:
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
@@ -63,23 +68,31 @@
                 root.manager.transition.direction = 'left'
 
         # Signup Button:
-
         CButtonPrimary:
             text: "Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.manager.current = 'Setup'
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 
 <LoginScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Login Label:
-
         CLabel:
             text: "Login To Weather Tether"
             style: "heading_04"
@@ -91,7 +104,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.7}
             size_hint_x: None
@@ -99,12 +111,13 @@
 
             CTextInput:
                 hint_text: "Email"
+                id: email_input
 
             CTextInputHelperText:
                 text: "Enter Your Email"
+                color: "#000000"
 
         # Password Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -112,13 +125,15 @@
 
             CTextInput:
                 hint_text: "Password"
+                password: True
+                id: password_input
 
             CTextInputHelperText:
                 text: "Enter Your Password"
+                color: "#000000"
 
         # Back To Signup Button:
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -128,8 +143,7 @@
                 root.manager.transition.direction = 'right'
 
         # Forgot Password Button:
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
@@ -139,21 +153,31 @@
                 root.manager.transition.direction = 'left'
 
         # Login Button:
-
         CButtonPrimary:
             text: "Login"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
+            on_press:
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 
 <ForgotScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Forgot Password Label:
-
         CLabel:
             text: "Forgot Your Password?"
             style: "heading_04"
@@ -165,7 +189,6 @@
             font_size: sp(24)
 
         # Email Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -173,13 +196,15 @@
 
             CTextInput:
                 hint_text: "Email"
+                id: email_input
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
+                color: "#000000"
+                
 
         # Back To Signup Label:
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
@@ -189,8 +214,7 @@
                 root.manager.transition.direction = 'right'
 
         # Back To Login Button:
-
-        CButtonGhost:
+        CButtonSecondary:
             text: "Back To Login"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
@@ -200,21 +224,34 @@
                 root.manager.transition.direction = 'right'
 
         # Send Email Button:
-
         CButtonPrimary:
             text: "Send Email"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "send--alt"
+            on_press:
+                root.start_load(root.ids.email_input.text.strip())
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 
 # ---------------------------------------------------------------------------------
 
 <SetupScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
+
+        padding: 0
+        spacing: 0
+
+        AsyncImage:
+            source: "images/sunny.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
 
         # Setup Label:
-
         CLabel:
             text: "Setup"
             style: "heading_04"
@@ -226,7 +263,6 @@
             font_size: sp(24)
 
         # Address Text Input:
-
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
@@ -234,24 +270,88 @@
 
             CTextInput:
                 hint_text: "City or Zip Code"
-                on_text: root.Setup(self.text.strip())
+                on_text: root.Setup()
                 id: address_input
 
             CTextInputHelperText:
-                text: "Enter Your City or Zip Code"
+                text: "Enter Your City or Zip Code (This will be stored on our servers)"
+                color: "#000000"
 
         # Search Result Button:
-
-        CButtonTertiary:
+        CButtonPrimary:
             text: "Start typing"
             id: address_button
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.22}
-            size_hint_x: 1
-            size_hint_y: 0.25
-            height: dp(80)  # fixed height large enough for 2 lines
-            text_size: self.width - dp(20), None  # force text wrapping
+            size_hint_x: 1          
+            size_hint_y: None
+            height: dp(180)
+            pos_hint: {'y': 0}  
+            text_size: self.width - dp(20), None
             disabled: True
-            icon: "home"
+            icon: "location--filled"
             on_press:
                 root.on_address_button_press(self.text.strip())
+                root.suggestion_pressed()
+
+        # Continue Button:
+        CButtonSecondary:
+            icon: "arrow--right"
+            text: "Finish Setup"
+            spacing: 0
+            pos_hint: {'center_y': 0.9, 'center_x': 0.9}
+            on_press:
+                root.countinue_pressed()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+# ---------------------------------------------------------------------------------
+<AppScreen>:
+
+    FloatLayout:
+
+        CLabel:
+            text: "Welcome to Weather Tether!"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            font_size: sp(24)
+# ---------------------------------------------------------------------------------
+<VerifyScreen>:
+
+    FloatLayout:
+
+        CLabel:
+            text: "Please Verify Your Email Address Before Continuing"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CButtonPrimary:
+            text: "Resend Verification Email"
+            role: "Large Productive"
+            icon: "send--alt"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            on_press:
+                root.start_load()
+
+        CButtonSecondary:
+            text: "Continue To App"
+            role: "Large Productive"
+            icon: "right-panel--open--filled"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.check_verification()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader

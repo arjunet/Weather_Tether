@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.3.1, https://github.com/kivymd/KivyMD/archive/master.zip, exceptiongroup, asynckivy, asyncgui, materialyoucolor, android, carbonkivy==0.0.3, certifi==2025.10.5, charset-normalizer==3.4.4, docutils==0.22.3, filetype==1.2.0, idna==3.11, Kivy-Garden==0.1.5, Pygments==2.19.2, requests==2.32.5, setuptools==65.5.0, urllib3==2.5.0
+requirements = python3, kivy==2.3.1, https://github.com/kivymd/KivyMD/archive/master.zip, exceptiongroup, asynckivy, asyncgui, materialyoucolor, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, certifi==2025.10.5, charset-normalizer==3.4.4, docutils==0.22.3, filetype==1.2.0, idna==3.11, Kivy-Garden==0.1.5, pyjnius, Pygments==2.19.2, requests==2.32.5, setuptools==65.5.0, urllib3==2.5.0, cryptography
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -101,19 +101,19 @@ android.permissions = INTERNET, WRITE_INTERNAL_STORAGE, READ_INTERNAL_STORAGE
 #android.features = android.hardware.usb.host
 
 # (int) Target Android API, should be as high as possible.
-android.api = 34
+android.api = 36
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 23
+android.minapi = 26
 
 # (int) Android SDK version to use
 #android.sdk = 20
 
 # (str) Android NDK version to use
-#android.ndk = 25b
+android.ndk = 25b
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-#android.ndk_api = 21
+android.ndk_api = 26
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -201,12 +201,12 @@ android.accept_sdk_license = True
 #android.add_resources =
 
 # (list) Gradle dependencies to add
-#android.gradle_dependencies =
+android.gradle_dependencies = com.google.crypto.tink:tink-android:1.19.0
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
 # android.enable_androidx requires android.api >= 28
-#android.enable_androidx = True
+android.enable_androidx = True
 
 # (list) add java compile options
 # this can for example be necessary when importing certain java libraries using the 'android.gradle_dependencies' option
@@ -216,7 +216,7 @@ android.accept_sdk_license = True
 # (list) Gradle repositories to add {can be necessary for some android.gradle_dependencies}
 # please enclose in double quotes 
 # e.g. android.gradle_repositories = "maven { url 'https://kotlin.bintray.com/ktor' }"
-#android.add_gradle_repositories =
+android.add_gradle_repositories = "mavenCentral()"
 
 # (list) packaging options to add 
 # see https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.PackagingOptions.html
@@ -321,7 +321,7 @@ android.debug_artifact = apk
 #p4a.fork = kivy
 
 # (str) python-for-android branch to use, defaults to master
-p4a.branch = master
+p4a.branch = develop
 
 # (str) python-for-android specific commit to use, defaults to HEAD, must be within p4a.branch
 #p4a.commit = HEAD
