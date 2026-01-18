@@ -320,6 +320,11 @@
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             font_size: sp(24)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
 
@@ -341,7 +346,7 @@
             icon: "send--alt"
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             on_press:
-                root.start_load()
+                root.start_load_send()
 
         CButtonSecondary:
             text: "Continue To App"
@@ -349,7 +354,7 @@
             icon: "right-panel--open--filled"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             on_press:
-                root.check_verification()
+                root.start_load_check()
 
         CLoadingIndicator:
             role: "Large"

@@ -19,13 +19,10 @@ from token_management import save_refresh_token, load_refresh_token, clear_refre
 import requests
 import time
 import threading
-import json
-import os
 
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
-
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def start_load(self, email_input, password_input):
@@ -451,7 +448,22 @@ class SetupScreen(Screen):
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
 class VerifyScreen(Screen):
-    def start_load(self):
+    def start_load_send(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        self.r = None
+        self.result = None
+        self.email_verified = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Send_Verification_Email,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_send, 0.1)
+
+    def start_load_check(self):
         # Make the loader visible:
         self.ids.loader.opacity = 1
 
@@ -460,10 +472,10 @@ class VerifyScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Send_Verification_Email,
+            target=self.check_verification,
             daemon=True
         ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
+        Clock.schedule_interval(self.stop_load_check, 0.1)
 
     def Send_Verification_Email(self):
         url = f"{FIREBASE_URL}/resend_verification"
@@ -485,6 +497,8 @@ class VerifyScreen(Screen):
     def check_verification(self, *args):
         token = load_refresh_token()
 
+        self.email_verified = None
+
         if token:
             result = refresh_login(token)
 
@@ -496,33 +510,17 @@ class VerifyScreen(Screen):
                 save_refresh_token(result["refreshToken"])
 
                 if result.get("emailVerified") is True:
-                    self.notification = (
-                        CNotificationToast(
-                        title="Success",
-                        subtitle="Email Verified Successfully",
-                        status="Success",
-                        pos_hint={"center_x": 0.5, "y": 0.57},
-                        ).open()
-                    )
-                    self.manager.current = "App"
+                    self.email_verified = True
 
                 else:
-                    self.notification = (
-                        CNotificationToast(
-                        title="Error",
-                        subtitle="Email Is Not Verified Yet. Please Check Your Email And Click The Link To Verify Your Account.",
-                        status="Error",
-                        pos_hint={"center_x": 0.5, "y": 0.57},
-                        ).open()
-                    )
-                return
+                    self.email_verified = False
 
-    def stop_load(self, *args):
+    def stop_load_send(self, *args):
         if self.r is None:
             return True # Keep waiting
         
         # Stops thread once done:
-        Clock.unschedule(self.stop_load)
+        Clock.unschedule(self.stop_load_send)
         self.ids.loader.opacity = 0
 
         r = self.r
@@ -551,10 +549,57 @@ class VerifyScreen(Screen):
                 pos_hint={"center_x": 0.5, "y": 0.57},
                 ).open()
             )
+            
+    def stop_load_check(self, *args):   
+        if self.email_verified is None:
+            return True # Keep waiting 
+        
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load_check)
+        self.ids.loader.opacity = 0
 
+        email_verified = self.email_verified
+
+        if email_verified == True:
+            self.notification = (
+                    CNotificationToast(
+                    title="Success",
+                    subtitle="Email Verified Successfully",
+                    status="Success",
+                    pos_hint={"center_x": 0.5, "y": 0.57},
+                    ).open()
+                )
+            self.manager.current = "App"
+
+        elif email_verified == False:
+            self.notification = (
+                        CNotificationToast(
+                        title="Error",
+                        subtitle="Email Not Verified Yet. Please Check Your Email And Spam Email And Click The Link To Verify",
+                        status="Error",
+                        pos_hint={"center_x": 0.5, "y": 0.57},
+                        ).open()
+                    )
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
+    def __init__(self, **kw):
+        super().__init__(**kw)
+        self.r = None
+        self.result = None
+        self.go_to_verify = False
+
     def on_enter(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.login,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def login(self):
         token = load_refresh_token()
 
         if token:
@@ -568,11 +613,30 @@ class AppScreen(Screen):
                 save_refresh_token(result["refreshToken"])
 
                 if result.get("emailVerified") is True:
-                    pass
+                    self.go_to_verify = False
 
                 else:
-                    self.manager.current = "Verify"
-                return
+                    self.go_to_verify = True
+
+        self.r = "done"
+            
+    def stop_load(self, *args):
+        if self.r is None:
+            return True # Keep waiting
+        
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+
+        if self.go_to_verify==True:
+            Clock.unschedule(self.stop_load)
+            self.ids.loader.opacity = 0
+            print ("if statement passed")
+
+            self.manager.current = "Verify"
+        
+        self.r = None
+        return False
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
