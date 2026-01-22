@@ -10,7 +10,6 @@ def set_softinput(*args) -> None:
 Window.on_restore(Clock.schedule_once(set_softinput, 0.1))
 
 from carbonkivy.app import CarbonApp
-from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
 from carbonkivy.uix.notification import CNotificationToast
@@ -23,6 +22,9 @@ import threading
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
+
+# Weather API URL (global):
+WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def start_load(self, email_input, password_input):
@@ -347,7 +349,16 @@ class SetupScreen(Screen):
         self._last_request_time = 0
         self._debounce_event = None  
 
+        # Reset variables for location/city:
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+        self.city_found = False
+
     def Setup(self):
+        # Stop another request going out if the suggestion was already pressed:
+        if self.suggestion_was_pressed:
+            return
+        
         # Timer Config (again):
         if self._debounce_event:
             self._debounce_event.cancel()
@@ -373,6 +384,8 @@ class SetupScreen(Screen):
     def Request_City(self): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
         search_query = self.ids.address_input.text.strip() 
+        # Reset the city_found variable to False for each new search:
+        self.city_found = False
 
         # Request for JSON and raise exceptions on errors:
 
@@ -383,30 +396,38 @@ class SetupScreen(Screen):
         response.raise_for_status() 
         data = response.json()
         if data.get("results"):
+            # Get coordinate/city data:
+            result = data["results"][0]
+            location_data = result.get("geometry", {}).get("location", {})
+
             formatted_address = data["results"][0].get("formatted_address")
             self.ids.address_button.disabled = False
             self.ids.address_button.text = formatted_address
+
+            # Most Google Place results have geometry -> location -> lat/lng
+            self.current_lat = location_data.get("lat")
+            self.current_lon = location_data.get("lng")
+            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
+            self.city_found = True
 
         else:
             self.ids.address_button.disabled = True
             self.ids.address_button.text = "No results found."
 
-    # Fills in to textinput fild when address button is pressed:
+    # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
         # ignore if it's still the placeholder text
         if text == "Start typing" or text == "No results found.":
              return
         
         # otherwise, fill the text field
+        self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
         self.ids.address_input.text = text
 
-    # Button config for countinuing to app:
-    def suggestion_pressed(self):
-        self.suggestion_was_pressed = True
-
     def countinue_pressed(self):
-        if not self.suggestion_was_pressed == True:
-            return
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
 
         # Make the loader visible:
         self.ids.loader.opacity = 1
@@ -419,10 +440,18 @@ class SetupScreen(Screen):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
+        # Countinue the loading until city is found (extra if-statement, just in-case):
+        if self.city_found == False:
+            return True # Keep waiting
+        
         # Sends the location to Firestore:
         location_input = self.ids.address_input.text
         id_token = self.manager.id_token
-        payload = {"location": location_input}
+        payload = {
+            "location": str(location_input), 
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
+        }
         headers = {"Authorization": f"Bearer {id_token}"}
         r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
         print(r.json())
@@ -497,8 +526,6 @@ class VerifyScreen(Screen):
     def check_verification(self, *args):
         token = load_refresh_token()
 
-        self.email_verified = None
-
         if token:
             result = refresh_login(token)
 
@@ -514,7 +541,7 @@ class VerifyScreen(Screen):
 
                 else:
                     self.email_verified = False
-
+                    
     def stop_load_send(self, *args):
         if self.r is None:
             return True # Keep waiting
@@ -550,17 +577,20 @@ class VerifyScreen(Screen):
                 ).open()
             )
             
-    def stop_load_check(self, *args):   
+    def stop_load_check(self, *args): 
+        # Check verification status: 
+        self.check_verification() 
         if self.email_verified is None:
-            return True # Keep waiting 
+            return True # Keep waiting
         
         # Stops thread once done:
         Clock.unschedule(self.stop_load_check)
         self.ids.loader.opacity = 0
 
-        email_verified = self.email_verified
-
-        if email_verified == True:
+        if self.email_verified == True:
+            # Add a coming from verify so that the app screen will not malfunction:
+            self.manager.coming_from_verify = True
+            self.manager.current = "App"
             self.notification = (
                     CNotificationToast(
                     title="Success",
@@ -569,17 +599,19 @@ class VerifyScreen(Screen):
                     pos_hint={"center_x": 0.5, "y": 0.57},
                     ).open()
                 )
-            self.manager.current = "App"
 
-        elif email_verified == False:
+        # Error Notification:
+        elif self.email_verified == False:
             self.notification = (
-                        CNotificationToast(
-                        title="Error",
-                        subtitle="Email Not Verified Yet. Please Check Your Email And Spam Email And Click The Link To Verify",
-                        status="Error",
-                        pos_hint={"center_x": 0.5, "y": 0.57},
-                        ).open()
-                    )
+                    CNotificationToast(
+                    title="Error",
+                    subtitle="Email Not Verified Yet. Please Check Your Email And Spam Email And Click The Link To Verify",
+                    status="Error",
+                    pos_hint={"center_x": 0.5, "y": 0.57},
+                    ).open()
+                )
+            
+        self.email_verified = None
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
     def __init__(self, **kw):
@@ -587,6 +619,19 @@ class AppScreen(Screen):
         self.r = None
         self.result = None
         self.go_to_verify = False
+
+        # Add null values so kivy will be quiet:
+        self.current_temp = None
+        self.feels_like = None
+        self.is_daytime = None
+        self.min_temp = None
+        self.max_temp = None
+        self.precip_percent = None
+        self.precip_type = None
+        self.snow_fall = None
+        self.thunderstorm_prob = None
+        self.weather_condition = None
+        self.wind_chill = None
 
     def on_enter(self):
         # Make the loader visible:
@@ -600,6 +645,14 @@ class AppScreen(Screen):
         Clock.schedule_interval(self.stop_load, 0.1)
 
     def login(self):
+        # If its coming from verify screen, skip going back to verify screen & prevent duplicate login:
+        if getattr(self.manager, 'coming_from_verify', False):
+            self.go_to_verify = False
+            # Reset the flag so it doesn't stay True forever
+            self.manager.coming_from_verify = False 
+            self.r = "done"
+            return # Exit early, we're good!
+        
         token = load_refresh_token()
 
         if token:
@@ -631,13 +684,92 @@ class AppScreen(Screen):
         if self.go_to_verify==True:
             Clock.unschedule(self.stop_load)
             self.ids.loader.opacity = 0
-            print ("if statement passed")
-
             self.manager.current = "Verify"
-        
+
+        # If everything is good, load the weather data:
+        else:
+            self.r = None
+            self.start_load_weather()
+    
+    def start_load_weather(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
         self.r = None
-        return False
-# ---------------------------------------------------------------------------------
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.get_user_dat,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_weather, 0.1)
+
+    def get_user_dat(self):
+        # Get user dat:
+        id_token = self.manager.id_token
+        headers = {"Authorization": f"Bearer {id_token}"}
+
+        response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
+
+        if response.status_code == 200:
+                user_data = response.json()
+                
+                # Grab the Firestore location data:
+                lat = user_data.get("lat")
+                lon = user_data.get("lon")
+                city = user_data.get("location")
+
+                self.get_weather(lat, lon)
+
+                self.r = "weather_done"
+
+    def get_weather(self, lat, lon):
+        if lat is None or lon is None:
+            return True # Keep waiting
+        
+        url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}"
+        response = requests.get(url)
+
+        if response.status_code == 200:
+            data = response.json()
+
+            # Get the weather data:
+            self.current_temp = (f"{data['current_temp']}°F")
+            self.feels_like = (f"{data['feels_like']}°F")
+            self.is_daytime = (f"{data['is_daytime']}")
+            self.min_temp = (f"{data['min_temp']}°F")
+            self.max_temp = (f"{data['max_temp']}°F")
+            self.precip_percent = (f"{data['precip_percent']}%")
+            self.precip_type = (f"{data['precip_type']}")
+            self.snow_fall = (f"{data['snow_fall']} inches")
+            self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+            self.weather_condition = (f"{data['weather_condition']}")
+            self.wind_chill = (f"{data['wind_chill']}°F")
+
+    def stop_load_weather(self, *args):
+        # If weather has not been fetched yet:
+        if self.r != "weather_done":
+            return True # Keep waiting
+        
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load_weather)
+        self.ids.loader.opacity = 0
+        self.update_ui_labels()
+
+    def update_ui_labels(self):
+        # Sets the labels with the fetched weather data:
+        self.ids.current_temp_label.text = self.current_temp
+        self.ids.condition_label.text = self.weather_condition
+    
+        # Combined High/Low
+        self.ids.min_max_label.text = f"H: {self.max_temp} L: {self.min_temp}"
+    
+        self.ids.feels_like_label.text = f"Feels like: {self.feels_like}"
+        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
+        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
+        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
+        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+
 # Build And Run The App:
 class MainApp(CarbonApp):
     def __init__(self, *args, **kwargs) -> None:
@@ -658,6 +790,7 @@ class MainApp(CarbonApp):
         return self.sm
 
     def on_start(self):
+
         token = load_refresh_token()
 
         if token:

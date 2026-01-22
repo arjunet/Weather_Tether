@@ -270,8 +270,10 @@
 
             CTextInput:
                 hint_text: "City or Zip Code"
-                on_text: root.Setup()
                 id: address_input
+                on_text: 
+                    root.Setup()
+                    root.suggestion_was_pressed = False
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code (This will be stored on our servers)"
@@ -291,7 +293,6 @@
             icon: "location--filled"
             on_press:
                 root.on_address_button_press(self.text.strip())
-                root.suggestion_pressed()
 
         # Continue Button:
         CButtonSecondary:
@@ -318,7 +319,87 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.8}
+            font_size: sp(24)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            font_size: sp(24)
+
+        CLabel:
+            id: min_max_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+            font_size: sp(24)
+
+        CLabel:
+            id: feels_like_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            font_size: sp(24)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(24)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(24)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(24)
+
+        CLabel:
+            id: wind_chill_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             font_size: sp(24)
 
         CLoadingIndicator:
@@ -339,6 +420,16 @@
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
             font_size: sp(24)
+
+        CLabel:
+            text: "The Email Should Already Be In Your Inbox, But If You Can't Find It, Please Check Your Spam Folder, Or Try Resending The Verification Email"
+            style: "body_01"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            font_size: sp(16)
 
         CButtonPrimary:
             text: "Resend Verification Email"
