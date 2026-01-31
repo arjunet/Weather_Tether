@@ -477,6 +477,13 @@ class SetupScreen(Screen):
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
 class VerifyScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.r = None
+        self.result = None
+        self.email_verified = None
+        self.done = False
+
     def start_load_send(self):
         # Make the loader visible:
         self.ids.loader.opacity = 1
@@ -541,6 +548,22 @@ class VerifyScreen(Screen):
 
                 else:
                     self.email_verified = False
+
+            time.sleep(2.0)
+
+            result = refresh_login(token)
+
+            if result and result.get("emailVerified") is True:
+                self.email_verified = True
+                self.manager.id_token = result["idToken"]
+                self.manager.refresh_token = result["refreshToken"]
+                self.done = True
+
+            else:
+                self.email_verified = False
+                self.manager.id_token = result["idToken"]
+                self.manager.refresh_token = result["refreshToken"]
+                self.done = True
                     
     def stop_load_send(self, *args):
         if self.r is None:
@@ -577,10 +600,11 @@ class VerifyScreen(Screen):
                 ).open()
             )
             
-    def stop_load_check(self, *args): 
-        # Check verification status: 
-        self.check_verification() 
+    def stop_load_check(self, *args):  
         if self.email_verified is None:
+            return True # Keep waiting
+        
+        if self.done != True:
             return True # Keep waiting
         
         # Stops thread once done:
