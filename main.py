@@ -2,6 +2,7 @@
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
+from kivy.properties import StringProperty
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -638,6 +639,10 @@ class VerifyScreen(Screen):
         self.email_verified = None
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
+    # Default background image:
+    bg_image = StringProperty("")
+    icon_path = StringProperty("")
+
     def __init__(self, **kw):
         super().__init__(**kw)
         self.r = None
@@ -779,20 +784,44 @@ class AppScreen(Screen):
         Clock.unschedule(self.stop_load_weather)
         self.ids.loader.opacity = 0
         self.update_ui_labels()
+        self.update_background()
 
     def update_ui_labels(self):
         # Sets the labels with the fetched weather data:
         self.ids.current_temp_label.text = self.current_temp
         self.ids.condition_label.text = self.weather_condition
     
-        # Combined High/Low
-        self.ids.min_max_label.text = f"H: {self.max_temp} L: {self.min_temp}"
+        # Combined High/Low/feels`like label:
+        self.ids.min_max_label.text = f" High: {self.max_temp} / Low: {self.min_temp} Feels like: {self.feels_like}"
     
-        self.ids.feels_like_label.text = f"Feels like: {self.feels_like}"
         self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
         self.ids.snow_label.text = f"Snow: {self.snow_fall}"
         self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
         self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+
+    def update_background(self):
+        # Update the background:
+
+        # Declare day/night:
+        is_daytime = self.is_daytime.lower() == "true"
+
+        if is_daytime == True:
+            self.bg_image = "images/sunny.jpg"
+            self.icon_path = "images/sun.png"
+
+            if "cloud" in self.weather_condition.lower():
+                self.bg_image = "images/cloudy.jpg"
+
+            if "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower():
+                self.bg_image = "images/rain.jpg"
+
+            if "clear" in self.weather_condition.lower() or "sun" in self.weather_condition.lower():
+                self.bg_image = "images/sunny.jpg"
+
+        else:
+            self.bg_image = "images/night.jpg"
+            self.icon_path = "images/moon.png"
+
 
 # Build And Run The App:
 class MainApp(CarbonApp):

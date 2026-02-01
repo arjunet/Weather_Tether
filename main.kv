@@ -310,17 +310,22 @@
 # ---------------------------------------------------------------------------------
 <AppScreen>:
 
-    FloatLayout:
+    CRelativeLayout:
 
-        CLabel:
-            text: "Welcome to Weather Tether!"
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+        padding: 0
+        spacing: 0
+
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
 
         CLabel:
             id: current_temp_label
@@ -329,7 +334,7 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.8}
+            pos_hint: {'center_x': 0.4, 'center_y': 0.75}
             font_size: sp(24)
 
         CLabel:
@@ -339,7 +344,7 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            pos_hint: {'center_x': 0.25, 'center_y': 0.6}
             font_size: sp(24)
 
         CLabel:
@@ -349,7 +354,7 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.6}
+            pos_hint: {'x': 0.155, 'center_y': 0.7}
             font_size: sp(24)
 
         CLabel:
