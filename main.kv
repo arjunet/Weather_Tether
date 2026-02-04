@@ -344,9 +344,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(80) 
+            center_x: weather_icon.center_x + dp(100)
             center_y: weather_icon.center_y + dp(30)
-            font_size: sp(10)
+            font_size: sp(15)
 
         CLabel:
             id: condition_label
@@ -357,7 +357,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x 
             center_y: weather_icon.center_y - dp(30)
-            font_size: sp(10)
+            font_size: sp(15)
 
         CLabel:
             id: min_max_label
@@ -367,48 +367,8 @@
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(40)
-            font_size: sp(8)
-
-        CLabel:
-            id: feels_like_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            font_size: sp(10)
-
-        CLabel:
-            id: precip_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(10)
-
-        CLabel:
-            id: snow_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(10)
-
-        CLabel:
-            id: thunder_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            font_size: sp(10)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(15)
 
         CLabel:
             id: wind_chill_label
@@ -418,8 +378,38 @@
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(50)
-            font_size: sp(8)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(15)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
 
         CLoadingIndicator:
             role: "Large"
