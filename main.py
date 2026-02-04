@@ -746,7 +746,7 @@ class AppScreen(Screen):
                 # Grab the Firestore location data:
                 lat = user_data.get("lat")
                 lon = user_data.get("lon")
-                city = user_data.get("location")
+                self.city = user_data.get("location")
 
                 self.get_weather(lat, lon)
 
@@ -788,41 +788,49 @@ class AppScreen(Screen):
 
     def update_ui_labels(self):
         # Sets the labels with the fetched weather data:
+        self.ids.city_label.text = f"{self.city}"
         self.ids.current_temp_label.text = self.current_temp
         self.ids.condition_label.text = self.weather_condition
     
-        # Combined High/Low/feels`like label:
-        self.ids.min_max_label.text = f" High: {self.max_temp} / Low: {self.min_temp} Feels like: {self.feels_like}"
-    
+        # Combined High/Low/feels like label:
+        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp} / Feels like: {self.feels_like}"    
         self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
         self.ids.snow_label.text = f"Snow: {self.snow_fall}"
         self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
         self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
 
     def update_background(self):
-        # Update the background:
+        # Update the background/icon based on weather condition:
 
-        # Declare day/night:
-        is_daytime = self.is_daytime.lower() == "true"
+        if "sun" in self.weather_condition.lower() or "clear" in self.weather_condition.lower():
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
 
-        if is_daytime == True:
-            self.bg_image = "images/sunny.jpg"
-            self.icon_path = "images/sun.png"
+        elif "cloud" in self.weather_condition.lower():
+            self.bg_image = "images/cloud_bg.jpg"
+            self.icon_path = "images/cloud_icon.png"
 
-            if "cloud" in self.weather_condition.lower():
-                self.bg_image = "images/cloudy.jpg"
+        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
+            self.bg_image = "images/rain_bg.jpg"
+            self.icon_path = "images/rain_icon.png"
 
-            if "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower():
-                self.bg_image = "images/rain.jpg"
-
-            if "clear" in self.weather_condition.lower() or "sun" in self.weather_condition.lower():
-                self.bg_image = "images/sunny.jpg"
+        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
+            self.bg_image = "images/snow_bg.jpg"
+            self.icon_path = "images/snow_icon.png"
 
         else:
             self.bg_image = "images/night.jpg"
             self.icon_path = "images/moon.png"
-
-
+            self.ids.city_label.color = "#3300FF"
+            self.ids.current_temp_label.color = "#3300FF"
+            self.ids.condition_label.color = "#3300FF"
+            self.ids.min_max_label.color = "#3300FF"
+            self.ids.feels_like_label.color = "#3300FF"
+            self.ids.precip_label.color = "#3300FF"
+            self.ids.snow_label.color = "#3300FF"
+            self.ids.thunder_label.color = "#3300FF"
+            self.ids.wind_chill_label.color = "#3300FF"
+# ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
     def __init__(self, *args, **kwargs) -> None:
