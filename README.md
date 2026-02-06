@@ -13,7 +13,7 @@ Part 3 of Weather Tether was completed on: 01/17/2026.
 ## Features:
 
 - 🌤️ Modern **CarbonKivy UI** with smooth animations  
-- 4 Screens Completed:
+- 6 Screens Completed:
   - Signup screen  
   - Signin screen  
   - Forgot Password screen  

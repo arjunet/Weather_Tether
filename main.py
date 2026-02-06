@@ -19,6 +19,7 @@ from token_management import save_refresh_token, load_refresh_token, clear_refre
 import requests
 import time
 import threading
+from kivy.core.window import Window
 
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
@@ -811,7 +812,7 @@ class AppScreen(Screen):
             self.icon_path = "images/cloud_icon.png"
 
         elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
-            self.bg_image = "images/rain_bg.jpg"
+            self.bg_image = "images/rain_bg.png"
             self.icon_path = "images/rain_icon.png"
 
         elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
@@ -833,6 +834,7 @@ class AppScreen(Screen):
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
+    Window = Window
     def __init__(self, *args, **kwargs) -> None:
         super().__init__(*args, **kwargs)
         
