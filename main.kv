@@ -339,14 +339,14 @@
 
         CLabel:
             id: current_temp_label
-            style: "heading_04"
+            style: "heading_02"
             typeface: "IBM Plex Sans"
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(100)
             center_y: weather_icon.center_y + dp(30)
-            font_size: sp(15)
+            font_size: sp(20)
 
         CLabel:
             id: condition_label
@@ -357,7 +357,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x 
             center_y: weather_icon.center_y - dp(30)
-            font_size: sp(15)
+            font_size: sp(10)
 
         CLabel:
             id: min_max_label
@@ -368,9 +368,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(60)
-            font_size: sp(15)
-            height: app.Window.size[1] * 0.4
-            weight: app.Window.size[0] * 0.6
+            font_size: sp(10)
 
         CLabel:
             id: wind_chill_label
@@ -381,7 +379,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(90)
-            font_size: sp(15)
+            font_size: sp(10)
 
         CLabel:
             id: precip_label
