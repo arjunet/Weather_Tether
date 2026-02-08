@@ -794,7 +794,7 @@ class AppScreen(Screen):
         self.ids.condition_label.text = self.weather_condition
     
         # Combined High/Low/feels like label:
-        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp} / Feels like: {self.feels_like}"    
+        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
         self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
         self.ids.snow_label.text = f"Snow: {self.snow_fall}"
         self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
@@ -802,8 +802,11 @@ class AppScreen(Screen):
 
     def update_background(self):
         # Update the background/icon based on weather condition:
+        if "sun" in self.weather_condition.lower():
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
 
-        if "sun" in self.weather_condition.lower() or "clear" in self.weather_condition.lower():
+        elif "clear" in self.weather_condition.lower():
             self.bg_image = "images/sun_bg.jpg"
             self.icon_path = "images/sun_icon.png"
 
@@ -826,7 +829,6 @@ class AppScreen(Screen):
             self.ids.current_temp_label.color = "#3300FF"
             self.ids.condition_label.color = "#3300FF"
             self.ids.min_max_label.color = "#3300FF"
-            self.ids.feels_like_label.color = "#3300FF"
             self.ids.precip_label.color = "#3300FF"
             self.ids.snow_label.color = "#3300FF"
             self.ids.thunder_label.color = "#3300FF"
