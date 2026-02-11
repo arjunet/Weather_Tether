@@ -440,7 +440,9 @@
                 UIShellButton:
                     text: "Settings"
                     icon: "settings"
-                    pos_hint: {"x": 0.2, "y": 0.0}
+                    pos_hint: {"x": 0.2, "y": 0.1}
+                    on_press:
+                        root.manager.current = 'Settings'
                             
         UIShell:
             id: header_shell
@@ -508,3 +510,48 @@
             role: "Large"
             opacity: 0
             id: loader
+
+# ---------------------------------------------------------------------------------
+
+<SettingsScreen>:
+
+    CRelativeLayout:
+
+        AsyncImage:
+            source: "images/sun_bg.jpg"
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        # Settings Label:
+        CLabel:
+            text: "Settings"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CButtonDanger:
+            text: "Logout"
+            role: "Large Productive"
+            icon: "logout"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            on_press:
+                root.start_load_logout()
+
+        CButtonDanger:
+            text: "Delete Account"
+            role: "Large Productive"
+            icon: "trash-can"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.start_load_delete()
+
+        CButtonSecondary:
+            role: "Large Productive"
+            icon: "right-panel--open--filled"
+            pos_hint: {'center_x': 0.1, 'center_y': 0.9}
+            on_press:
+                root.manager.current = 'App'

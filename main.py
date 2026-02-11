@@ -653,7 +653,7 @@ class AppScreen(Screen):
         # Add null values so kivy will be quiet:
         self.current_temp = None
         self.feels_like = None
-        self.is_daytime = None
+        self.is_daytime = False
         self.min_temp = None
         self.max_temp = None
         self.precip_percent = None
@@ -806,7 +806,19 @@ class AppScreen(Screen):
             self.bg_image = "images/sun_bg.jpg"
             self.icon_path = "images/sun_icon.png"
 
-        elif "clear" in self.weather_condition.lower():
+        elif self.is_daytime == "False":
+            self.bg_image = "images/night.jpg"
+            self.icon_path = "images/moon.png"
+            self.ids.city_label.color = "#3300FF"
+            self.ids.current_temp_label.color = "#3300FF"
+            self.ids.condition_label.color = "#3300FF"
+            self.ids.min_max_label.color = "#3300FF"
+            self.ids.precip_label.color = "#3300FF"
+            self.ids.snow_label.color = "#3300FF"
+            self.ids.thunder_label.color = "#3300FF"
+            self.ids.wind_chill_label.color = "#3300FF"
+
+        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
             self.bg_image = "images/sun_bg.jpg"
             self.icon_path = "images/sun_icon.png"
 
@@ -822,17 +834,12 @@ class AppScreen(Screen):
             self.bg_image = "images/snow_bg.jpg"
             self.icon_path = "images/snow_icon.png"
 
-        else:
-            self.bg_image = "images/night.jpg"
-            self.icon_path = "images/moon.png"
-            self.ids.city_label.color = "#3300FF"
-            self.ids.current_temp_label.color = "#3300FF"
-            self.ids.condition_label.color = "#3300FF"
-            self.ids.min_max_label.color = "#3300FF"
-            self.ids.precip_label.color = "#3300FF"
-            self.ids.snow_label.color = "#3300FF"
-            self.ids.thunder_label.color = "#3300FF"
-            self.ids.wind_chill_label.color = "#3300FF"
+class SettingsScreen(Screen):
+    def start_load_logout(self):
+        pass
+
+    def start_load_delete(self):
+        pass
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
@@ -852,6 +859,7 @@ class MainApp(CarbonApp):
         self.sm.add_widget(SetupScreen(name='Setup'))
         self.sm.add_widget(AppScreen(name='App'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
+        self.sm.add_widget(SettingsScreen(name='Settings'))
         return self.sm
 
     def on_start(self):
