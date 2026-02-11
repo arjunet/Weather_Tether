@@ -334,7 +334,7 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
             font_size: sp(20)
 
         CLabel:
@@ -410,6 +410,54 @@
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             font_size: sp(15)
+
+        UIShell:
+            id: left_panel_shell
+
+            UIShellLeftPanel:
+                panel_shell: left_panel_shell
+                visibility: shell_menu_btn.active
+
+                ScrollView:
+                    do_scroll_x: False
+
+                    UIShellPanelLayout:
+
+                        UIShellPanelSelectionLayout:
+
+                            UIShellPanelSelectionItem:
+                                text: "City 1"
+                                right_icon: "location"
+
+                            UIShellPanelSelectionItem:
+                                text: "City 2"
+                                right_icon: "location"
+                                
+                            UIShellPanelSelectionItem:
+                                text: "City 3"
+                                right_icon: "location"
+
+                UIShellButton:
+                    text: "Settings"
+                    icon: "settings"
+                    pos_hint: {"x": 0.2, "y": 0.0}
+                            
+        UIShell:
+            id: header_shell
+
+            UIShellHeader:
+                id: shell_header
+                bg_color: app.transparent
+    
+                UIShellHeaderMenuButton:
+                    id: shell_menu_btn                
+
+                CAnchorLayout:
+                    anchor_x: "right"
+
+                    CGridLayout:
+                        adaptive: [True, True]
+                        rows: 1
 
         CLoadingIndicator:
             role: "Large"
