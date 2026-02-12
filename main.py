@@ -15,11 +15,12 @@ from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
 from carbonkivy.uix.notification import CNotificationToast
 
-from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login
+from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state
 import requests
 import time
 import threading
 from kivy.core.window import Window
+from kivy.storage.jsonstore import JsonStore
 
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
@@ -664,6 +665,9 @@ class AppScreen(Screen):
         self.wind_chill = None
 
     def on_enter(self):
+        store = JsonStore('session.json')
+        self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
+
         # Make the loader visible:
         self.ids.loader.opacity = 1
 
@@ -756,25 +760,46 @@ class AppScreen(Screen):
     def get_weather(self, lat, lon):
         if lat is None or lon is None:
             return True # Keep waiting
-        
-        url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}"
-        response = requests.get(url)
 
-        if response.status_code == 200:
-            data = response.json()
+        if self.toggle_state == False:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
+            response = requests.get(url)
 
-            # Get the weather data:
-            self.current_temp = (f"{data['current_temp']}°F")
-            self.feels_like = (f"{data['feels_like']}°F")
-            self.is_daytime = (f"{data['is_daytime']}")
-            self.min_temp = (f"{data['min_temp']}°F")
-            self.max_temp = (f"{data['max_temp']}°F")
-            self.precip_percent = (f"{data['precip_percent']}%")
-            self.precip_type = (f"{data['precip_type']}")
-            self.snow_fall = (f"{data['snow_fall']} inches")
-            self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-            self.weather_condition = (f"{data['weather_condition']}")
-            self.wind_chill = (f"{data['wind_chill']}°F")
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°F")
+                self.feels_like = (f"{data['feels_like']}°F")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°F")
+                self.max_temp = (f"{data['max_temp']}°F")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Inches")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°F")
+
+        elif self.toggle_state == True:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°C")
+                self.feels_like = (f"{data['feels_like']}°C")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°C")
+                self.max_temp = (f"{data['max_temp']}°C")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Centimeters")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°C")  
 
     def stop_load_weather(self, *args):
         # If weather has not been fetched yet:
@@ -835,11 +860,25 @@ class AppScreen(Screen):
             self.icon_path = "images/snow_icon.png"
 
 class SettingsScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+
+    def on_enter(self, *args):
+        # Load the toggle state from the session file and set the toggle accordingly:
+        store = JsonStore('session.json')
+        toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
+        self.ids.unit_toggle.active = toggle_state
+
     def start_load_logout(self):
         pass
 
     def start_load_delete(self):
         pass
+
+    def toggle_pressed(self):
+        toggle_state = self.ids.unit_toggle.active
+        save_toggle_state(toggle_state)
+
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):

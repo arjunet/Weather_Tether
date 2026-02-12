@@ -555,3 +555,31 @@
             pos_hint: {'center_x': 0.1, 'center_y': 0.9}
             on_press:
                 root.manager.current = 'App'
+
+        CToggle:
+            id: unit_toggle
+            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+            on_active:
+                root.toggle_pressed()
+
+        CLabel:
+            text: "Imperial Units"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: unit_toggle.center_x - dp(80)
+            center_y: unit_toggle.center_y + dp(12)
+            font_size: sp(16)
+
+        CLabel:
+            text: "Metric Units"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: unit_toggle.center_x + dp(80)
+            center_y: unit_toggle.center_y + dp(12)
+            font_size: sp(16)

@@ -45,5 +45,11 @@ def refresh_login(refresh_token):
 
     except requests.RequestException:
         return None
+    
+# ---------------------------------------------------------------------------------
+
+def save_toggle_state(toggle_state):
+    store = JsonStore('session.json')
+    store.put('toggle', active=toggle_state)
 
 
