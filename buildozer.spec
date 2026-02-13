@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy==2.3.1, https://github.com/kivymd/KivyMD/archive/master.zip, exceptiongroup, asynckivy, asyncgui, materialyoucolor, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, certifi==2025.10.5, charset-normalizer==3.4.4, docutils==0.22.3, filetype==1.2.0, idna==3.11, Kivy-Garden==0.1.5, pyjnius, Pygments==2.19.2, requests==2.32.5, setuptools==65.5.0, urllib3==2.5.0, cryptography
+requirements = python3, kivy==2.3.1, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, Kivy-Garden==0.1.5, pyjnius, Pygments==2.19.2, requests==2.32.5, cryptography
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -104,16 +104,16 @@ android.permissions = INTERNET, WRITE_INTERNAL_STORAGE, READ_INTERNAL_STORAGE
 android.api = 36
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 26
+android.minapi = 30
 
 # (int) Android SDK version to use
 #android.sdk = 20
 
 # (str) Android NDK version to use
-android.ndk = 25b
+android.ndk = 28c
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-android.ndk_api = 26
+android.ndk_api = 30
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -309,6 +309,8 @@ android.allow_backup = True
 
 # (str) The format used to package the app for debug mode (apk or aar).
 android.debug_artifact = apk
+
+android.display_cutout = shortEdges
 
 #
 # Python for android (p4a) specific

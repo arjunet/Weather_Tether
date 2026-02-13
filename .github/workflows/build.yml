@@ -1,18 +1,12 @@
+# Sample repository at https://github.com/Novfensec/SAMPLE-KIVYMD-APP
+# Tic Tac Toe Game at https://github.com/Novfensec/Tic-Tac-Toe-Android
+
 name: Android Build
 
 on:
   push:
     branches:
       - main
-    paths-ignore:
-      - 'README.md'
-      - '.github/workflows/build.yml'
-  pull_request:
-    branches:
-      - main
-    paths-ignore:
-      - 'README.md'
-      - '.github/workflows/build.yml'
 
 jobs:
   build:
@@ -57,6 +51,7 @@ jobs:
         run: |
           sudo apt update
           sudo apt-get install -y \
+            ant \
             build-essential \
             git \
             ffmpeg \
@@ -101,7 +96,9 @@ jobs:
             cmake \
             libffi-dev \
             libssl-dev \
-            automake
+            autopoint \
+            gettext
+
       # Set up Java 17 required by Gradle
       - name: Setup Java 17 required by Gradle
         uses: actions/setup-java@v4
@@ -113,19 +110,20 @@ jobs:
       - name: Set up Python
         uses: actions/setup-python@v5
         with:
-          python-version: '3.10' #set your python version
+          python-version: '3.11' #set your python version
 
       # Install pip dependencies
       - name: Install pip dependencies
         run: |
           pip install --upgrade pip
-          pip install buildozer cython==0.29.33 git+https://github.com/kivy/plyer.git
+          pip install https://github.com/novfensec/buildozer/archive/Cython.zip cython==3.0.11
+
       # Build with Buildozer
       - name: Build with Buildozer
         id: buildozer
         run: |
           yes | buildozer -v android debug
-          yes | buildozer -v android release
+        # yes | buildozer -v android release
         # run this for generating aab (Android App Bundle) [Required by google play]
 
       # Upload artifacts
