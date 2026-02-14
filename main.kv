@@ -83,6 +83,7 @@
 <LoginScreen>:
 
     CRelativeLayout:
+        size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
         # Login Label:
@@ -164,6 +165,7 @@
 <ForgotScreen>:
 
     CRelativeLayout:
+        size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
         # Forgot Password Label:
@@ -231,14 +233,9 @@
 <SetupScreen>:
 
     CRelativeLayout:
-
-        padding: 0
-        spacing: 0
-
-        AsyncImage:
-            source: "images/sun_bg.jpg"
-            size_hint: 1, 1
-            fit_mode: "cover"
+    
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
 
         # Setup Label:
         CLabel:
@@ -300,9 +297,6 @@
 <AppScreen>:
 
     CRelativeLayout:
-
-        padding: 0
-        spacing: 0
 
         AsyncImage:
             source: root.bg_image
@@ -459,6 +453,9 @@
 
     FloatLayout:
 
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
         CLabel:
             text: "Please Verify Your Email Address Before Continuing"
             style: "heading_04"
@@ -505,11 +502,9 @@
 <SettingsScreen>:
 
     CRelativeLayout:
-
-        AsyncImage:
-            source: "images/sun_bg.jpg"
-            size_hint: 1, 1
-            fit_mode: "cover"
+    
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
 
         # Settings Label:
         CLabel:
@@ -528,7 +523,7 @@
             icon: "logout"
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             on_press:
-                root.start_load_logout()
+                root.logout()
 
         CButtonDanger:
             text: "Delete Account"
@@ -536,7 +531,7 @@
             icon: "trash-can"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             on_press:
-                root.start_load_delete()
+                root.start_delete_account()
 
         CButtonSecondary:
             role: "Large Productive"
@@ -571,6 +566,11 @@
             halign: "center"
             color: (0,0,0,1)
             size_hint: 1, 1
-            center_x: unit_toggle.center_x + dp(80)
+            center_x: unit_toggle.center_x + dp(71)
             center_y: unit_toggle.center_y
             font_size: sp(16)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader

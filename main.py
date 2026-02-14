@@ -842,6 +842,7 @@ class AppScreen(Screen):
             self.ids.snow_label.color = "#3300FF"
             self.ids.thunder_label.color = "#3300FF"
             self.ids.wind_chill_label.color = "#3300FF"
+            self.ids.shell_menu_btn.color = "#3300FF"
 
         elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
             self.bg_image = "images/sun_bg.jpg"
@@ -862,6 +863,7 @@ class AppScreen(Screen):
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
+        self.response = None
 
     def on_enter(self, *args):
         # Load the toggle state from the session file and set the toggle accordingly:
@@ -869,15 +871,77 @@ class SettingsScreen(Screen):
         toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
         self.ids.unit_toggle.active = toggle_state
 
-    def start_load_logout(self):
-        pass
+    def logout(self):
+        clear_refresh_token()
+        self.manager.current = "Signup"
+        CNotificationInline(
+            title="Success",
+            subtitle="Successfully Logged Out",
+            status="Success",
+        ).open()
 
-    def start_load_delete(self):
-        pass
+    def start_delete_account(self):
+        # 1. Show the loader (make sure you have an id: loader in your KV for this screen)
+        self.ids.loader.opacity = 1
+        
+        # 2. Reset result variables
+        self.delete_r = None
+        self.delete_result = None
 
-    def toggle_pressed(self):
-        toggle_state = self.ids.unit_toggle.active
-        save_toggle_state(toggle_state)
+        # 3. Start the background thread
+        threading.Thread(
+            target=self.delete_request, 
+            daemon=True
+        ).start()
+        
+        # 4. Schedule the waiter
+        Clock.schedule_interval(self.stop_delete_load, 0.1)
+
+    def delete_request(self):
+        url = f"{FIREBASE_URL}/delete_account"
+        id_token = self.manager.id_token
+        headers = {"Authorization": f"Bearer {id_token}"}
+        
+        try:
+            # We use POST because that's how we set up the FastAPI route
+            r = requests.post(url, headers=headers, timeout=10)
+            self.delete_r = r
+            self.delete_result = r.json()
+        except Exception as e:
+            self.delete_r = "error"
+            self.delete_result = {"detail": str(e)}
+
+    def stop_delete_load(self, *args):
+        if self.delete_result is None:
+            return True  # Keep waiting
+
+        Clock.unschedule(self.stop_delete_load)
+        self.ids.loader.opacity = 0
+
+        r = self.delete_r
+        
+        if r == "error" or r.status_code != 200:
+            CNotificationInline(
+                title="Error",
+                subtitle="Could not delete account. Try again later.",
+                status="Error",
+            ).open()
+        else:
+            # SUCCESS! Now clean up locally
+            clear_refresh_token() # Wipe the session.json
+            self.manager.id_token = None
+            self.manager.refresh_token = None
+            
+            # Send them back to the very beginning
+            self.manager.current = "Signup"
+            
+            CNotificationToast(
+                title="Account Deleted",
+                subtitle="Your account and data have been permanently removed.",
+                status="Success",
+                pos_hint={"center_x": 0.5, "y": 0.57},
+            ).open()
+            
 
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
