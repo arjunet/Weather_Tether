@@ -941,8 +941,10 @@ class SettingsScreen(Screen):
                 status="Success",
                 pos_hint={"center_x": 0.5, "y": 0.57},
             ).open()
-            
 
+    def toggle_pressed(self):
+        toggle_state = self.ids.unit_toggle.active
+        save_toggle_state(toggle_state)
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
