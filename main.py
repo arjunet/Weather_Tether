@@ -3,6 +3,7 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
+from kivy.app import App
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -842,7 +843,10 @@ class AppScreen(Screen):
             self.ids.snow_label.color = "#3300FF"
             self.ids.thunder_label.color = "#3300FF"
             self.ids.wind_chill_label.color = "#3300FF"
-            self.ids.shell_menu_btn.color = "#3300FF"
+            self.ids.shell_menu_btn.bg_color = "#3300FF"
+
+            self.app = App.get_running_app()
+            self.app.theme = "Gray100" 
 
         elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
             self.bg_image = "images/sun_bg.jpg"
@@ -859,7 +863,7 @@ class AppScreen(Screen):
         elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
             self.bg_image = "images/snow_bg.jpg"
             self.icon_path = "images/snow_icon.png"
-
+# ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -927,8 +931,7 @@ class SettingsScreen(Screen):
                 status="Error",
             ).open()
         else:
-            # SUCCESS! Now clean up locally
-            clear_refresh_token() # Wipe the session.json
+            clear_refresh_token()
             self.manager.id_token = None
             self.manager.refresh_token = None
             
