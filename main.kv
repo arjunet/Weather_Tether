@@ -415,10 +415,14 @@
                             UIShellPanelSelectionItem:
                                 text: "City 2"
                                 right_icon: "location"
+                                on_press:
+                                    root.manager.current = 'City2'
                                 
                             UIShellPanelSelectionItem:
                                 text: "City 3"
                                 right_icon: "location"
+                                on_press:
+                                    root.manager.current = 'City3'
 
                 UIShellButton:
                     text: "Settings"
@@ -646,3 +650,134 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
+
+# ---------------------------------------------------------------------------------
+
+<City2Screen>:
+    CRelativeLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        CLabel:
+            text: "City 2"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+# ----------------------------------------------------------------------------------
+
+<AddCity2Modal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Add City"
+            CModalHeaderTitle:
+                text: "Would You Like To Add A Second City To Your Account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Adding a second city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+            CBoxLayout:
+                adaptive: [False, True]
+                padding: [0, dp(64)]
+
+                CTextInputLayout:
+                    CTextInput:
+                        hint_text: "e.g. New York"
+                    CTextInputLabel:
+                        text: "City Name"
+
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+                        app.root.current = 'App'
+
+                CButtonPrimary:
+                    text: "Add"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.add()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+            app.root.current = 'App'
+
+# ---------------------------------------------------------------------------------
+
+
+<City2Screen>:
+    CRelativeLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        CLabel:
+            text: "City 2"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+# ----------------------------------------------------------------------------------
+
+<AddCity3Modal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Add City"
+            CModalHeaderTitle:
+                text: "Would You Like To Add A Third City To Your Account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+            CBoxLayout:
+                adaptive: [False, True]
+                padding: [0, dp(64)]
+
+                CTextInputLayout:
+                    CTextInput:
+                        hint_text: "e.g. New York"
+                    CTextInputLabel:
+                        text: "City Name"
+
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+                        app.root.current = 'App'
+
+                CButtonPrimary:
+                    text: "Add"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.add()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+            app.root.current = 'App'

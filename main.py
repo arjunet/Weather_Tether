@@ -975,6 +975,88 @@ class DeleteModal(CModal):
         self.dismiss()
         self.settings.start_delete_account()
 # ---------------------------------------------------------------------------------
+class City2(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+
+    def city_2_exist(self, filename, search_word):
+        with open(filename, 'r') as file:
+            content = file.read()
+            return search_word in content
+        
+    def open_add_modal(self) -> None:
+        modal = AddCity2Modal(city_2=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    # This runs every time you switch to this screen
+    def on_enter(self):
+        file_path = 'session.json'
+        word_to_find = 'city2'
+        
+        if not self.city_2_exist(file_path, word_to_find):
+            self.open_add_modal()
+
+        else:
+            pass
+
+    def push_city2(self):
+        pass
+# ---------------------------------------------------------------------------------
+class AddCity2Modal(CModal):
+    def __init__(self, city_2, **kwargs):
+        super().__init__(**kwargs)
+        self.city2 = city_2
+
+    def add(self):
+        self.dismiss()
+        self.city2.push_city2()
+# ---------------------------------------------------------------------------------
+class City3(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+
+    def city_3_exist(self, filename, search_word):
+        with open(filename, 'r') as file:
+            content = file.read()
+            return search_word in content
+        
+    def open_add_modal(self) -> None:
+        modal = AddCity3Modal(city_3=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    # This runs every time you switch to this screen
+    def on_enter(self):
+        file_path = 'session.json'
+        word_to_find = 'city3'
+        
+        if not self.city_3_exist(file_path, word_to_find):
+            self.open_add_modal()
+
+        else:
+            pass
+
+    def push_city3(self):
+        pass
+# ---------------------------------------------------------------------------------
+class AddCity3Modal(CModal):
+    def __init__(self, city_3, **kwargs):
+        super().__init__(**kwargs)
+        self.city3 = city_3
+
+    def add(self):
+        self.dismiss()
+        self.city3.push_city3()
+# ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
     Window = Window
@@ -994,6 +1076,8 @@ class MainApp(CarbonApp):
         self.sm.add_widget(AppScreen(name='App'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
         self.sm.add_widget(SettingsScreen(name='Settings'))
+        self.sm.add_widget(City2(name='City2'))
+        self.sm.add_widget(City3(name='City3'))
         return self.sm
 
     def on_start(self):
