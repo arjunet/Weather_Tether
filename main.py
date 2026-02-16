@@ -15,6 +15,7 @@ from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.uix.notification import CNotificationInline
 from carbonkivy.uix.notification import CNotificationToast
+from carbonkivy.uix.modal import CModal
 
 from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state
 import requests
@@ -22,6 +23,7 @@ import time
 import threading
 from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
+import weakref
 
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
@@ -835,18 +837,10 @@ class AppScreen(Screen):
         elif self.is_daytime == "False":
             self.bg_image = "images/night.jpg"
             self.icon_path = "images/moon.png"
-            self.ids.city_label.color = "#3300FF"
-            self.ids.current_temp_label.color = "#3300FF"
-            self.ids.condition_label.color = "#3300FF"
-            self.ids.min_max_label.color = "#3300FF"
-            self.ids.precip_label.color = "#3300FF"
-            self.ids.snow_label.color = "#3300FF"
-            self.ids.thunder_label.color = "#3300FF"
-            self.ids.wind_chill_label.color = "#3300FF"
-            self.ids.shell_menu_btn.bg_color = "#3300FF"
 
             self.app = App.get_running_app()
             self.app.theme = "Gray100" 
+            self.ids.shell_header.bg_color = self.app.transparent
 
         elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
             self.bg_image = "images/sun_bg.jpg"
@@ -948,6 +942,38 @@ class SettingsScreen(Screen):
     def toggle_pressed(self):
         toggle_state = self.ids.unit_toggle.active
         save_toggle_state(toggle_state)
+
+    def open_logout_modal(self) -> None:
+        modal = LogoutModal(settings=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def open_delete_modal(self) -> None:
+        modal = DeleteModal(settings=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+# ---------------------------------------------------------------------------------
+class LogoutModal(CModal):
+    def __init__(self, settings, **kwargs):
+        super().__init__(**kwargs)
+        self.settings = settings
+
+    def logout_confirmed(self):
+        self.dismiss()
+        self.settings.logout()
+# ---------------------------------------------------------------------------------
+class DeleteModal(CModal):
+    def __init__(self, settings, **kwargs):
+        super().__init__(**kwargs)
+        self.settings = settings
+
+    def delete_confirmed(self):
+        self.dismiss()
+        self.settings.start_delete_account()
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):

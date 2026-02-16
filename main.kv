@@ -523,7 +523,7 @@
             icon: "logout"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             on_press:
-                root.logout()
+                root.open_logout_modal()
 
         CButtonDanger:
             text: "Delete Account"
@@ -531,7 +531,7 @@
             icon: "trash-can"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             on_press:
-                root.start_delete_account()
+                root.open_delete_modal()
 
         CButtonSecondary:
             role: "Large Productive"
@@ -574,3 +574,75 @@
             role: "Large"
             opacity: 0
             id: loader
+
+# ---------------------------------------------------------------------------------
+
+<LogoutModal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Logout"
+            CModalHeaderTitle:
+                text: "Are you sure you want to logout?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Logging out will require you to login again with your email and password. Your saved location and unit preference will still be saved, but you will need to login again to access them."
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+
+                CButtonDanger:
+                    text: "Logout"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.logout_confirmed()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+
+# ---------------------------------------------------------------------------------
+
+<DeleteModal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Delete Account"
+            CModalHeaderTitle:
+                text: "Are you sure you want to delete your account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Deleting your account will permanently delete all of your data from our servers, including your saved location and unit preference. This action cannot be undone."
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+
+                CButtonDanger:
+                    text: "Delete"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.delete_confirmed()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
