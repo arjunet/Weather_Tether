@@ -690,6 +690,18 @@
                     CTextInputLabel:
                         text: "City Name"
 
+            CButtonPrimary:
+                text: "Start typing"
+                id: address_button
+                role: "Large Productive"
+                size_hint_x: 1          
+                size_hint_y: None
+                height: dp(100) 
+                length: 1
+                text_size: self.width - dp(20), None
+                disabled: True
+                icon: "location--filled"
+
         CModalFooter:
             CGridLayout:
                 cols: 2
@@ -719,7 +731,7 @@
 # ---------------------------------------------------------------------------------
 
 
-<City2Screen>:
+<City3Screen>:
     CRelativeLayout:
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
@@ -755,6 +767,18 @@
                         hint_text: "e.g. New York"
                     CTextInputLabel:
                         text: "City Name"
+
+            CButtonPrimary:
+                text: "Start typing"
+                id: address_button
+                role: "Large Productive"
+                size_hint_x: 1          
+                size_hint_y: None
+                height: dp(100) 
+                length: 1
+                text_size: self.width - dp(20), None
+                disabled: True
+                icon: "location--filled"
 
         CModalFooter:
             CGridLayout:
