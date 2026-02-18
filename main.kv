@@ -687,12 +687,21 @@
                 CTextInputLayout:
                     CTextInput:
                         hint_text: "e.g. New York"
+                        id: address_input_citytwo
+                        on_text: 
+                            root.Setup()
+                            root.suggestion_was_pressed = False
                     CTextInputLabel:
                         text: "City Name"
 
+                    CLoadingIndicator:
+                        id: citytwo_loader
+                        role: "Small"
+                        opacity: 0
+
             CButtonPrimary:
                 text: "Start typing"
-                id: address_button
+                id: address_button_citytwo
                 role: "Large Productive"
                 size_hint_x: 1          
                 size_hint_y: None
@@ -701,6 +710,9 @@
                 text_size: self.width - dp(20), None
                 disabled: True
                 icon: "location--filled"
+                on_press:
+                    root.on_address_button_press(self.text.strip())
+
 
         CModalFooter:
             CGridLayout:
@@ -737,7 +749,7 @@
         bg_source: "images/sun_bg.jpg"
 
         CLabel:
-            text: "City 2"
+            text: "City 3"
             style: "heading_04"
             typeface: "IBM Plex Sans"
             weight_style: "Medium"
@@ -765,12 +777,21 @@
                 CTextInputLayout:
                     CTextInput:
                         hint_text: "e.g. New York"
+                        id: address_input_citythree
+                        on_text: 
+                            root.Setup()
+                            root.suggestion_was_pressed = False
                     CTextInputLabel:
                         text: "City Name"
 
+                    CLoadingIndicator:
+                        id: citythree_loader
+                        role: "Small"
+                        opacity: 0
+
             CButtonPrimary:
                 text: "Start typing"
-                id: address_button
+                id: address_button_citythree
                 role: "Large Productive"
                 size_hint_x: 1          
                 size_hint_y: None
@@ -779,6 +800,9 @@
                 text_size: self.width - dp(20), None
                 disabled: True
                 icon: "location--filled"
+                on_press:
+                    root.on_address_button_press(self.text.strip())
+
 
         CModalFooter:
             CGridLayout:

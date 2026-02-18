@@ -975,7 +975,7 @@ class DeleteModal(CModal):
         self.dismiss()
         self.settings.start_delete_account()
 # ---------------------------------------------------------------------------------
-class City2(Screen):
+class City2Screen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -1010,13 +1010,143 @@ class City2(Screen):
 class AddCity2Modal(CModal):
     def __init__(self, city_2, **kwargs):
         super().__init__(**kwargs)
+        self.suggestion_was_pressed = False
         self.city2 = city_2
+        # Timer Config:
+        self._last_request_time = 0
+        self._debounce_event = None  
+
+        # Reset variables for location/city:
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+        self.city_found = False
+
+    def Setup(self):
+        # Stop another request going out if the suggestion was already pressed:
+        if self.suggestion_was_pressed:
+            return
+        
+        # Timer Config (again):
+        if self._debounce_event:
+            self._debounce_event.cancel()
+        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
+
+    def make_request_when_ready(self):
+        now = time.time()
+        # Timer Config (again):
+        if now - self._last_request_time < 2.5:
+            return
+        self._last_request_time = now
+
+        # Make the loader visible:
+        self.ids.citytwo_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Request_City,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Request_City(self): # Text is here for the text typing on textinput field
+        # Variable for Search Query of city:
+        search_query = self.ids.address_input_citytwo.text.strip() 
+        # Reset the city_found variable to False for each new search:
+        self.city_found = False
+
+        # Request for JSON and raise exceptions on errors:
+
+        # Api url (google cloud run):
+        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
+
+        response = requests.get(url)
+        response.raise_for_status() 
+        data = response.json()
+        if data.get("results"):
+            # Get coordinate/city data:
+            result = data["results"][0]
+            location_data = result.get("geometry", {}).get("location", {})
+
+            formatted_address = data["results"][0].get("formatted_address")
+            self.ids.address_button_citytwo.disabled = False
+            self.ids.address_button_citytwo.text = formatted_address
+
+            # Most Google Place results have geometry -> location -> lat/lng
+            self.current_lat = location_data.get("lat")
+            self.current_lon = location_data.get("lng")
+            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
+            self.city_found = True
+
+        else:
+            self.ids.address_button_citytwo.disabled = True
+            self.ids.address_button_citytwo.text = "No results found."
+
+    # Fills in to textinput field when address button is pressed:
+    def on_address_button_press(self, text):
+        # ignore if it's still the placeholder text
+        if text == "Start typing" or text == "No results found.":
+             return
+        
+        # otherwise, fill the text field
+        self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
+        self.ids.address_input_citytwo.text = text
+
+    def countinue_pressed(self):
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
+
+        # Make the loader visible:
+        self.ids.citytwo_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
+        # Countinue the loading until city is found (extra if-statement, just in-case):
+        if self.city_found == False:
+            return True # Keep waiting
+        
+        # Sends the location to Firestore:
+        location_input = self.ids.address_input.text
+        id_token = self.manager.id_token
+        payload = {
+            "location": str(location_input), 
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
+        }
+        headers = {"Authorization": f"Bearer {id_token}"}
+        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        print(r.json())
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.citytwo_loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.citytwo_loader.opacity = 0
+
+        self.manager.current = "App"
 
     def add(self):
-        self.dismiss()
-        self.city2.push_city2()
+        pass
 # ---------------------------------------------------------------------------------
-class City3(Screen):
+class City3Screen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -1051,11 +1181,141 @@ class City3(Screen):
 class AddCity3Modal(CModal):
     def __init__(self, city_3, **kwargs):
         super().__init__(**kwargs)
+        self.suggestion_was_pressed = False
         self.city3 = city_3
+        # Timer Config:
+        self._last_request_time = 0
+        self._debounce_event = None  
+
+        # Reset variables for location/city:
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+        self.city_found = False
+
+    def Setup(self):
+        # Stop another request going out if the suggestion was already pressed:
+        if self.suggestion_was_pressed:
+            return
+        
+        # Timer Config (again):
+        if self._debounce_event:
+            self._debounce_event.cancel()
+        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
+
+    def make_request_when_ready(self):
+        now = time.time()
+        # Timer Config (again):
+        if now - self._last_request_time < 2.5:
+            return
+        self._last_request_time = now
+
+        # Make the loader visible:
+        self.ids.citythree_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.Request_City,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def Request_City(self): # Text is here for the text typing on textinput field
+        # Variable for Search Query of city:
+        search_query = self.ids.address_input_citythree.text.strip() 
+        # Reset the city_found variable to False for each new search:
+        self.city_found = False
+
+        # Request for JSON and raise exceptions on errors:
+
+        # Api url (google cloud run):
+        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
+
+        response = requests.get(url)
+        response.raise_for_status() 
+        data = response.json()
+        if data.get("results"):
+            # Get coordinate/city data:
+            result = data["results"][0]
+            location_data = result.get("geometry", {}).get("location", {})
+
+            formatted_address = data["results"][0].get("formatted_address")
+            self.ids.address_button_citythree.disabled = False
+            self.ids.address_button_citythree.text = formatted_address
+
+            # Most Google Place results have geometry -> location -> lat/lng
+            self.current_lat = location_data.get("lat")
+            self.current_lon = location_data.get("lng")
+            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
+            self.city_found = True
+
+        else:
+            self.ids.address_button_citythree.disabled = True
+            self.ids.address_button_citythree.text = "No results found."
+
+    # Fills in to textinput field when address button is pressed:
+    def on_address_button_press(self, text):
+        # ignore if it's still the placeholder text
+        if text == "Start typing" or text == "No results found.":
+             return
+        
+        # otherwise, fill the text field
+        self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
+        self.ids.address_input_citythree.text = text
+
+    def countinue_pressed(self):
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
+
+        # Make the loader visible:
+        self.ids.citythree_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
+        # Countinue the loading until city is found (extra if-statement, just in-case):
+        if self.city_found == False:
+            return True # Keep waiting
+        
+        # Sends the location to Firestore:
+        location_input = self.ids.address_input.text
+        id_token = self.manager.id_token
+        payload = {
+            "location": str(location_input), 
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
+        }
+        headers = {"Authorization": f"Bearer {id_token}"}
+        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        print(r.json())
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citythree.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.citythree_loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citythree.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.citythree_loader.opacity = 0
+
+        self.manager.current = "App"
 
     def add(self):
-        self.dismiss()
-        self.city3.push_city3()
+        pass
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
@@ -1076,8 +1336,8 @@ class MainApp(CarbonApp):
         self.sm.add_widget(AppScreen(name='App'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
         self.sm.add_widget(SettingsScreen(name='Settings'))
-        self.sm.add_widget(City2(name='City2'))
-        self.sm.add_widget(City3(name='City3'))
+        self.sm.add_widget(City2Screen(name='City2'))
+        self.sm.add_widget(City3Screen(name='City3'))
         return self.sm
 
     def on_start(self):
