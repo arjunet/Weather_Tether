@@ -4,6 +4,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.app import App
+from carbonkivy.utils import _Dict, update_system_ui
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -1321,6 +1322,7 @@ class AddCity3Modal(CModal):
 class MainApp(CarbonApp):
     Window = Window
     def __init__(self, *args, **kwargs) -> None:
+        self.defaults = False
         super().__init__(*args, **kwargs)
         
     def build(self):
@@ -1364,6 +1366,16 @@ class MainApp(CarbonApp):
                 clear_refresh_token()
 
         self.sm.current = "Signup"
+
+    def on_theme(self, *args) -> None:
+        super(CarbonApp, self).on_theme(*args)
+        self.apply_styles()
+
+    def apply_styles(self, *args) -> None:
+        Window.clearcolor = self.background
+        icon_style = "Dark" if self.theme in ["White", "Gray10"] else "Light"
+        update_system_ui(self.background, self.background, icon_style=icon_style, pad_nav=True)
+
 
 if __name__ == "__main__":
     MainApp().run()
