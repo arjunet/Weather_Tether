@@ -1145,7 +1145,56 @@ class AddCity2Modal(CModal):
         self.manager.current = "App"
 
     def add(self):
-        pass
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
+
+        # Make the loader visible:
+        self.ids.citytwo_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
+        # Countinue the loading until city is found (extra if-statement, just in-case):
+        if self.city_found == False:
+            return True # Keep waiting
+        
+        # Sends the location to Firestore:
+        location_input = self.ids.address_input_citytwo.text.strip()
+        id_token = self.city2.manager.id_token
+        payload = {
+            "location": str(location_input), 
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
+        }
+        headers = {"Authorization": f"Bearer {id_token}"}
+        r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
+        print(r.json())
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.citytwo_loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.citytwo_loader.opacity = 0
+
+        self.dismiss()
 # ---------------------------------------------------------------------------------
 class City3Screen(Screen):
     def __init__(self, **kwargs):
