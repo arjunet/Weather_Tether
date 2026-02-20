@@ -977,18 +977,36 @@ class DeleteModal(CModal):
         self.settings.start_delete_account()
 # ---------------------------------------------------------------------------------
 class City2Screen(Screen):
+    icon_path = StringProperty("")
+    bg_image = StringProperty("")
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
         self.current_lon = 0.0
+        self.r = None
+        self.result = None
+        self.go_to_verify = False
 
-    def city_2_exist(self, filename, search_word):
+        # Add null values so kivy will be quiet:
+        self.current_temp = None
+        self.feels_like = None
+        self.is_daytime = False
+        self.min_temp = None
+        self.max_temp = None
+        self.precip_percent = None
+        self.precip_type = None
+        self.snow_fall = None
+        self.thunderstorm_prob = None
+        self.weather_condition = None
+        self.wind_chill = None
+
+    def city_exist(self, filename, search_word):
         with open(filename, 'r') as file:
             content = file.read()
             return search_word in content
         
     def open_add_modal(self) -> None:
-        modal = AddCity2Modal(city_2=self)
+        modal = AddCity2Modal(city=self)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
@@ -998,21 +1016,150 @@ class City2Screen(Screen):
     def on_enter(self):
         file_path = 'session.json'
         word_to_find = 'city2'
+        store = JsonStore('session.json')
+        self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
         
-        if not self.city_2_exist(file_path, word_to_find):
+        if not self.city_exist(file_path, word_to_find):
             self.open_add_modal()
 
         else:
-            pass
+            self.start_load_weather()
 
-    def push_city2(self):
-        pass
+    def start_load_weather(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        self.r = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.get_user_dat,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_weather, 0.1)
+
+    def get_user_dat(self):
+        # Get user dat:
+        id_token = self.manager.id_token
+        headers = {"Authorization": f"Bearer {id_token}"}
+
+        response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
+
+        if response.status_code == 200:
+                user_data = response.json()
+                
+                # Grab the Firestore location data:
+                lat = user_data.get("lat")
+                lon = user_data.get("lon")
+                self.city = user_data.get("location")
+
+                self.get_weather(lat, lon)
+
+                self.r = "weather_done"
+
+    def get_weather(self, lat, lon):
+        if lat is None or lon is None:
+            return True # Keep waiting
+
+        if self.toggle_state == False:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°F")
+                self.feels_like = (f"{data['feels_like']}°F")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°F")
+                self.max_temp = (f"{data['max_temp']}°F")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Inches")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°F")
+
+        elif self.toggle_state == True:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°C")
+                self.feels_like = (f"{data['feels_like']}°C")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°C")
+                self.max_temp = (f"{data['max_temp']}°C")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Centimeters")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°C")  
+
+    def stop_load_weather(self, *args):
+        # If weather has not been fetched yet:
+        if self.r != "weather_done":
+            return True # Keep waiting
+        
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load_weather)
+        self.ids.loader.opacity = 0
+        self.update_ui_labels()
+        self.update_background()
+
+    def update_ui_labels(self):
+        # Sets the labels with the fetched weather data:
+        self.ids.citytwo_label.text = f"{self.city}"
+        self.ids.current_temp_label.text = self.current_temp
+        self.ids.condition_label.text = self.weather_condition
+    
+        # Combined High/Low/feels like label:
+        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
+        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
+        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
+        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
+        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+
+    def update_background(self):
+        # Update the background/icon based on weather condition:
+        if "sun" in self.weather_condition.lower():
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
+
+        elif self.is_daytime == "False":
+            self.bg_image = "images/night.jpg"
+            self.icon_path = "images/moon.png"
+
+            self.app = App.get_running_app()
+            self.app.theme = "Gray100" 
+            self.ids.shell_header.bg_color = self.app.transparent
+
+        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
+
+        elif "cloud" in self.weather_condition.lower():
+            self.bg_image = "images/cloud_bg.jpg"
+            self.icon_path = "images/cloud_icon.png"
+
+        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
+            self.bg_image = "images/rain_bg.png"
+            self.icon_path = "images/rain_icon.png"
+
+        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
+            self.bg_image = "images/snow_bg.jpg"
+            self.icon_path = "images/snow_icon.png"
 # ---------------------------------------------------------------------------------
 class AddCity2Modal(CModal):
-    def __init__(self, city_2, **kwargs):
+    def __init__(self, city, **kwargs):
         super().__init__(**kwargs)
         self.suggestion_was_pressed = False
-        self.city2 = city_2
+        self.city = city
         # Timer Config:
         self._last_request_time = 0
         self._debounce_event = None  
@@ -1040,7 +1187,7 @@ class AddCity2Modal(CModal):
         self._last_request_time = now
 
         # Make the loader visible:
-        self.ids.citytwo_loader.opacity = 1
+        self.ids.loader.opacity = 1
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -1051,7 +1198,7 @@ class AddCity2Modal(CModal):
 
     def Request_City(self): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
-        search_query = self.ids.address_input_citytwo.text.strip() 
+        search_query = self.ids.address_input.text.strip() 
         # Reset the city_found variable to False for each new search:
         self.city_found = False
 
@@ -1069,8 +1216,8 @@ class AddCity2Modal(CModal):
             location_data = result.get("geometry", {}).get("location", {})
 
             formatted_address = data["results"][0].get("formatted_address")
-            self.ids.address_button_citytwo.disabled = False
-            self.ids.address_button_citytwo.text = formatted_address
+            self.ids.address_button.disabled = False
+            self.ids.address_button.text = formatted_address
 
             # Most Google Place results have geometry -> location -> lat/lng
             self.current_lat = location_data.get("lat")
@@ -1079,8 +1226,8 @@ class AddCity2Modal(CModal):
             self.city_found = True
 
         else:
-            self.ids.address_button_citytwo.disabled = True
-            self.ids.address_button_citytwo.text = "No results found."
+            self.ids.address_button.disabled = True
+            self.ids.address_button.text = "No results found."
 
     # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
@@ -1090,7 +1237,7 @@ class AddCity2Modal(CModal):
         
         # otherwise, fill the text field
         self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
-        self.ids.address_input_citytwo.text = text
+        self.ids.address_input.text = text
 
     def countinue_pressed(self):
         # Don't submit unless a city was found:
@@ -1098,7 +1245,7 @@ class AddCity2Modal(CModal):
             return 
 
         # Make the loader visible:
-        self.ids.citytwo_loader.opacity = 1
+        self.ids.loader.opacity = 1
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -1121,26 +1268,26 @@ class AddCity2Modal(CModal):
             "lon": float(self.current_lon)
         }
         headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
         print(r.json())
 
     def stop_load(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load)
-        self.ids.citytwo_loader.opacity = 0
+        self.ids.loader.opacity = 0
         
     def stop_load_firestore(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load_firestore)
-        self.ids.citytwo_loader.opacity = 0
+        self.ids.loader.opacity = 0
 
         self.manager.current = "App"
 
@@ -1150,7 +1297,7 @@ class AddCity2Modal(CModal):
             return 
 
         # Make the loader visible:
-        self.ids.citytwo_loader.opacity = 1
+        self.ids.loader.opacity = 1
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -1165,8 +1312,8 @@ class AddCity2Modal(CModal):
             return True # Keep waiting
         
         # Sends the location to Firestore:
-        location_input = self.ids.address_input_citytwo.text.strip()
-        id_token = self.city2.manager.id_token
+        location_input = self.ids.address_input.text.strip()
+        id_token = self.city.manager.id_token
         payload = {
             "location": str(location_input), 
             "lat": float(self.current_lat), 
@@ -1178,29 +1325,47 @@ class AddCity2Modal(CModal):
 
     def stop_load(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load)
-        self.ids.citytwo_loader.opacity = 0
+        self.ids.loader.opacity = 0
         
     def stop_load_firestore(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citytwo.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load_firestore)
-        self.ids.citytwo_loader.opacity = 0
+        self.ids.loader.opacity = 0
 
         self.dismiss()
 # ---------------------------------------------------------------------------------
 class City3Screen(Screen):
+    icon_path = StringProperty("")
+    bg_image = StringProperty("")
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
         self.current_lon = 0.0
+        self.r = None
+        self.result = None
+        self.go_to_verify = False
+
+        # Add null values so kivy will be quiet:
+        self.current_temp = None
+        self.feels_like = None
+        self.is_daytime = False
+        self.min_temp = None
+        self.max_temp = None
+        self.precip_percent = None
+        self.precip_type = None
+        self.snow_fall = None
+        self.thunderstorm_prob = None
+        self.weather_condition = None
+        self.wind_chill = None
 
     def city_3_exist(self, filename, search_word):
         with open(filename, 'r') as file:
@@ -1218,15 +1383,144 @@ class City3Screen(Screen):
     def on_enter(self):
         file_path = 'session.json'
         word_to_find = 'city3'
+        store = JsonStore('session.json')
+        self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
         
         if not self.city_3_exist(file_path, word_to_find):
             self.open_add_modal()
 
         else:
-            pass
+            self.start_load_weather()
 
-    def push_city3(self):
-        pass
+    def start_load_weather(self):
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        self.r = None
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.get_user_dat,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_weather, 0.1)
+
+    def get_user_dat(self):
+        # Get user dat:
+        id_token = self.manager.id_token
+        headers = {"Authorization": f"Bearer {id_token}"}
+
+        response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
+
+        if response.status_code == 200:
+                user_data = response.json()
+                
+                # Grab the Firestore location data:
+                lat = user_data.get("lat")
+                lon = user_data.get("lon")
+                self.city = user_data.get("location")
+
+                self.get_weather(lat, lon)
+
+                self.r = "weather_done"
+
+    def get_weather(self, lat, lon):
+        if lat is None or lon is None:
+            return True # Keep waiting
+
+        if self.toggle_state == False:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°F")
+                self.feels_like = (f"{data['feels_like']}°F")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°F")
+                self.max_temp = (f"{data['max_temp']}°F")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Inches")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°F")
+
+        elif self.toggle_state == True:
+            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
+            response = requests.get(url)
+
+            if response.status_code == 200:
+                data = response.json()
+
+                # Get the weather data:
+                self.current_temp = (f"{data['current_temp']}°C")
+                self.feels_like = (f"{data['feels_like']}°C")
+                self.is_daytime = (f"{data['is_daytime']}")
+                self.min_temp = (f"{data['min_temp']}°C")
+                self.max_temp = (f"{data['max_temp']}°C")
+                self.precip_percent = (f"{data['precip_percent']}%")
+                self.precip_type = (f"{data['precip_type']}")
+                self.snow_fall = (f"{data['snow_fall']} Centimeters")
+                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.weather_condition = (f"{data['weather_condition']}")
+                self.wind_chill = (f"{data['wind_chill']}°C")  
+
+    def stop_load_weather(self, *args):
+        # If weather has not been fetched yet:
+        if self.r != "weather_done":
+            return True # Keep waiting
+        
+        # Stops thread once done:
+        Clock.unschedule(self.stop_load_weather)
+        self.ids.loader.opacity = 0
+        self.update_ui_labels()
+        self.update_background()
+
+    def update_ui_labels(self):
+        # Sets the labels with the fetched weather data:
+        self.ids.citythree_label.text = f"{self.city}"
+        self.ids.current_temp_label.text = self.current_temp
+        self.ids.condition_label.text = self.weather_condition
+    
+        # Combined High/Low/feels like label:
+        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
+        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
+        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
+        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
+        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+
+    def update_background(self):
+        # Update the background/icon based on weather condition:
+        if "sun" in self.weather_condition.lower():
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
+
+        elif self.is_daytime == "False":
+            self.bg_image = "images/night.jpg"
+            self.icon_path = "images/moon.png"
+
+            self.app = App.get_running_app()
+            self.app.theme = "Gray100" 
+            self.ids.shell_header.bg_color = self.app.transparent
+
+        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
+            self.bg_image = "images/sun_bg.jpg"
+            self.icon_path = "images/sun_icon.png"
+
+        elif "cloud" in self.weather_condition.lower():
+            self.bg_image = "images/cloud_bg.jpg"
+            self.icon_path = "images/cloud_icon.png"
+
+        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
+            self.bg_image = "images/rain_bg.png"
+            self.icon_path = "images/rain_icon.png"
+
+        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
+            self.bg_image = "images/snow_bg.jpg"
+            self.icon_path = "images/snow_icon.png"
 # ---------------------------------------------------------------------------------
 class AddCity3Modal(CModal):
     def __init__(self, city_3, **kwargs):
@@ -1333,7 +1627,7 @@ class AddCity3Modal(CModal):
             return True # Keep waiting
         
         # Sends the location to Firestore:
-        location_input = self.ids.address_input.text
+        location_input = self.ids.address_input_citythree.text.strip()
         id_token = self.manager.id_token
         payload = {
             "location": str(location_input), 
@@ -1341,7 +1635,7 @@ class AddCity3Modal(CModal):
             "lon": float(self.current_lon)
         }
         headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
         print(r.json())
 
     def stop_load(self, *args):
@@ -1365,7 +1659,56 @@ class AddCity3Modal(CModal):
         self.manager.current = "App"
 
     def add(self):
-        pass
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
+
+        # Make the loader visible:
+        self.ids.citythree_loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
+        # Countinue the loading until city is found (extra if-statement, just in-case):
+        if self.city_found == False:
+            return True # Keep waiting
+        
+        # Sends the location to Firestore:
+        location_input = self.ids.address_input_citythree.text.strip()
+        id_token = self.city3.manager.id_token
+        payload = {
+            "location": str(location_input), 
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
+        }
+        headers = {"Authorization": f"Bearer {id_token}"}
+        r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
+        print(r.json())
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citythree.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.citythree_loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button_citythree.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.citythree_loader.opacity = 0
+
+        self.dismiss()
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
