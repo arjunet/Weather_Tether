@@ -37,7 +37,7 @@ version = 0.1
 
 # (list) Application requirements
 # comma separated e.g. requirements = sqlite3,kivy
-requirements = python3, kivy, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, Kivy-Garden, pyjnius, Pygments, requests, cryptography
+requirements = python3, kivy, android, https://github.com/CarbonKivy/CarbonKivy/archive/master.zip, pyjnius, requests
 
 # (str) Custom source folders for requirements
 # Sets custom source for any requirements with recipes
@@ -104,7 +104,7 @@ android.permissions = INTERNET, WRITE_INTERNAL_STORAGE, READ_INTERNAL_STORAGE
 android.api = 36
 
 # (int) Minimum API your APK / AAB will support.
-android.minapi = 30
+android.minapi = 28
 
 # (int) Android SDK version to use
 #android.sdk = 20
@@ -113,7 +113,7 @@ android.minapi = 30
 android.ndk = 28c
 
 # (int) Android NDK API to use. This is the minimum API your app will support, it should usually match android.minapi.
-android.ndk_api = 30
+android.ndk_api = 28
 
 # (bool) Use --private data storage (True) or --dir public storage (False)
 #android.private_storage = True
@@ -201,7 +201,7 @@ android.accept_sdk_license = True
 #android.add_resources =
 
 # (list) Gradle dependencies to add
-android.gradle_dependencies = com.google.crypto.tink:tink-android:1.19.0
+# android.gradle_dependencies = com.google.crypto.tink:tink-android:1.19.0
 
 # (bool) Enable AndroidX support. Enable when 'android.gradle_dependencies'
 # contains an 'androidx' package, or any package from Kotlin source.
@@ -216,7 +216,7 @@ android.enable_androidx = True
 # (list) Gradle repositories to add {can be necessary for some android.gradle_dependencies}
 # please enclose in double quotes 
 # e.g. android.gradle_repositories = "maven { url 'https://kotlin.bintray.com/ktor' }"
-android.add_gradle_repositories = "mavenCentral()"
+# android.add_gradle_repositories = "mavenCentral()"
 
 # (list) packaging options to add 
 # see https://google.github.io/android-gradle-dsl/current/com.android.build.gradle.internal.dsl.PackagingOptions.html
