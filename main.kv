@@ -880,7 +880,7 @@
                     role: "Extra Large"
                     size_hint_x: 1
                     on_press:
-                        root.add()
+                        root.save_location()
 
     CModalCloseButton:
         on_press:
@@ -1069,7 +1069,7 @@
                 CTextInputLayout:
                     CTextInput:
                         hint_text: "e.g. New York"
-                        id: address_input_citythree
+                        id: address_input
                         on_text: 
                             root.Setup()
                             root.suggestion_was_pressed = False
@@ -1077,13 +1077,13 @@
                         text: "City Name"
 
                     CLoadingIndicator:
-                        id: citythree_loader
+                        id: loader
                         role: "Small"
                         opacity: 0
 
             CButtonPrimary:
                 text: "Start typing"
-                id: address_button_citythree
+                id: address_button
                 role: "Large Productive"
                 size_hint_x: 1          
                 size_hint_y: None
@@ -1115,7 +1115,7 @@
                     role: "Extra Large"
                     size_hint_x: 1
                     on_press:
-                        root.add()
+                        root.save_location()
 
     CModalCloseButton:
         on_press:

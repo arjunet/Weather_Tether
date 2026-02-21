@@ -51,5 +51,18 @@ def refresh_login(refresh_token):
 def save_toggle_state(toggle_state):
     store = JsonStore('session.json')
     store.put('toggle', active=toggle_state)
+def save_city(city_name, city_number):
+    # Normalize the city key
+    if city_number is None:
+        key = 'city1'
+    else:
+        if isinstance(city_number, int):
+            key = f"city{city_number}"
+        else:
+            s = str(city_number)
+            key = s if s.startswith('city') else f"city{s}"
+
+    store = JsonStore('session.json')
+    store.put(key, name=city_name)
 
 

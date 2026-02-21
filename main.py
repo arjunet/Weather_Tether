@@ -18,7 +18,7 @@ from carbonkivy.uix.notification import CNotificationInline
 from carbonkivy.uix.notification import CNotificationToast
 from carbonkivy.uix.modal import CModal
 
-from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state
+from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state, save_city
 import requests
 import time
 import threading
@@ -461,6 +461,7 @@ class SetupScreen(Screen):
         }
         headers = {"Authorization": f"Bearer {id_token}"}
         r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+        save_city(location_input, 1)
         print(r.json())
 
     def stop_load(self, *args):
@@ -1168,6 +1169,7 @@ class AddCity2Modal(CModal):
         self.current_lat = 0.0
         self.current_lon = 0.0
         self.city_found = False
+        self.dismissed = False
 
     def Setup(self):
         # Stop another request going out if the suggestion was already pressed:
@@ -1260,59 +1262,7 @@ class AddCity2Modal(CModal):
             return True # Keep waiting
         
         # Sends the location to Firestore:
-        location_input = self.ids.address_input.text
-        id_token = self.manager.id_token
-        payload = {
-            "location": str(location_input), 
-            "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
-        }
-        headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
-        print(r.json())
-
-    def stop_load(self, *args):
-        # Stops thread once done:
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Once thread done, stop the loader and show the result:
-        Clock.unschedule(self.stop_load)
-        self.ids.loader.opacity = 0
-        
-    def stop_load_firestore(self, *args):
-        # Stops thread once done:
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Once thread done, stop the loader and show the result:
-        Clock.unschedule(self.stop_load_firestore)
-        self.ids.loader.opacity = 0
-
-        self.manager.current = "App"
-
-    def add(self):
-        # Don't submit unless a city was found:
-        if not self.city_found == True:
-            return 
-
-        # Make the loader visible:
-        self.ids.loader.opacity = 1
-
-        # Start the thread so ui can load while waiting for the server response:
-        threading.Thread(
-            target=self.save_location,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_firestore, 0.1)
-
-    def save_location(self):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if self.city_found == False:
-            return True # Keep waiting
-        
-        # Sends the location to Firestore:
-        location_input = self.ids.address_input.text.strip()
+        location_input = str(self.ids.address_input.text.strip())
         id_token = self.city.manager.id_token
         payload = {
             "location": str(location_input), 
@@ -1322,6 +1272,15 @@ class AddCity2Modal(CModal):
         headers = {"Authorization": f"Bearer {id_token}"}
         r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
         print(r.json())
+        # Mark city2 as active in local session store
+        save_city(location_input, 2)
+        # Schedule UI work on main thread to dismiss modal and refresh
+        try:
+            from kivy.clock import Clock
+            Clock.schedule_once(lambda dt: self.on_saved(), 0)
+        except Exception:
+            pass
+        self.dismissed = True
 
     def stop_load(self, *args):
         # Stops thread once done:
@@ -1340,8 +1299,21 @@ class AddCity2Modal(CModal):
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load_firestore)
         self.ids.loader.opacity = 0
+        if self.dismissed == True:
+            # kept for backward-compat; prefer scheduled _on_saved
+            try:
+                self.dismiss()
+            except Exception:
+                pass
+            try:
+                self.city.start_load_weather()
+            except Exception:
+                pass
 
+    def on_saved(self, *args):
         self.dismiss()
+        self.city.start_load_weather()
+        self.dismissed = False
 # ---------------------------------------------------------------------------------
 class City3Screen(Screen):
     icon_path = StringProperty("")
@@ -1373,7 +1345,7 @@ class City3Screen(Screen):
             return search_word in content
         
     def open_add_modal(self) -> None:
-        modal = AddCity3Modal(city_3=self)
+        modal = AddCity3Modal(city=self)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
@@ -1523,10 +1495,10 @@ class City3Screen(Screen):
             self.icon_path = "images/snow_icon.png"
 # ---------------------------------------------------------------------------------
 class AddCity3Modal(CModal):
-    def __init__(self, city_3, **kwargs):
+    def __init__(self, city, **kwargs):
         super().__init__(**kwargs)
         self.suggestion_was_pressed = False
-        self.city3 = city_3
+        self.city = city
         # Timer Config:
         self._last_request_time = 0
         self._debounce_event = None  
@@ -1535,6 +1507,7 @@ class AddCity3Modal(CModal):
         self.current_lat = 0.0
         self.current_lon = 0.0
         self.city_found = False
+        self.dismissed = False
 
     def Setup(self):
         # Stop another request going out if the suggestion was already pressed:
@@ -1554,7 +1527,7 @@ class AddCity3Modal(CModal):
         self._last_request_time = now
 
         # Make the loader visible:
-        self.ids.citythree_loader.opacity = 1
+        self.ids.loader.opacity = 1
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -1565,7 +1538,7 @@ class AddCity3Modal(CModal):
 
     def Request_City(self): # Text is here for the text typing on textinput field
         # Variable for Search Query of city:
-        search_query = self.ids.address_input_citythree.text.strip() 
+        search_query = self.ids.address_input.text.strip() 
         # Reset the city_found variable to False for each new search:
         self.city_found = False
 
@@ -1583,8 +1556,8 @@ class AddCity3Modal(CModal):
             location_data = result.get("geometry", {}).get("location", {})
 
             formatted_address = data["results"][0].get("formatted_address")
-            self.ids.address_button_citythree.disabled = False
-            self.ids.address_button_citythree.text = formatted_address
+            self.ids.address_button.disabled = False
+            self.ids.address_button.text = formatted_address
 
             # Most Google Place results have geometry -> location -> lat/lng
             self.current_lat = location_data.get("lat")
@@ -1593,8 +1566,8 @@ class AddCity3Modal(CModal):
             self.city_found = True
 
         else:
-            self.ids.address_button_citythree.disabled = True
-            self.ids.address_button_citythree.text = "No results found."
+            self.ids.address_button.disabled = True
+            self.ids.address_button.text = "No results found."
 
     # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
@@ -1604,7 +1577,7 @@ class AddCity3Modal(CModal):
         
         # otherwise, fill the text field
         self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
-        self.ids.address_input_citythree.text = text
+        self.ids.address_input.text = text
 
     def countinue_pressed(self):
         # Don't submit unless a city was found:
@@ -1612,7 +1585,7 @@ class AddCity3Modal(CModal):
             return 
 
         # Make the loader visible:
-        self.ids.citythree_loader.opacity = 1
+        self.ids.loader.opacity = 1
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -1627,8 +1600,8 @@ class AddCity3Modal(CModal):
             return True # Keep waiting
         
         # Sends the location to Firestore:
-        location_input = self.ids.address_input_citythree.text.strip()
-        id_token = self.manager.id_token
+        location_input = str(self.ids.address_input.text.strip())
+        id_token = self.city.manager.id_token
         payload = {
             "location": str(location_input), 
             "lat": float(self.current_lat), 
@@ -1637,78 +1610,48 @@ class AddCity3Modal(CModal):
         headers = {"Authorization": f"Bearer {id_token}"}
         r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
         print(r.json())
+        # Mark city3 as active in local session store
+        save_city(location_input, 3)
+        # Schedule UI work on main thread to dismiss modal and refresh
+        try:
+            from kivy.clock import Clock
+            Clock.schedule_once(lambda dt: self.on_saved(), 0)
+        except Exception:
+            pass
+        self.dismissed = True
 
     def stop_load(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citythree.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load)
-        self.ids.citythree_loader.opacity = 0
+        self.ids.loader.opacity = 0
         
     def stop_load_firestore(self, *args):
         # Stops thread once done:
-        if self.ids.address_button_citythree.text.strip() == "Start typing":
+        if self.ids.address_button.text.strip() == "Start typing":
             return True # Keep waiting
         
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load_firestore)
-        self.ids.citythree_loader.opacity = 0
+        self.ids.loader.opacity = 0
+        if self.dismissed == True:
+            # kept for backward-compat; prefer scheduled _on_saved
+            try:
+                self.dismiss()
+            except Exception:
+                pass
+            try:
+                self.city.start_load_weather()
+            except Exception:
+                pass
 
-        self.manager.current = "App"
-
-    def add(self):
-        # Don't submit unless a city was found:
-        if not self.city_found == True:
-            return 
-
-        # Make the loader visible:
-        self.ids.citythree_loader.opacity = 1
-
-        # Start the thread so ui can load while waiting for the server response:
-        threading.Thread(
-            target=self.save_location,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_firestore, 0.1)
-
-    def save_location(self):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if self.city_found == False:
-            return True # Keep waiting
-        
-        # Sends the location to Firestore:
-        location_input = self.ids.address_input_citythree.text.strip()
-        id_token = self.city3.manager.id_token
-        payload = {
-            "location": str(location_input), 
-            "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
-        }
-        headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
-        print(r.json())
-
-    def stop_load(self, *args):
-        # Stops thread once done:
-        if self.ids.address_button_citythree.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Once thread done, stop the loader and show the result:
-        Clock.unschedule(self.stop_load)
-        self.ids.citythree_loader.opacity = 0
-        
-    def stop_load_firestore(self, *args):
-        # Stops thread once done:
-        if self.ids.address_button_citythree.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Once thread done, stop the loader and show the result:
-        Clock.unschedule(self.stop_load_firestore)
-        self.ids.citythree_loader.opacity = 0
-
+    def on_saved(self, *args):
         self.dismiss()
+        self.city.start_load_weather()
+        self.dismissed = False
 # ---------------------------------------------------------------------------------
 # Build And Run The App:
 class MainApp(CarbonApp):
