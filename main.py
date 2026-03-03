@@ -25,7 +25,7 @@ from signup import Signup_request
 from login import Login_request
 from forgot import Send_Forgot_Email
 from setup import Request_City, save_location_request
-from app import get_dat, get_user_weather, update_ui_labels, update_ui_background
+from app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name
 from verify import Send_Verification, check_verification
 from settings import delete_request
 
@@ -405,6 +405,12 @@ class AppScreen(Screen):
     # Default background image:
     bg_image = StringProperty("")
     icon_path = StringProperty("")
+    city1_panel_item = StringProperty("")
+    city2_panel_item = StringProperty("")
+    city3_panel_item = StringProperty("")
+
+    def on_pre_enter(self, *args):
+        get_city_name(self)
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -490,8 +496,6 @@ class AppScreen(Screen):
         self.ids.loader.opacity = 0
         self.update_labels()
         self.update_background()
-        app = App.get_running_app()
-        app.update_side_panel_text()
 
     def update_labels(self):
         update_ui_labels(self)
@@ -595,6 +599,14 @@ class DeleteModal(CModal):
 class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
+
+    city1_panel_item = StringProperty("")
+    city2_panel_item = StringProperty("")
+    city3_panel_item = StringProperty("")
+
+    def on_pre_enter(self, *args):
+        get_city_name(self)
+
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -672,8 +684,6 @@ class City2Screen(Screen):
         self.ids.loader.opacity = 0
         self.update_labels()
         self.update_background()
-        app = App.get_running_app()
-        app.update_side_panel_text()
 
     def update_labels(self):
         update_ui_labels(self)
@@ -804,6 +814,14 @@ class AddCity2Modal(CModal):
 class City3Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
+
+    city1_panel_item = StringProperty("")
+    city2_panel_item = StringProperty("")
+    city3_panel_item = StringProperty("")
+
+    def on_pre_enter(self, *args):
+        get_city_name(self)
+    
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -824,6 +842,9 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
+        city1_panel_item = StringProperty("")
+        city2_panel_item = StringProperty("")
+        city3_panel_item = StringProperty("")
 
     def city_3_exist(self, filename, search_word):
         with open(filename, 'r') as file:
@@ -881,8 +902,6 @@ class City3Screen(Screen):
         self.ids.loader.opacity = 0
         self.update_labels()
         self.update_background()
-        app = App.get_running_app()
-        app.update_side_panel_text()
 
     def update_labels(self):
         update_ui_labels(self)
@@ -1033,31 +1052,6 @@ class MainApp(CarbonApp):
         self.sm.add_widget(City2Screen(name='City2'))
         self.sm.add_widget(City3Screen(name='City3'))
         return self.sm
-
-    def update_side_panel_text(self, *args):
-        with open('session.json', 'r') as f:
-            data = json.load(f)
-
-        app = App.get_running_app()
-
-        screen = app.root.get_screen('App')
-        screen2 = app.root.get_screen('City2')
-        screen3 = app.root.get_screen('City3')
-
-        self.city1 = data.get("city1", {}).get("name", "City 1")
-        for s in [screen, screen2, screen3]:
-            s.ids.city1_panel_item.text = ""
-            s.ids.city1_panel_item.text = self.city1
-
-        self.city2 = data.get("city2", {}).get("name", "City 2")
-        for s in [screen, screen2, screen3]:
-            s.ids.city2_panel_item.text = ""
-            s.ids.city2_panel_item.text = self.city2
-
-        self.city3 = data.get("city3", {}).get("name", "City 3")
-        for s in [screen, screen2, screen3]:
-            s.ids.city3_panel_item.text = ""
-            s.ids.city3_panel_item.text = self.city3
 
     def on_start(self):
         token = load_refresh_token()

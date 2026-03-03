@@ -1,6 +1,8 @@
 import requests
 from kivy.app import App
 from carbonkivy.app import App
+import json
+from kivy.properties import StringProperty
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
@@ -117,3 +119,17 @@ def update_ui_background(screen_instance):
     elif "snow" in screen_instance.weather_condition.lower() or "sleet" in screen_instance.weather_condition.lower() or "blizzard" in screen_instance.weather_condition.lower():
         screen_instance.bg_image = "images/snow_bg.jpg"
         screen_instance.icon_path = "images/snow_icon.png"
+
+def get_city_name(screen_instance):
+      with open('session.json', 'r') as f:
+            data = json.load(f)
+
+            screen_instance.city1_panel_item = data.get("city1", {}).get("name", "City 1")
+        
+            try:
+                screen_instance.city2_panel_item = data.get("city2", {}).get("name", "City 2")
+                screen_instance.city3_panel_item = data.get("city3", {}).get("name", "City 3")
+
+            except (FileNotFoundError, json.JSONDecodeError):
+                 screen_instance.city2_panel_item = "City2"
+                 screen_instance.city3_panel_item = "City3"
