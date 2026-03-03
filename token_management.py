@@ -51,6 +51,7 @@ def refresh_login(refresh_token):
 def save_toggle_state(toggle_state):
     store = JsonStore('session.json')
     store.put('toggle', active=toggle_state)
+    
 def save_city(city_name, city_number):
     # Normalize the city key
     if city_number is None:
@@ -64,5 +65,36 @@ def save_city(city_name, city_number):
 
     store = JsonStore('session.json')
     store.put(key, name=city_name)
+
+# ----------------------------------------------------------------------------------
+
+def login_request_token(screen_instance):
+        # If its coming from verify screen, skip going back to verify screen & prevent duplicate login:
+        if getattr(screen_instance.manager, 'coming_from_verify', False):
+            screen_instance.go_to_verify = False
+            # Reset the flag so it doesn't stay True forever
+            screen_instance.manager.coming_from_verify = False 
+            screen_instance.r = "done"
+            return # Exit early, we're good!
+        
+        token = load_refresh_token()
+
+        if token:
+            result = refresh_login(token)
+
+            if result:
+                screen_instance.manager.id_token = result["idToken"]
+                screen_instance.manager.refresh_token = result["refreshToken"]
+
+                # save new token
+                save_refresh_token(result["refreshToken"])
+
+                if result.get("emailVerified") is True:
+                    screen_instance.go_to_verify = False
+
+                else:
+                    screen_instance.go_to_verify = True
+
+        screen_instance.r = "done"
 
 

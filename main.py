@@ -3,7 +3,10 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
+from kivy.properties import DictProperty
 from kivy.app import App
+from kivy.core.window import Window
+from kivy.storage.jsonstore import JsonStore
 from carbonkivy.utils import _Dict, update_system_ui
 
 # Soft Input Config (For keyboard issue on android 15+):
@@ -14,17 +17,22 @@ Window.on_restore(Clock.schedule_once(set_softinput, 0.1))
 
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
-from carbonkivy.uix.notification import CNotificationInline
-from carbonkivy.uix.notification import CNotificationToast
+from notification import notification_error, notification_success, forgot_notification
 from carbonkivy.uix.modal import CModal
 
-from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state, save_city
-import requests
+from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state, save_city, login_request_token
+from signup import Signup_request
+from login import Login_request
+from forgot import Send_Forgot_Email
+from setup import Request_City, save_location_request
+from app import get_dat, get_user_weather, update_ui_labels, update_ui_background
+from verify import Send_Verification, check_verification
+from settings import delete_request
+
 import time
 import threading
-from kivy.core.window import Window
-from kivy.storage.jsonstore import JsonStore
 import weakref
+import json
 
 # ---------------------------------------------------------------------------------
  # Firebase Auth Service URL (global):
@@ -34,6 +42,10 @@ FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.r = None
+
     def start_load(self, email_input, password_input):
         # Make the loader visible:
         self.ids.loader.opacity = 1
@@ -44,44 +56,14 @@ class SignupScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Signup_request, 
+            target=self.signup, 
             args=(email_input, password_input), 
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Signup_request(self, email_input, password_input):
-        # Server Request:
-        url = f"{FIREBASE_URL}/signup"
-        payload = {
-            "email": email_input,
-            "password": password_input
-       }
-        r = requests.post(url, json=payload)
-        result = r.json() 
-
-        # Declares results from signup for notifications:
-        self.signup_r = r
-        self.signup_result = result
-        self.email_input = email_input
-        self.password_input = password_input
-
-        # If successful signup, login to get the tokens and save them for later:
-        if r.status_code == 200:
-            # Login after signup for token retrieval:
-            login_payload = {
-                "email": email_input,
-                "password": password_input
-            }
-            login_r = requests.post(f"{FIREBASE_URL}/login", json=login_payload)
-            login_res = login_r.json()
-
-            self.manager.id_token = login_res["data"]["idToken"]
-            self.manager.local_id = login_res["data"]["localId"]
-            self.manager.refresh_token = login_res["data"]["refreshToken"]
-
-            # Saves refresh token to file for autologin on app start:
-            save_refresh_token(self.manager.refresh_token)
+    def signup(self, email_input, password_input):
+        Signup_request(self, email_input, password_input)
 
     def stop_load(self, *args):
         # Stops thread once done:
@@ -100,13 +82,7 @@ class SignupScreen(Screen):
     
         # Client Validation:
         if email_input == "" or password_input == "":
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Please Type In All Fields",
-                status="Error",
-            ).open()
-            )
+            notification_error(subtitle="Please Type In All Fields").open()
             return
         
         # Error Notifications:  
@@ -114,44 +90,20 @@ class SignupScreen(Screen):
             error_code = result.get("detail", "")
 
             if error_code == "EMAIL_EXISTS":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="User Already Exists",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="User Already Exists").open()
                 return
             
             elif "WEAK_PASSWORD" in error_code:
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Password Is Too Weak",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="Please Choose A stronger Password").open()
                 return
             
             elif error_code == "INVALID_EMAIL":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Invalid Email Format",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="Invalid Email").open()
                 return
             
         # Success Notification:
         if r.status_code == 200:
-            self.notification = (
-                CNotificationInline(
-                title="Success",
-                subtitle="Successfully Signed Up",
-                status="Success",
-            ).open()
-        )
+            notification_success(subtitle="Successfully Signed Up").open()
             self.manager.current = "Setup"
 # ---------------------------------------------------------------------------------
 class LoginScreen(Screen):
@@ -165,30 +117,14 @@ class LoginScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Login_request, 
+            target=self.Login, 
             args=(email_input, password_input), 
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Login_request(self, email_input, password_input):  
-        # Server Request:
-        url = f"{FIREBASE_URL}/login"
-        payload = {
-            "email": email_input,
-            "password": password_input
-       }
-        r = requests.post(url, json=payload)
-        result = r.json()
-        data = result.get("data", {})
-        email_verified = data.get("emailVerified", False)
-
-        # Declares results from login for notifications:
-        self.login_r = r
-        self.login_result = result
-        self.email_verified = email_verified
-        self.email_input = email_input
-        self.password_input = password_input
+    def Login(self, email_input, password_input):  
+        Login_request(self, email_input, password_input)
 
     def stop_load(self, *args):
         # Stops thread once done:
@@ -202,19 +138,12 @@ class LoginScreen(Screen):
         # Declares results from login for notifications:
         r = self.login_r
         result = self.login_result
-        email_verified = self.email_verified
         email_input = self.email_input
         password_input = self.password_input
 
         # Client Validation:
         if email_input == "" or password_input == "":
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Please Type In All Fields",
-                status="Error",
-            ).open()
-            )
+            notification_error(subtitle="Please type in all fields")
             return
 
         # Error Notifications:  
@@ -222,52 +151,21 @@ class LoginScreen(Screen):
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Invalid Email Or Password",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="Invalid Email or Password")
                 return
             
             elif error_code == "INVALID_EMAIL":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Invalid Email Format",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="Invalid Email Format")
                 return
-            
-        if not email_verified:
-            self.notification = (
-                CNotificationInline(
-                    title="Error",
-                    subtitle="Please Go to Your Email And Verify Your Account Before Logging In.",
-                    status="Error",
-                ).open()
-            )
-            return
 
         # Success Notification:
         if r.status_code == 200:
             self.manager.refresh_token = result["data"]["refreshToken"]
             self.manager.id_token = result["data"]["idToken"]
 
-            self.notification = (
-                CNotificationInline(
-                title="Success",
-                subtitle="Successfully Logged In",
-                status="Success",
-            ).open()
-        ) 
-
             save_refresh_token(self.manager.refresh_token)
             # Go to the main app screen:
             self.manager.current = "App"
-
 # ---------------------------------------------------------------------------------
 class ForgotScreen(Screen):
     def start_load(self, email_input):
@@ -280,23 +178,14 @@ class ForgotScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Send_Forgot_Email, 
+            target=self.forgot, 
             args=(email_input,), 
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Send_Forgot_Email(self, email_input):   
-        # Server Request:
-        url = f"{FIREBASE_URL}/reset_password"
-        payload = {"email": email_input}
-        r = requests.post(url, json=payload)
-        result = r.json()
-
-        # Declares results from sending for notifications:
-        self.forgot_r = r
-        self.forgot_result = result
-        self.email_input = email_input
+    def forgot(self, email_input):   
+        Send_Forgot_Email(self, email_input)
             
     def stop_load(self, *args):
         # Stops thread once done:
@@ -314,13 +203,7 @@ class ForgotScreen(Screen):
 
         # Client Validation:
         if email_input == "":
-            self.notification = (
-                CNotificationInline(
-                title="Error",
-                subtitle="Please Type In All Fields",
-                status="Error",
-            ).open()
-            )
+            notification_error(subtitle="Please Type In All Fields").open()
             return
         
         # Error Notification:  
@@ -328,25 +211,12 @@ class ForgotScreen(Screen):
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_EMAIL":
-                self.notification = (
-                    CNotificationInline(
-                    title="Error",
-                    subtitle="Invalid Email Format",
-                    status="Error",
-                ).open()
-                )
+                notification_error(subtitle="User Doesn't Exist").open()
                 return
             
         # Success Notification:
         if r.status_code == 200:
-            self.notification = (
-                CNotificationToast(
-                title="Success",
-                subtitle="Successfully Sent Reset Email. If You Don't See It, Check Your Spam Folder. If You Still Don't See It, The Email May Not Be Registered.",
-                status="Success",
-                pos_hint={"center_x": 0.5, "y": 0.57},
-            ).open()
-        )
+            forgot_notification().open()
 # ---------------------------------------------------------------------------------
 class SetupScreen(Screen):
     def __init__(self, **kwargs):
@@ -360,6 +230,9 @@ class SetupScreen(Screen):
         self.current_lat = 0.0
         self.current_lon = 0.0
         self.city_found = False
+        self.add_other = False
+        self.add_2 = False
+        self.add_3 = False
 
     def Setup(self):
         # Stop another request going out if the suggestion was already pressed:
@@ -383,43 +256,13 @@ class SetupScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Request_City,
+            target=self.City,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Request_City(self): # Text is here for the text typing on textinput field
-        # Variable for Search Query of city:
-        search_query = self.ids.address_input.text.strip() 
-        # Reset the city_found variable to False for each new search:
-        self.city_found = False
-
-        # Request for JSON and raise exceptions on errors:
-
-        # Api url (google cloud run):
-        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
-
-        response = requests.get(url)
-        response.raise_for_status() 
-        data = response.json()
-        if data.get("results"):
-            # Get coordinate/city data:
-            result = data["results"][0]
-            location_data = result.get("geometry", {}).get("location", {})
-
-            formatted_address = data["results"][0].get("formatted_address")
-            self.ids.address_button.disabled = False
-            self.ids.address_button.text = formatted_address
-
-            # Most Google Place results have geometry -> location -> lat/lng
-            self.current_lat = location_data.get("lat")
-            self.current_lon = location_data.get("lng")
-            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
-            self.city_found = True
-
-        else:
-            self.ids.address_button.disabled = True
-            self.ids.address_button.text = "No results found."
+    def City(self):
+        Request_City(self)
 
     # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
@@ -447,22 +290,7 @@ class SetupScreen(Screen):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if self.city_found == False:
-            return True # Keep waiting
-        
-        # Sends the location to Firestore:
-        location_input = self.ids.address_input.text
-        id_token = self.manager.id_token
-        payload = {
-            "location": str(location_input), 
-            "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
-        }
-        headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
-        save_city(location_input, 1)
-        print(r.json())
+        save_location_request(self)
 
     def stop_load(self, *args):
         # Stops thread once done:
@@ -481,6 +309,9 @@ class SetupScreen(Screen):
         # Once thread done, stop the loader and show the result:
         Clock.unschedule(self.stop_load_firestore)
         self.ids.loader.opacity = 0
+
+        location_input = self.ids.address_input.text.strip()
+        save_city(location_input, 1)
 
         self.manager.current = "App"
 # ---------------------------------------------------------------------------------
@@ -516,63 +347,17 @@ class VerifyScreen(Screen):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.check_verification,
+            target=self.check,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load_check, 0.1)
 
-    def Send_Verification_Email(self):
-        url = f"{FIREBASE_URL}/resend_verification"
-        id_token = self.manager.id_token
+    def Send_verification_Email(self):
+        Send_Verification(self)
 
-        payload = {"id_token": id_token}
-    
-        r = requests.post(url, json=payload, timeout=10)
-        print(r.json())
-        result = r.json()
-        self.r = r
-        self.result = result
-        
-        # Check the response
-        if r.status_code == 200:
-            print("Email resent successfully!")
-            print(r.json())
-
-    def check_verification(self, *args):
-        token = load_refresh_token()
-
-        if token:
-            result = refresh_login(token)
-
-            if result:
-                self.manager.id_token = result["idToken"]
-                self.manager.refresh_token = result["refreshToken"]
-
-                # save new token
-                save_refresh_token(result["refreshToken"])
-
-                if result.get("emailVerified") is True:
-                    self.email_verified = True
-
-                else:
-                    self.email_verified = False
-
-            time.sleep(2.0)
-
-            result = refresh_login(token)
-
-            if result and result.get("emailVerified") is True:
-                self.email_verified = True
-                self.manager.id_token = result["idToken"]
-                self.manager.refresh_token = result["refreshToken"]
-                self.done = True
-
-            else:
-                self.email_verified = False
-                self.manager.id_token = result["idToken"]
-                self.manager.refresh_token = result["refreshToken"]
-                self.done = True
-                    
+    def check(self):
+        check_verification(self)
+     
     def stop_load_send(self, *args):
         if self.r is None:
             return True # Keep waiting
@@ -588,25 +373,10 @@ class VerifyScreen(Screen):
         print(error_code)
 
         if error_code == "TOO_MANY_ATTEMPTS_TRY_LATER":
-            print("Too many attempts. Please try again later.")
-            self.notification = (
-                CNotificationToast( 
-                title="Error",
-                subtitle="Email verification email should already be in your email inbox. If you don't see it, check your spam folder.",
-                status="Error",
-                pos_hint={"center_x": 0.5, "y": 0.57},
-                ).open()
-            )
+            notification_error(subtitle="Email should already be in your inbox. If you don't see it, try checking your spam").open()
 
         elif r.status_code == 200:
-            self.notification = (
-                CNotificationToast(
-                title="Success",
-                subtitle="Verification Email Sent Successfully. Please Check Your Email And Click The Link To Verify Your Account.",
-                status="Success",
-                pos_hint={"center_x": 0.5, "y": 0.57},
-                ).open()
-            )
+            notification_success(subtitle="Verification email successfully sent. If you dont see it try checking your spam. Click on the link to verify your email.").open()
             
     def stop_load_check(self, *args):  
         if self.email_verified is None:
@@ -623,25 +393,11 @@ class VerifyScreen(Screen):
             # Add a coming from verify so that the app screen will not malfunction:
             self.manager.coming_from_verify = True
             self.manager.current = "App"
-            self.notification = (
-                    CNotificationToast(
-                    title="Success",
-                    subtitle="Email Verified Successfully",
-                    status="Success",
-                    pos_hint={"center_x": 0.5, "y": 0.57},
-                    ).open()
-                )
+            notification_success(subtitle="Email verified successfully").open()
 
         # Error Notification:
         elif self.email_verified == False:
-            self.notification = (
-                    CNotificationToast(
-                    title="Error",
-                    subtitle="Email Not Verified Yet. Please Check Your Email And Spam Email And Click The Link To Verify",
-                    status="Error",
-                    pos_hint={"center_x": 0.5, "y": 0.57},
-                    ).open()
-                )
+            notification_error(subtitle="Email is not verified").open()
             
         self.email_verified = None
 # ---------------------------------------------------------------------------------
@@ -652,11 +408,10 @@ class AppScreen(Screen):
 
     def __init__(self, **kw):
         super().__init__(**kw)
+        # Add null values so kivy will be quiet:
         self.r = None
         self.result = None
         self.go_to_verify = False
-
-        # Add null values so kivy will be quiet:
         self.current_temp = None
         self.feels_like = None
         self.is_daytime = False
@@ -668,6 +423,8 @@ class AppScreen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
+        self.get_3 = False
+        self.get_2 = False
 
     def on_enter(self):
         store = JsonStore('session.json')
@@ -684,34 +441,8 @@ class AppScreen(Screen):
         Clock.schedule_interval(self.stop_load, 0.1)
 
     def login(self):
-        # If its coming from verify screen, skip going back to verify screen & prevent duplicate login:
-        if getattr(self.manager, 'coming_from_verify', False):
-            self.go_to_verify = False
-            # Reset the flag so it doesn't stay True forever
-            self.manager.coming_from_verify = False 
-            self.r = "done"
-            return # Exit early, we're good!
-        
-        token = load_refresh_token()
+        login_request_token(self)
 
-        if token:
-            result = refresh_login(token)
-
-            if result:
-                self.manager.id_token = result["idToken"]
-                self.manager.refresh_token = result["refreshToken"]
-
-                # save new token
-                save_refresh_token(result["refreshToken"])
-
-                if result.get("emailVerified") is True:
-                    self.go_to_verify = False
-
-                else:
-                    self.go_to_verify = True
-
-        self.r = "done"
-            
     def stop_load(self, *args):
         if self.r is None:
             return True # Keep waiting
@@ -744,67 +475,10 @@ class AppScreen(Screen):
         Clock.schedule_interval(self.stop_load_weather, 0.1)
 
     def get_user_dat(self):
-        # Get user dat:
-        id_token = self.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
-
-        response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
-
-        if response.status_code == 200:
-                user_data = response.json()
-                
-                # Grab the Firestore location data:
-                lat = user_data.get("lat")
-                lon = user_data.get("lon")
-                self.city = user_data.get("location")
-
-                self.get_weather(lat, lon)
-
-                self.r = "weather_done"
+        get_dat(self)
 
     def get_weather(self, lat, lon):
-        if lat is None or lon is None:
-            return True # Keep waiting
-
-        if self.toggle_state == False:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°F")
-                self.feels_like = (f"{data['feels_like']}°F")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°F")
-                self.max_temp = (f"{data['max_temp']}°F")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Inches")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°F")
-
-        elif self.toggle_state == True:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°C")
-                self.feels_like = (f"{data['feels_like']}°C")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°C")
-                self.max_temp = (f"{data['max_temp']}°C")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Centimeters")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°C")  
+        get_user_weather(self, lat, lon)
 
     def stop_load_weather(self, *args):
         # If weather has not been fetched yet:
@@ -814,51 +488,16 @@ class AppScreen(Screen):
         # Stops thread once done:
         Clock.unschedule(self.stop_load_weather)
         self.ids.loader.opacity = 0
-        self.update_ui_labels()
+        self.update_labels()
         self.update_background()
+        app = App.get_running_app()
+        app.update_side_panel_text()
 
-    def update_ui_labels(self):
-        # Sets the labels with the fetched weather data:
-        self.ids.city_label.text = f"{self.city}"
-        self.ids.current_temp_label.text = self.current_temp
-        self.ids.condition_label.text = self.weather_condition
-    
-        # Combined High/Low/feels like label:
-        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
-        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
-        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
-        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
-        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+    def update_labels(self):
+        update_ui_labels(self)
 
     def update_background(self):
-        # Update the background/icon based on weather condition:
-        if "sun" in self.weather_condition.lower():
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif self.is_daytime == "False":
-            self.bg_image = "images/night.jpg"
-            self.icon_path = "images/moon.png"
-
-            self.app = App.get_running_app()
-            self.app.theme = "Gray100" 
-            self.ids.shell_header.bg_color = self.app.transparent
-
-        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif "cloud" in self.weather_condition.lower():
-            self.bg_image = "images/cloud_bg.jpg"
-            self.icon_path = "images/cloud_icon.png"
-
-        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
-            self.bg_image = "images/rain_bg.png"
-            self.icon_path = "images/rain_icon.png"
-
-        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
-            self.bg_image = "images/snow_bg.jpg"
-            self.icon_path = "images/snow_icon.png"
+        update_ui_background(self)
 # ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
@@ -874,42 +513,26 @@ class SettingsScreen(Screen):
     def logout(self):
         clear_refresh_token()
         self.manager.current = "Signup"
-        CNotificationInline(
-            title="Success",
-            subtitle="Successfully Logged Out",
-            status="Success",
-        ).open()
+        notification_success(subtitle="Successfully Logged out").open()
 
     def start_delete_account(self):
-        # 1. Show the loader (make sure you have an id: loader in your KV for this screen)
         self.ids.loader.opacity = 1
         
-        # 2. Reset result variables
+        # Reset result variables
         self.delete_r = None
         self.delete_result = None
 
-        # 3. Start the background thread
+        # Start the background thread
         threading.Thread(
-            target=self.delete_request, 
+            target=self.delete_user_dat, 
             daemon=True
         ).start()
         
-        # 4. Schedule the waiter
+        # Schedule the waiter
         Clock.schedule_interval(self.stop_delete_load, 0.1)
 
-    def delete_request(self):
-        url = f"{FIREBASE_URL}/delete_account"
-        id_token = self.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
-        
-        try:
-            # We use POST because that's how we set up the FastAPI route
-            r = requests.post(url, headers=headers, timeout=10)
-            self.delete_r = r
-            self.delete_result = r.json()
-        except Exception as e:
-            self.delete_r = "error"
-            self.delete_result = {"detail": str(e)}
+    def delete_user_dat(self):
+        delete_request()
 
     def stop_delete_load(self, *args):
         if self.delete_result is None:
@@ -921,25 +544,17 @@ class SettingsScreen(Screen):
         r = self.delete_r
         
         if r == "error" or r.status_code != 200:
-            CNotificationInline(
-                title="Error",
-                subtitle="Could not delete account. Try again later.",
-                status="Error",
-            ).open()
+            notification_error(subtitle="Error deleting account. Please try again later.").open()
+
         else:
             clear_refresh_token()
             self.manager.id_token = None
             self.manager.refresh_token = None
             
-            # Send them back to the very beginning
+            # Send them back to signup
             self.manager.current = "Signup"
             
-            CNotificationToast(
-                title="Account Deleted",
-                subtitle="Your account and data have been permanently removed.",
-                status="Success",
-                pos_hint={"center_x": 0.5, "y": 0.57},
-            ).open()
+            notification_success(subtitle="Successfully Deleted Account").open()
 
     def toggle_pressed(self):
         toggle_state = self.ids.unit_toggle.active
@@ -1027,6 +642,8 @@ class City2Screen(Screen):
             self.start_load_weather()
 
     def start_load_weather(self):
+        self.get_2 = True
+        self.get_3 = False
         # Make the loader visible:
         self.ids.loader.opacity = 1
 
@@ -1040,67 +657,10 @@ class City2Screen(Screen):
         Clock.schedule_interval(self.stop_load_weather, 0.1)
 
     def get_user_dat(self):
-        # Get user dat:
-        id_token = self.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
-
-        response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
-
-        if response.status_code == 200:
-                user_data = response.json()
-                
-                # Grab the Firestore location data:
-                lat = user_data.get("lat")
-                lon = user_data.get("lon")
-                self.city = user_data.get("location")
-
-                self.get_weather(lat, lon)
-
-                self.r = "weather_done"
+        get_dat(self)
 
     def get_weather(self, lat, lon):
-        if lat is None or lon is None:
-            return True # Keep waiting
-
-        if self.toggle_state == False:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°F")
-                self.feels_like = (f"{data['feels_like']}°F")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°F")
-                self.max_temp = (f"{data['max_temp']}°F")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Inches")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°F")
-
-        elif self.toggle_state == True:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°C")
-                self.feels_like = (f"{data['feels_like']}°C")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°C")
-                self.max_temp = (f"{data['max_temp']}°C")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Centimeters")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°C")  
+        get_user_weather(self, lat, lon)  
 
     def stop_load_weather(self, *args):
         # If weather has not been fetched yet:
@@ -1110,51 +670,16 @@ class City2Screen(Screen):
         # Stops thread once done:
         Clock.unschedule(self.stop_load_weather)
         self.ids.loader.opacity = 0
-        self.update_ui_labels()
+        self.update_labels()
         self.update_background()
+        app = App.get_running_app()
+        app.update_side_panel_text()
 
-    def update_ui_labels(self):
-        # Sets the labels with the fetched weather data:
-        self.ids.citytwo_label.text = f"{self.city}"
-        self.ids.current_temp_label.text = self.current_temp
-        self.ids.condition_label.text = self.weather_condition
-    
-        # Combined High/Low/feels like label:
-        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
-        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
-        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
-        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
-        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+    def update_labels(self):
+        update_ui_labels(self)
 
     def update_background(self):
-        # Update the background/icon based on weather condition:
-        if "sun" in self.weather_condition.lower():
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif self.is_daytime == "False":
-            self.bg_image = "images/night.jpg"
-            self.icon_path = "images/moon.png"
-
-            self.app = App.get_running_app()
-            self.app.theme = "Gray100" 
-            self.ids.shell_header.bg_color = self.app.transparent
-
-        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif "cloud" in self.weather_condition.lower():
-            self.bg_image = "images/cloud_bg.jpg"
-            self.icon_path = "images/cloud_icon.png"
-
-        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
-            self.bg_image = "images/rain_bg.png"
-            self.icon_path = "images/rain_icon.png"
-
-        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
-            self.bg_image = "images/snow_bg.jpg"
-            self.icon_path = "images/snow_icon.png"
+        update_ui_background(self)
 # ---------------------------------------------------------------------------------
 class AddCity2Modal(CModal):
     def __init__(self, city, **kwargs):
@@ -1170,6 +695,8 @@ class AddCity2Modal(CModal):
         self.current_lon = 0.0
         self.city_found = False
         self.dismissed = False
+        self.add_2 = False
+        self.add_3 = False
 
     def Setup(self):
         # Stop another request going out if the suggestion was already pressed:
@@ -1193,43 +720,13 @@ class AddCity2Modal(CModal):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Request_City,
+            target=self.City,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Request_City(self): # Text is here for the text typing on textinput field
-        # Variable for Search Query of city:
-        search_query = self.ids.address_input.text.strip() 
-        # Reset the city_found variable to False for each new search:
-        self.city_found = False
-
-        # Request for JSON and raise exceptions on errors:
-
-        # Api url (google cloud run):
-        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
-
-        response = requests.get(url)
-        response.raise_for_status() 
-        data = response.json()
-        if data.get("results"):
-            # Get coordinate/city data:
-            result = data["results"][0]
-            location_data = result.get("geometry", {}).get("location", {})
-
-            formatted_address = data["results"][0].get("formatted_address")
-            self.ids.address_button.disabled = False
-            self.ids.address_button.text = formatted_address
-
-            # Most Google Place results have geometry -> location -> lat/lng
-            self.current_lat = location_data.get("lat")
-            self.current_lon = location_data.get("lng")
-            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
-            self.city_found = True
-
-        else:
-            self.ids.address_button.disabled = True
-            self.ids.address_button.text = "No results found."
+    def City(self): # Text is here for the text typing on textinput field
+        Request_City(self)
 
     # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
@@ -1257,21 +754,10 @@ class AddCity2Modal(CModal):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if self.city_found == False:
-            return True # Keep waiting
-        
-        # Sends the location to Firestore:
+        self.add_other = True
+        self.add_2 = True
+        save_location_request(self)
         location_input = str(self.ids.address_input.text.strip())
-        id_token = self.city.manager.id_token
-        payload = {
-            "location": str(location_input), 
-            "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
-        }
-        headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
-        print(r.json())
         # Mark city2 as active in local session store
         save_city(location_input, 2)
         # Schedule UI work on main thread to dismiss modal and refresh
@@ -1365,6 +851,8 @@ class City3Screen(Screen):
             self.start_load_weather()
 
     def start_load_weather(self):
+        self.get_2 = False
+        self.get_3 = True
         # Make the loader visible:
         self.ids.loader.opacity = 1
 
@@ -1378,67 +866,10 @@ class City3Screen(Screen):
         Clock.schedule_interval(self.stop_load_weather, 0.1)
 
     def get_user_dat(self):
-        # Get user dat:
-        id_token = self.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
-
-        response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
-
-        if response.status_code == 200:
-                user_data = response.json()
-                
-                # Grab the Firestore location data:
-                lat = user_data.get("lat")
-                lon = user_data.get("lon")
-                self.city = user_data.get("location")
-
-                self.get_weather(lat, lon)
-
-                self.r = "weather_done"
+        get_dat(self)
 
     def get_weather(self, lat, lon):
-        if lat is None or lon is None:
-            return True # Keep waiting
-
-        if self.toggle_state == False:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=imperial"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°F")
-                self.feels_like = (f"{data['feels_like']}°F")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°F")
-                self.max_temp = (f"{data['max_temp']}°F")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Inches")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°F")
-
-        elif self.toggle_state == True:
-            url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
-            response = requests.get(url)
-
-            if response.status_code == 200:
-                data = response.json()
-
-                # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°C")
-                self.feels_like = (f"{data['feels_like']}°C")
-                self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°C")
-                self.max_temp = (f"{data['max_temp']}°C")
-                self.precip_percent = (f"{data['precip_percent']}%")
-                self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Centimeters")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
-                self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°C")  
+        get_user_weather(self, lat, lon) 
 
     def stop_load_weather(self, *args):
         # If weather has not been fetched yet:
@@ -1448,51 +879,16 @@ class City3Screen(Screen):
         # Stops thread once done:
         Clock.unschedule(self.stop_load_weather)
         self.ids.loader.opacity = 0
-        self.update_ui_labels()
+        self.update_labels()
         self.update_background()
+        app = App.get_running_app()
+        app.update_side_panel_text()
 
-    def update_ui_labels(self):
-        # Sets the labels with the fetched weather data:
-        self.ids.citythree_label.text = f"{self.city}"
-        self.ids.current_temp_label.text = self.current_temp
-        self.ids.condition_label.text = self.weather_condition
-    
-        # Combined High/Low/feels like label:
-        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
-        self.ids.precip_label.text = f"Precip: {self.precip_percent} ({self.precip_type})"
-        self.ids.snow_label.text = f"Snow: {self.snow_fall}"
-        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
-        self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
+    def update_labels(self):
+        update_ui_labels(self)
 
     def update_background(self):
-        # Update the background/icon based on weather condition:
-        if "sun" in self.weather_condition.lower():
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif self.is_daytime == "False":
-            self.bg_image = "images/night.jpg"
-            self.icon_path = "images/moon.png"
-
-            self.app = App.get_running_app()
-            self.app.theme = "Gray100" 
-            self.ids.shell_header.bg_color = self.app.transparent
-
-        elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
-            self.bg_image = "images/sun_bg.jpg"
-            self.icon_path = "images/sun_icon.png"
-
-        elif "cloud" in self.weather_condition.lower():
-            self.bg_image = "images/cloud_bg.jpg"
-            self.icon_path = "images/cloud_icon.png"
-
-        elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
-            self.bg_image = "images/rain_bg.png"
-            self.icon_path = "images/rain_icon.png"
-
-        elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
-            self.bg_image = "images/snow_bg.jpg"
-            self.icon_path = "images/snow_icon.png"
+        update_ui_background(self)
 # ---------------------------------------------------------------------------------
 class AddCity3Modal(CModal):
     def __init__(self, city, **kwargs):
@@ -1508,6 +904,8 @@ class AddCity3Modal(CModal):
         self.current_lon = 0.0
         self.city_found = False
         self.dismissed = False
+        self.add_2 = False
+        self.add_3 = False
 
     def Setup(self):
         # Stop another request going out if the suggestion was already pressed:
@@ -1531,43 +929,13 @@ class AddCity3Modal(CModal):
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
-            target=self.Request_City,
+            target=self.City,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load, 0.1)
 
-    def Request_City(self): # Text is here for the text typing on textinput field
-        # Variable for Search Query of city:
-        search_query = self.ids.address_input.text.strip() 
-        # Reset the city_found variable to False for each new search:
-        self.city_found = False
-
-        # Request for JSON and raise exceptions on errors:
-
-        # Api url (google cloud run):
-        url = f"https://maps-backend-318359636878.us-central1.run.app/places?query={search_query}"
-
-        response = requests.get(url)
-        response.raise_for_status() 
-        data = response.json()
-        if data.get("results"):
-            # Get coordinate/city data:
-            result = data["results"][0]
-            location_data = result.get("geometry", {}).get("location", {})
-
-            formatted_address = data["results"][0].get("formatted_address")
-            self.ids.address_button.disabled = False
-            self.ids.address_button.text = formatted_address
-
-            # Most Google Place results have geometry -> location -> lat/lng
-            self.current_lat = location_data.get("lat")
-            self.current_lon = location_data.get("lng")
-            print(f"Latitude: {self.current_lat}, Longitude: {self.current_lon}")
-            self.city_found = True
-
-        else:
-            self.ids.address_button.disabled = True
-            self.ids.address_button.text = "No results found."
+    def City(self): # Text is here for the text typing on textinput field
+        Request_City(self)
 
     # Fills in to textinput field when address button is pressed:
     def on_address_button_press(self, text):
@@ -1595,21 +963,10 @@ class AddCity3Modal(CModal):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if self.city_found == False:
-            return True # Keep waiting
-        
-        # Sends the location to Firestore:
+        self.add_other = True
+        self.add_3 = True
+        save_location_request(self)
         location_input = str(self.ids.address_input.text.strip())
-        id_token = self.city.manager.id_token
-        payload = {
-            "location": str(location_input), 
-            "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
-        }
-        headers = {"Authorization": f"Bearer {id_token}"}
-        r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
-        print(r.json())
         # Mark city3 as active in local session store
         save_city(location_input, 3)
         # Schedule UI work on main thread to dismiss modal and refresh
@@ -1677,8 +1034,32 @@ class MainApp(CarbonApp):
         self.sm.add_widget(City3Screen(name='City3'))
         return self.sm
 
-    def on_start(self):
+    def update_side_panel_text(self, *args):
+        with open('session.json', 'r') as f:
+            data = json.load(f)
 
+        app = App.get_running_app()
+
+        screen = app.root.get_screen('App')
+        screen2 = app.root.get_screen('City2')
+        screen3 = app.root.get_screen('City3')
+
+        self.city1 = data.get("city1", {}).get("name", "City 1")
+        for s in [screen, screen2, screen3]:
+            s.ids.city1_panel_item.text = ""
+            s.ids.city1_panel_item.text = self.city1
+
+        self.city2 = data.get("city2", {}).get("name", "City 2")
+        for s in [screen, screen2, screen3]:
+            s.ids.city2_panel_item.text = ""
+            s.ids.city2_panel_item.text = self.city2
+
+        self.city3 = data.get("city3", {}).get("name", "City 3")
+        for s in [screen, screen2, screen3]:
+            s.ids.city3_panel_item.text = ""
+            s.ids.city3_panel_item.text = self.city3
+
+    def on_start(self):
         token = load_refresh_token()
 
         if token:
@@ -1710,7 +1091,6 @@ class MainApp(CarbonApp):
         Window.clearcolor = self.background
         icon_style = "Dark" if self.theme in ["White", "Gray10"] else "Light"
         update_system_ui(self.background, self.background, icon_style=icon_style, pad_nav=True)
-
 
 if __name__ == "__main__":
     MainApp().run()
