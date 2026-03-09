@@ -604,9 +604,6 @@ class City2Screen(Screen):
     city2_panel_item = StringProperty("")
     city3_panel_item = StringProperty("")
 
-    def on_pre_enter(self, *args):
-        get_city_name(self)
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -687,6 +684,7 @@ class City2Screen(Screen):
 
     def update_labels(self):
         update_ui_labels(self)
+        get_city_name(self)
 
     def update_background(self):
         update_ui_background(self)
@@ -818,9 +816,6 @@ class City3Screen(Screen):
     city1_panel_item = StringProperty("")
     city2_panel_item = StringProperty("")
     city3_panel_item = StringProperty("")
-
-    def on_pre_enter(self, *args):
-        get_city_name(self)
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -842,9 +837,6 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
-        city1_panel_item = StringProperty("")
-        city2_panel_item = StringProperty("")
-        city3_panel_item = StringProperty("")
 
     def city_3_exist(self, filename, search_word):
         with open(filename, 'r') as file:
@@ -905,6 +897,7 @@ class City3Screen(Screen):
 
     def update_labels(self):
         update_ui_labels(self)
+        get_city_name(self)
 
     def update_background(self):
         update_ui_background(self)

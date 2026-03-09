@@ -127,9 +127,10 @@ def get_city_name(screen_instance):
             screen_instance.city1_panel_item = data.get("city1", {}).get("name", "City 1")
         
             try:
-                screen_instance.city2_panel_item = data.get("city2", {}).get("name", "City 2")
-                screen_instance.city3_panel_item = data.get("city3", {}).get("name", "City 3")
+                screen_instance.city2_panel_item = data.get("city2", {}).get("name", "City 2").replace("\n", " ")
+                screen_instance.city3_panel_item = data.get("city3", {}).get("name", "City 3").replace("\n", " ")
 
             except (FileNotFoundError, json.JSONDecodeError):
                  screen_instance.city2_panel_item = "City2"
                  screen_instance.city3_panel_item = "City3"
+
