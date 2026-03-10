@@ -1,3 +1,6 @@
+import os, sys
+sys.path.insert(0, os.path.dirname(__file__))
+
 # Imports:
 from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
