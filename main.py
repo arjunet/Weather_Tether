@@ -6,11 +6,8 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
-from kivy.properties import DictProperty
-from kivy.app import App
 from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
-from carbonkivy.utils import _Dict, update_system_ui
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -20,29 +17,22 @@ Window.on_restore(Clock.schedule_once(set_softinput, 0.1))
 
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
-from notification import notification_error, notification_success, forgot_notification
 from carbonkivy.uix.modal import CModal
+from carbonkivy.utils import _Dict, update_system_ui
 
-from token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, save_toggle_state, save_city, login_request_token
-from signup import Signup_request
-from login import Login_request
-from forgot import Send_Forgot_Email
-from setup import Request_City, save_location_request
-from app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name
-from verify import Send_Verification, check_verification
-from settings import delete_request
+from helpers.notification import notification_error, notification_success, forgot_notification
+from helpers.token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, login_request_token
+from helpers.signup import Signup_request
+from helpers.login import Login_request
+from helpers.forgot import Send_Forgot_Email
+from helpers.setup import Request_City, save_location_request
+from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name, save_city
+from helpers.verify import Send_Verification, check_verification
+from helpers.settings import delete_request, save_toggle_state
 
 import time
 import threading
 import weakref
-import json
-
-# ---------------------------------------------------------------------------------
- # Firebase Auth Service URL (global):
-FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
-
-# Weather API URL (global):
-WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):

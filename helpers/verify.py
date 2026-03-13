@@ -1,6 +1,6 @@
 import requests
 import time
-from token_management import load_refresh_token, save_refresh_token, refresh_login
+from helpers.token_management import load_refresh_token, save_refresh_token, refresh_login
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 

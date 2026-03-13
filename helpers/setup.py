@@ -1,5 +1,4 @@
 import requests
-from token_management import save_city
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
