@@ -296,7 +296,7 @@
 # ---------------------------------------------------------------------------------
 <AppScreen>:
 
-    CRelativeLayout:
+    UIShell:
 
         AsyncImage:
             source: root.bg_image
@@ -398,6 +398,31 @@
             role: "Large"
             opacity: 0
             id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
 

@@ -430,10 +430,7 @@ class AppScreen(Screen):
         self.get_3 = False
         self.get_2 = False
 
-        self.sidepanel = SidePanel()
-        SidePanel.manager = self.manager
-
-        self.add_widget(self.sidepanel)
+        self.sidepanel = self.ids.SidePanel
 
     def on_enter(self):
         store = JsonStore('session.json')
