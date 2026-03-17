@@ -8,6 +8,7 @@ from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
+from kivy.lang import Builder
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -29,6 +30,10 @@ from helpers.setup import Request_City, save_location_request
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name, save_city
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state
+
+
+Builder.load_file("helpers/sidepanel.kv")
+from helpers.sidepanel import SidePanel
 
 import time
 import threading
@@ -425,12 +430,21 @@ class AppScreen(Screen):
         self.get_3 = False
         self.get_2 = False
 
+        self.sidepanel = SidePanel()
+        SidePanel.manager = self.manager
+
+        self.add_widget(self.sidepanel)
+
     def on_enter(self):
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
         # Make the loader visible:
         self.ids.loader.opacity = 1
+
+        self.sidepanel.city1_panel_item = self.city1_panel_item
+        self.sidepanel.city2_panel_item = self.city2_panel_item
+        self.sidepanel.city3_panel_item = self.city3_panel_item
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -618,6 +632,9 @@ class City2Screen(Screen):
         self.weather_condition = None
         self.wind_chill = None
 
+        self.sidepanel = SidePanel()
+        self.sidepanel.manager = self.manager
+
     def city_exist(self, filename, search_word):
         with open(filename, 'r') as file:
             content = file.read()
@@ -641,6 +658,15 @@ class City2Screen(Screen):
             self.open_add_modal()
 
         else:
+            sidepanel = SidePanel()
+            sidepanel.manager = self.manager
+
+            sidepanel.city1_panel_item = self.city1_panel_item
+            sidepanel.city2_panel_item = self.city2_panel_item
+            sidepanel.city3_panel_item = self.city3_panel_item
+
+            self.add_widget(sidepanel)
+
             self.start_load_weather()
 
     def start_load_weather(self):
@@ -854,6 +880,15 @@ class City3Screen(Screen):
             self.open_add_modal()
 
         else:
+            sidepanel = SidePanel()
+            sidepanel.manager = self.manager
+
+            sidepanel.city1_panel_item = self.city1_panel_item
+            sidepanel.city2_panel_item = self.city2_panel_item
+            sidepanel.city3_panel_item = self.city3_panel_item
+
+            self.add_widget(sidepanel)
+
             self.start_load_weather()
 
     def start_load_weather(self):

@@ -2,6 +2,7 @@ import requests
 from carbonkivy.app import App
 import json
 from kivy.storage.jsonstore import JsonStore
+from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
@@ -100,8 +101,11 @@ def update_ui_background(screen_instance):
         screen_instance.icon_path = "images/moon.png"
 
         screen_instance.app = App.get_running_app()
-        screen_instance.app.theme = "Gray100" 
-        screen_instance.ids.shell_header.bg_color = screen_instance.app.transparent
+        screen_instance.app.theme = "Gray100"
+
+        screen_instance.sidepanel = SidePanel()
+
+        screen_instance.sidepanel.ids.shell_header.bg_color = screen_instance.app.transparent
 
     elif "clear" in screen_instance.weather_condition.lower() and screen_instance.is_daytime != "False":
         screen_instance.bg_image = "images/sun_bg.jpg"
