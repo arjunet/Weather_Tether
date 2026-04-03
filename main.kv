@@ -1,0 +1,1030 @@
+<SignupScreen>:
+
+    CRelativeLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        # Signup Label:
+        CLabel:
+            text: "Signup For Weather Tether"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+                id: email_input
+
+            CTextInputHelperText:
+                text: "Enter An Email That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
+
+        # Password Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Password"
+                password: True
+                id: password_input
+
+            CTextInputHelperText:
+                text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
+                color: "#000000"
+
+        # Login Button (users already have an account):
+        CButtonSecondary:
+            text: "Already Have An Account? Login Here"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--close--filled"
+            on_press: 
+                root.manager.current = 'Login'
+                root.manager.transition.direction = 'left'
+
+        # Forgot Password Button:
+        CButtonSecondary:
+            text: "Forgot Your Password?"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "help--filled"
+            on_press:
+                root.manager.current = 'Forgot'
+                root.manager.transition.direction = 'left'
+
+        # Signup Button:
+        CButtonPrimary:
+            text: "Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "login"
+            on_press:
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+# ---------------------------------------------------------------------------------
+
+<LoginScreen>:
+
+    CRelativeLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        # Login Label:
+        CLabel:
+            text: "Login To Weather Tether"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+                id: email_input
+
+            CTextInputHelperText:
+                text: "Enter Your Email"
+                color: "#000000"
+
+        # Password Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Password"
+                password: True
+                id: password_input
+
+            CTextInputHelperText:
+                text: "Enter Your Password"
+                color: "#000000"
+
+        # Back To Signup Button:
+        CButtonSecondary:
+            text: "Back To Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Signup'
+                root.manager.transition.direction = 'right'
+
+        # Forgot Password Button:
+        CButtonSecondary:
+            text: "Forgot Your Password?"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "help--filled"
+            on_press:
+                root.manager.current = 'Forgot'
+                root.manager.transition.direction = 'left'
+
+        # Login Button:
+        CButtonPrimary:
+            text: "Login"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "login"
+            on_press:
+                root.start_load(root.ids.email_input.text, root.ids.password_input.text)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+# ---------------------------------------------------------------------------------
+
+<ForgotScreen>:
+
+    CRelativeLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        # Forgot Password Label:
+        CLabel:
+            text: "Forgot Your Password?"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Email Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "Email"
+                id: email_input
+
+            CTextInputHelperText:
+                text: "Enter Your Email And We'll Send You A Code"
+                color: "#000000"
+                
+
+        # Back To Signup Label:
+        CButtonSecondary:
+            text: "Back To Signup"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Signup'
+                root.manager.transition.direction = 'right'
+
+        # Back To Login Button:
+        CButtonSecondary:
+            text: "Back To Login"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            icon: "right-panel--open--filled"
+            on_press: 
+                root.manager.current = 'Login'
+                root.manager.transition.direction = 'right'
+
+        # Send Email Button:
+        CButtonPrimary:
+            text: "Send Email"
+            role: "Large Productive"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            icon: "send--alt"
+            on_press:
+                root.start_load(root.ids.email_input.text.strip())
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+# ---------------------------------------------------------------------------------
+
+<SetupScreen>:
+
+    CRelativeLayout:
+    
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        # Setup Label:
+        CLabel:
+            text: "Setup"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        # Address Text Input:
+        CTextInputLayout:
+            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            size_hint_x: None
+            width: dp(300)
+
+            CTextInput:
+                hint_text: "City or Zip Code"
+                id: address_input
+                on_text: 
+                    root.Setup()
+                    root.suggestion_was_pressed = False
+
+            CTextInputHelperText:
+                text: "Enter Your City or Zip Code (This will be stored on our servers)"
+                color: "#000000"
+
+        # Search Result Button:
+        CButtonPrimary:
+            text: "Start typing"
+            id: address_button
+            role: "Large Productive"
+            size_hint_x: 1          
+            size_hint_y: None
+            height: dp(180)
+            pos_hint: {'y': 0}  
+            text_size: self.width - dp(20), None
+            disabled: True
+            icon: "location--filled"
+            on_press:
+                root.on_address_button_press(self.text.strip())
+
+        # Continue Button:
+        CButtonSecondary:
+            icon: "arrow--right"
+            text: "Finish Setup"
+            spacing: 0
+            pos_hint: {'center_y': 0.9, 'center_x': 0.9}
+            on_press:
+                root.countinue_pressed()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+# ---------------------------------------------------------------------------------
+<AppScreen>:
+
+    CRelativeLayout:
+
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
+
+        CLabel:
+            id: city_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+            font_size: sp(20)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(100)
+            center_y: weather_icon.center_y - dp(8.5)
+            font_size: sp(20)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(10)
+
+        CLabel:
+            id: min_max_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(10)
+
+        CLabel:
+            id: wind_chill_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(120)
+            font_size: sp(10)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
+# ---------------------------------------------------------------------------------
+<VerifyScreen>:
+
+    FloatLayout:
+
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        CLabel:
+            text: "Please Verify Your Email Address Before Continuing"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CLabel:
+            text: "The Email Should Already Be In Your Inbox, But If You Can't Find It, Please Check Your Spam Folder, Or Try Resending The Verification Email"
+            style: "body_01"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            font_size: sp(16)
+
+        CButtonPrimary:
+            text: "Resend Verification Email"
+            role: "Large Productive"
+            icon: "send--alt"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            on_press:
+                root.start_load_send()
+
+        CButtonSecondary:
+            text: "Continue To App"
+            role: "Large Productive"
+            icon: "right-panel--open--filled"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.start_load_check()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+# ---------------------------------------------------------------------------------
+
+<SettingsScreen>:
+
+    CRelativeLayout:
+
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        # Settings Label:
+        CLabel:
+            text: "Settings"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CButtonDanger:
+            text: "Logout"
+            role: "Large Productive"
+            icon: "logout"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.open_logout_modal()
+
+        CButtonDanger:
+            text: "Delete Account"
+            role: "Large Productive"
+            icon: "trash-can"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            on_press:
+                root.open_delete_modal()
+
+        CButtonSecondary:
+            role: "Large Productive"
+            icon: "right-panel--open--filled"
+            pos_hint: {'center_x': 0.1, 'center_y': 0.9}
+            on_press:
+                root.manager.current = 'App'
+
+        CToggle:
+            id: unit_toggle
+            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+            on_active:
+                root.toggle_pressed()
+
+        CLabel:
+            text: "Imperial Units"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            size_hint: 1, 1
+            center_x: unit_toggle.center_x - dp(80)
+            center_y: unit_toggle.center_y
+            font_size: sp(16)
+
+        CLabel:
+            text: "Metric Units"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            size_hint: 1, 1
+            center_x: unit_toggle.center_x + dp(71)
+            center_y: unit_toggle.center_y
+            font_size: sp(16)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+# ---------------------------------------------------------------------------------
+
+<LogoutModal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Logout"
+            CModalHeaderTitle:
+                text: "Are you sure you want to logout?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Logging out will require you to login again with your email and password. Your saved location and unit preference will still be saved, but you will need to login again to access them."
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+
+                CButtonDanger:
+                    text: "Logout"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.logout_confirmed()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+
+# ---------------------------------------------------------------------------------
+
+<DeleteModal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Delete Account"
+            CModalHeaderTitle:
+                text: "Are you sure you want to delete your account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Deleting your account will permanently delete all of your data from our servers, including your saved location and unit preference. This action cannot be undone."
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+
+                CButtonDanger:
+                    text: "Delete"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.delete_confirmed()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+
+# ---------------------------------------------------------------------------------
+
+<City2Screen>:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
+
+        CLabel:
+            id: city_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+            font_size: sp(20)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(100)
+            center_y: weather_icon.center_y - dp(8.5)
+            font_size: sp(20)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(10)
+
+        CLabel:
+            id: min_max_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(10)
+
+        CLabel:
+            id: wind_chill_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(120)
+            font_size: sp(10)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
+
+# ----------------------------------------------------------------------------------
+
+<AddCity2Modal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Add City"
+            CModalHeaderTitle:
+                text: "Would You Like To Add A Second City To Your Account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Adding a second city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+            CBoxLayout:
+                adaptive: [False, True]
+                padding: [0, dp(64)]
+
+                CTextInputLayout:
+                    CTextInput:
+                        hint_text: "e.g. New York"
+                        id: address_input
+                        on_text: 
+                            root.Setup()
+                            root.suggestion_was_pressed = False
+                    CTextInputLabel:
+                        text: "City Name"
+
+                    CLoadingIndicator:
+                        id: loader
+                        role: "Small"
+                        opacity: 0
+
+            CButtonPrimary:
+                text: "Start typing"
+                id: address_button
+                role: "Large Productive"
+                size_hint_x: 1          
+                size_hint_y: None
+                height: dp(100) 
+                length: 1
+                text_size: self.width - dp(20), None
+                disabled: True
+                icon: "location--filled"
+                on_press:
+                    root.on_address_button_press(self.text.strip())
+
+
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+                        app.root.current = 'App'
+
+                CButtonPrimary:
+                    text: "Add"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.save_location()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+            app.root.current = 'App'
+
+# ---------------------------------------------------------------------------------
+
+
+<City3Screen>:
+    CRelativeLayout:
+
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
+
+        CLabel:
+            id: city_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+            font_size: sp(20)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(100)
+            center_y: weather_icon.center_y - dp(8.5)
+            font_size: sp(20)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(10)
+
+        CLabel:
+            id: min_max_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(10)
+
+        CLabel:
+            id: wind_chill_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(120)
+            font_size: sp(10)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
+
+# ----------------------------------------------------------------------------------
+
+<AddCity3Modal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Add City"
+            CModalHeaderTitle:
+                text: "Would You Like To Add A Third City To Your Account?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+            CBoxLayout:
+                adaptive: [False, True]
+                padding: [0, dp(64)]
+
+                CTextInputLayout:
+                    CTextInput:
+                        hint_text: "e.g. New York"
+                        id: address_input
+                        on_text: 
+                            root.Setup()
+                            root.suggestion_was_pressed = False
+                    CTextInputLabel:
+                        text: "City Name"
+
+                    CLoadingIndicator:
+                        id: loader
+                        role: "Small"
+                        opacity: 0
+
+            CButtonPrimary:
+                text: "Start typing"
+                id: address_button
+                role: "Large Productive"
+                size_hint_x: 1          
+                size_hint_y: None
+                height: dp(100) 
+                length: 1
+                text_size: self.width - dp(20), None
+                disabled: True
+                icon: "location--filled"
+                on_press:
+                    root.on_address_button_press(self.text.strip())
+
+
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+                        app.root.current = 'App'
+
+                CButtonPrimary:
+                    text: "Add"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.save_location()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+            app.root.current = 'App'

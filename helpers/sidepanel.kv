@@ -1,0 +1,33 @@
+<SidePanel>:
+
+    ScrollView:
+        do_scroll_x: False
+
+        UIShellPanelLayout:
+
+            UIShellPanelSelectionLayout:
+
+                UIShellPanelSelectionItem:
+                    text: root.city1_panel_item
+                    right_icon: "location"
+                    on_press:
+                        app.root.current = 'App'
+
+                UIShellPanelSelectionItem:
+                    text: root.city2_panel_item
+                    right_icon: "location"
+                    on_press:
+                        app.root.current = 'City2'
+                        
+                UIShellPanelSelectionItem:
+                    text: root.city3_panel_item
+                    right_icon: "location"
+                    on_press:
+                        app.root.current = 'City3'
+
+    UIShellButton:
+        text: "Settings"
+        icon: "settings"
+        pos_hint: {"x": 0.2, "y": 0.1}
+        on_press:
+            app.root.current = 'Settings'
