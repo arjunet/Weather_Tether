@@ -1,4 +1,4 @@
-from carbonkivy.uix.shell import UIShellLeftPanel
+from carbonkivy.uix.shell import UIShellLeftPanel, UIShellPanelSelectionItem
 from kivy.properties import StringProperty
 from kivy.animation import Animation
 
@@ -10,3 +10,14 @@ class SidePanel(UIShellLeftPanel):
     def __init__(self, **kwargs):
         self.animation = Animation()
         super(SidePanel, self).__init__(**kwargs)
+
+class CityPanelItem(UIShellPanelSelectionItem):
+    text = StringProperty("")
+    right_icon = StringProperty("")
+
+    
+
+    
+
+
+    

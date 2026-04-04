@@ -30,6 +30,7 @@ from helpers.setup import Request_City, save_location_request
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name, save_city
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state
+from helpers.sidepanel import CityPanelItem
 
 
 Builder.load_file("helpers/sidepanel.kv")
@@ -404,10 +405,6 @@ class AppScreen(Screen):
     bg_image = StringProperty("")
     icon_path = StringProperty("")
 
-    city1_panel_item = StringProperty("")
-    city2_panel_item = StringProperty("")
-    city3_panel_item = StringProperty("")
-
     def __init__(self, **kw):
         super().__init__(**kw)
         # Add null values so kivy will be quiet:
@@ -428,18 +425,12 @@ class AppScreen(Screen):
         self.get_3 = False
         self.get_2 = False
 
-        self.sidepanel = self.ids.SidePanel
-
     def on_enter(self):
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
         # Make the loader visible:
         self.ids.loader.opacity = 1
-
-        self.sidepanel.city1_panel_item = self.city1_panel_item
-        self.sidepanel.city2_panel_item = self.city2_panel_item
-        self.sidepanel.city3_panel_item = self.city3_panel_item
 
         # Start the thread so ui can load while waiting for the server response:
         threading.Thread(
@@ -501,13 +492,24 @@ class AppScreen(Screen):
 
     def update_labels(self):
         update_ui_labels(self)
-        get_city_name(self)
 
+        file = JsonStore("session.json")
         sidepanel = self.ids.SidePanel
+        widget_container = sidepanel.ids.widgets
 
-        self.sidepanel.city1_panel_item = self.city1_panel_item
-        self.sidepanel.city2_panel_item = self.city2_panel_item
-        self.sidepanel.city3_panel_item = self.city3_panel_item
+        # Remove any existing dynamic city widgets before adding fresh ones.
+        widget_container.clear_widgets()
+
+        def add_city_item(city_key, target_screen):
+            if file.exists(city_key):
+                city_name = file.get(city_key)["name"]
+                item = CityPanelItem(text=city_name, right_icon="location")
+                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
+                widget_container.add_widget(item)
+
+        add_city_item("city1", "App")
+        add_city_item("city2", "City2")
+        add_city_item("city3", "City3")
 
     def update_background(self):
         update_ui_background(self)
@@ -573,6 +575,15 @@ class SettingsScreen(Screen):
         toggle_state = self.ids.unit_toggle.active
         save_toggle_state(toggle_state)
 
+    def open_add_city_modal(self):
+        file = JsonStore("session.json")
+
+        if not file.exists("city2"):
+            self.manager.current = "City2"
+
+        elif not file.exists("city3"):
+            self.manager.current = "City3"
+
     def open_logout_modal(self) -> None:
         modal = LogoutModal(settings=self)
         self._modal_ref = weakref.ref(modal)
@@ -609,13 +620,6 @@ class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
 
-    city1_panel_item = StringProperty("")
-    city2_panel_item = StringProperty("")
-    city3_panel_item = StringProperty("")
-
-    def on_pre_enter(self, *args):
-        get_city_name(self)
-
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.current_lat = 0.0
@@ -636,14 +640,6 @@ class City2Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
-
-        self.sidepanel = self.ids.SidePanel
-        self.sidepanel.manager = self.manager
-
-    def city_exist(self, filename, search_word):
-        with open(filename, 'r') as file:
-            content = file.read()
-            return search_word in content
         
     def open_add_modal(self) -> None:
         modal = AddCity2Modal(city=self)
@@ -654,20 +650,13 @@ class City2Screen(Screen):
 
     # This runs every time you switch to this screen
     def on_enter(self):
-        file_path = 'session.json'
-        word_to_find = 'city2'
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
-        
-        if not self.city_exist(file_path, word_to_find):
+
+        if not store.exists("city2"):
             self.open_add_modal()
 
         else:
-            get_city_name(self)
-            self.sidepanel.city1_panel_item = self.city1_panel_item
-            self.sidepanel.city2_panel_item = self.city2_panel_item
-            self.sidepanel.city3_panel_item = self.city3_panel_item
-
             self.start_load_weather()
 
     def start_load_weather(self):
@@ -704,11 +693,24 @@ class City2Screen(Screen):
 
     def update_labels(self):
         update_ui_labels(self)
-        get_city_name(self)
+        
+        file = JsonStore("session.json")
+        sidepanel = self.ids.SidePanel
+        widget_container = sidepanel.ids.widgets
 
-        self.sidepanel.city1_panel_item = self.city1_panel_item
-        self.sidepanel.city2_panel_item = self.city2_panel_item
-        self.sidepanel.city3_panel_item = self.city3_panel_item
+        # Remove any existing dynamic city widgets before adding fresh ones.
+        widget_container.clear_widgets()
+
+        def add_city_item(city_key, target_screen):
+            if file.exists(city_key):
+                city_name = file.get(city_key)["name"]
+                item = CityPanelItem(text=city_name, right_icon="location")
+                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
+                widget_container.add_widget(item)
+
+        add_city_item("city1", "App")
+        add_city_item("city2", "City2")
+        add_city_item("city3", "City3")
 
     def update_background(self):
         update_ui_background(self)
@@ -836,13 +838,6 @@ class AddCity2Modal(CModal):
 class City3Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
-
-    city1_panel_item = StringProperty("")
-    city2_panel_item = StringProperty("")
-    city3_panel_item = StringProperty("")
-
-    def on_pre_enter(self, *args):
-        get_city_name(self)
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -864,14 +859,6 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
-
-        self.sidepanel = self.ids.SidePanel
-        self.sidepanel.manager = self.manager
-
-    def city_exist(self, filename, search_word):
-        with open(filename, 'r') as file:
-            content = file.read()
-            return search_word in content
         
     def open_add_modal(self) -> None:
         modal = AddCity3Modal(city=self)
@@ -882,20 +869,13 @@ class City3Screen(Screen):
 
     # This runs every time you switch to this screen
     def on_enter(self):
-        file_path = 'session.json'
-        word_to_find = 'city3'
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
-        
-        if not self.city_exist(file_path, word_to_find):
+
+        if not store.exists("city3"):
             self.open_add_modal()
 
-        else:
-            self.sidepanel.city1_panel_item = self.city1_panel_item
-            self.sidepanel.city2_panel_item = self.city2_panel_item
-            self.sidepanel.city3_panel_item = self.city3_panel_item
-
-            self.start_load_weather()
+        self.start_load_weather()
 
     def start_load_weather(self):
         self.get_2 = False
@@ -931,11 +911,24 @@ class City3Screen(Screen):
 
     def update_labels(self):
         update_ui_labels(self)
-        get_city_name(self)
+        
+        file = JsonStore("session.json")
+        sidepanel = self.ids.SidePanel
+        widget_container = sidepanel.ids.widgets
 
-        self.sidepanel.city1_panel_item = self.city1_panel_item
-        self.sidepanel.city2_panel_item = self.city2_panel_item
-        self.sidepanel.city3_panel_item = self.city3_panel_item
+        # Remove any existing dynamic city widgets before adding fresh ones.
+        widget_container.clear_widgets()
+
+        def add_city_item(city_key, target_screen):
+            if file.exists(city_key):
+                city_name = file.get(city_key)["name"]
+                item = CityPanelItem(text=city_name, right_icon="location")
+                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
+                widget_container.add_widget(item)
+
+        add_city_item("city1", "App")
+        add_city_item("city2", "City2")
+        add_city_item("city3", "City3")
 
     def update_background(self):
         update_ui_background(self)

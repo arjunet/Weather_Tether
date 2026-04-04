@@ -492,6 +492,14 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
             font_size: sp(24)
 
+        CButtonSecondary:
+            role: "Large Productive"
+            icon: "building"
+            text: "Add City"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+            on_press:
+                root.open_add_city_modal()
+
         CButtonDanger:
             text: "Logout"
             role: "Large Productive"
