@@ -27,7 +27,7 @@ from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
 from helpers.setup import Request_City, save_location_request
-from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, get_city_name, save_city
+from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state
 from helpers.sidepanel import CityPanelItem
@@ -478,6 +478,10 @@ class AppScreen(Screen):
 
     def get_weather(self, lat, lon):
         get_user_weather(self, lat, lon)
+        store = JsonStore('session.json')
+
+        if not store.exists("city1"):
+            get_new_device_data(self)
 
     def stop_load_weather(self, *args):
         # If weather has not been fetched yet:

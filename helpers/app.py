@@ -33,6 +33,38 @@ def get_dat(screen_instance):
 
                 screen_instance.r = "weather_done"
 
+def get_new_device_data(screen_instance):
+        # Get user dat:
+        id_token = screen_instance.manager.id_token
+        headers = {"Authorization": f"Bearer {id_token}"}
+
+        response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
+        if response.status_code == 200:
+                user_data = response.json()
+                screen_instance.city3 = user_data.get("location")
+                save_city(screen_instance.city3, 3)
+
+        else:
+            screen_instance.get3 = "Fail"
+
+        response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
+
+        if response.status_code == 200:
+                user_data = response.json()
+                screen_instance.city2 = user_data.get("location")
+                save_city(screen_instance.city2, 2)
+
+        else:
+            screen_instance.get2 = "Fail"
+
+        response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
+        if response.status_code == 200:
+                user_data = response.json()
+                screen_instance.city = user_data.get("location")
+                save_city(screen_instance.city, 1)
+
+        screen_instance.r = "weather_done"
+
 def get_user_weather(screen_instance, lat, lon):
         if lat is None or lon is None:
             return True # Keep waiting
@@ -120,20 +152,6 @@ def update_ui_background(screen_instance):
     elif "snow" in screen_instance.weather_condition.lower() or "sleet" in screen_instance.weather_condition.lower() or "blizzard" in screen_instance.weather_condition.lower():
         screen_instance.bg_image = "images/snow_bg.jpg"
         screen_instance.icon_path = "images/snow_icon.png"
-
-def get_city_name(screen_instance):
-      with open('session.json', 'r') as f:
-            data = json.load(f)
-
-            screen_instance.city1_panel_item = data.get("city1", {}).get("name", "City 1")
-        
-            try:
-                screen_instance.city2_panel_item = data.get("city2", {}).get("name", "City 2").replace("\n", " ")
-                screen_instance.city3_panel_item = data.get("city3", {}).get("name", "City 3").replace("\n", " ")
-
-            except (FileNotFoundError, json.JSONDecodeError):
-                 screen_instance.city2_panel_item = "City2"
-                 screen_instance.city3_panel_item = "City3"
 
 def save_city(city_name, city_number):
     # Normalize the city key

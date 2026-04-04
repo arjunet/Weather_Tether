@@ -1,4 +1,6 @@
+import json
 import requests
+from kivy.storage.jsonstore import JsonStore
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
@@ -63,3 +65,17 @@ def save_location_request(screen_instance):
         else: 
             r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
             print(r.json())
+
+def save_json(screen_instance, json_string):
+    if isinstance(json_string, JsonStore):
+        json_string = json.dumps({key: json_string.get(key) for key in json_string.keys()})
+    elif not isinstance(json_string, str):
+        json_string = json.dumps(json_string)
+
+    id_token = screen_instance.manager.id_token
+
+    payload = {"json_string": json_string}
+    headers = {"Authorization": f"Bearer {id_token}"}
+    
+    r = requests.post(f"{FIREBASE_URL}/update_json", json=payload, headers=headers)
+    print(r.json())
