@@ -423,6 +423,12 @@
                 CGridLayout:
                     adaptive: [True, True]
                     rows: 1
+
+                UIShellButton:
+                    role: "Large Productive"
+                    icon: "edit"
+                    bg_color: "#0f62fe"
+                    opacity: 0 if not shell_menu_btn.active else 1
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
 
@@ -761,6 +767,18 @@
                     adaptive: [True, True]
                     rows: 1
 
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "edit"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "trash-can"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+
 # ----------------------------------------------------------------------------------
 
 <AddCity2Modal>:
@@ -826,7 +844,7 @@
                     role: "Extra Large"
                     size_hint_x: 1
                     on_press:
-                        root.save_location()
+                        root.countinue_pressed()
 
     CModalCloseButton:
         on_press:
@@ -965,6 +983,18 @@
                     adaptive: [True, True]
                     rows: 1
 
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "edit"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "trash-can"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+
 # ----------------------------------------------------------------------------------
 
 <AddCity3Modal>:
@@ -1030,7 +1060,7 @@
                     role: "Extra Large"
                     size_hint_x: 1
                     on_press:
-                        root.save_location()
+                        root.countinue_pressed()
 
     CModalCloseButton:
         on_press:
