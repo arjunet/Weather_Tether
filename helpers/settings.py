@@ -15,6 +15,14 @@ def delete_request(self):
         except Exception as e:
             self.delete_r = "error"
             self.delete_result = {"detail": str(e)}
+# -----------------------------------------------------------------------------------------------------------
+def clear_json():
+    store = JsonStore('session.json')
+    store.delete('city1')
+    store.delete('city2')
+    store.delete('city3')
+    store.delete('toggle')
+    store.delete('auth')
 
 # -----------------------------------------------------------------------------------------------------------
 def save_toggle_state(toggle_state):

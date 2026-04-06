@@ -29,7 +29,7 @@ from helpers.forgot import Send_Forgot_Email
 from helpers.setup import Request_City, save_location_request, update_location_request
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data
 from helpers.verify import Send_Verification, check_verification
-from helpers.settings import delete_request, save_toggle_state
+from helpers.settings import delete_request, save_toggle_state, clear_json
 from helpers.sidepanel import CityPanelItem
 from helpers.city2utils import delete_city_2_request, delete_city_3_request
 
@@ -322,6 +322,14 @@ class VerifyScreen(Screen):
         self.result = None
         self.email_verified = None
         self.done = False
+        self.ids.resend_button.disabled = True
+
+    def on_enter(self):
+        Clock.schedule_once(self.show_button, 5)
+
+    def show_button(self, dt):
+        self.ids.resend_button.disabled = False
+        self.ids.resend_button.opacity = 1
 
     def start_load_send(self):
         # Make the loader visible:
@@ -680,7 +688,7 @@ class SettingsScreen(Screen):
         Clock.schedule_interval(self.stop_delete_load, 0.1)
 
     def delete_user_dat(self):
-        delete_request()
+        delete_request(self)
 
     def stop_delete_load(self, *args):
         if self.delete_result is None:
@@ -695,7 +703,7 @@ class SettingsScreen(Screen):
             notification_error(subtitle="Error deleting account. Please try again later.").open()
 
         else:
-            clear_refresh_token()
+            clear_json()
             self.manager.id_token = None
             self.manager.refresh_token = None
             

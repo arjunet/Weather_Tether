@@ -461,6 +461,8 @@
 
         CButtonPrimary:
             text: "Resend Verification Email"
+            id: resend_button
+            opacity: 0
             role: "Large Productive"
             icon: "send--alt"
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
@@ -470,7 +472,7 @@
         CButtonSecondary:
             text: "Continue To App"
             role: "Large Productive"
-            icon: "right-panel--open--filled"
+            icon: "side-panel--open--filled"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             on_press:
                 root.start_load_check()
