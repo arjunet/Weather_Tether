@@ -257,9 +257,9 @@
             CTextInput:
                 hint_text: "City or Zip Code"
                 id: address_input
-                on_text: 
+                on_text:
+                    root.suggestion_was_pressed = False 
                     root.Setup()
-                    root.suggestion_was_pressed = False
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code (This will be stored on our servers)"

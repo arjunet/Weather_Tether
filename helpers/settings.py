@@ -18,12 +18,19 @@ def delete_request(self):
 # -----------------------------------------------------------------------------------------------------------
 def clear_json():
     store = JsonStore('session.json')
-    store.delete('city1')
-    store.delete('city2')
-    store.delete('city3')
-    store.delete('toggle')
-    store.delete('auth')
 
+    store.delete('auth')
+    store.delete('city1')
+
+    if store.exists('city2'): 
+        store.delete('city2')
+
+    if store.exists('city3'):
+        store.delete('city3')
+
+    if store.exists('toggle'):
+         
+        store.delete('toggle')
 # -----------------------------------------------------------------------------------------------------------
 def save_toggle_state(toggle_state):
     store = JsonStore('session.json')
