@@ -26,7 +26,7 @@ from helpers.token_management import save_refresh_token, load_refresh_token, cle
 from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
-from helpers.setup import Request_City, save_location_request
+from helpers.setup import Request_City, save_location_request, update_location_request
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state
@@ -517,6 +517,134 @@ class AppScreen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+
+    def open_change_location_modal(self) -> None:
+        modal = ChangeLocationModal(city=self, update_type=1)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+# ---------------------------------------------------------------------------------
+class ChangeLocationModal(CModal):
+    def __init__(self, city, update_type, **kwargs):
+        super().__init__(**kwargs)
+        self.suggestion_was_pressed = False
+        self.city = city
+        self.update_type = update_type
+        # Timer Config:
+        self._last_request_time = 0
+        self._debounce_event = None  
+
+        # Reset variables for location/city:
+        self.current_lat = 0.0
+        self.current_lon = 0.0
+        self.city_found = False
+        self.dismissed = False
+        self.add_2 = False
+        self.add_3 = False
+
+    def Setup(self):
+        # Stop another request going out if the suggestion was already pressed:
+        if self.suggestion_was_pressed:
+            return
+        
+        # Timer Config (again):
+        if self._debounce_event:
+            self._debounce_event.cancel()
+        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
+
+    def make_request_when_ready(self):
+        now = time.time()
+        # Timer Config (again):
+        if now - self._last_request_time < 2.5:
+            return
+        self._last_request_time = now
+
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.City,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load, 0.1)
+
+    def City(self): # Text is here for the text typing on textinput field
+        Request_City(self)
+
+    # Fills in to textinput field when address button is pressed:
+    def on_address_button_press(self, text):
+        # ignore if it's still the placeholder text
+        if text == "Start typing" or text == "No results found.":
+             return
+        
+        # otherwise, fill the text field
+        self.suggestion_was_pressed = True # Set to true because: * suggestion was pressed
+        self.ids.address_input.text = text
+
+    def countinue_pressed(self):
+        # Don't submit unless a city was found:
+        if not self.city_found == True:
+            return 
+
+        # Make the loader visible:
+        self.ids.loader.opacity = 1
+
+        # Start the thread so ui can load while waiting for the server response:
+        threading.Thread(
+            target=self.save_location,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_load_firestore, 0.1)
+
+    def save_location(self):
+        self.add_other = True
+        update_location_request(self, self.update_type)
+        location_input = str(self.ids.address_input.text.strip())
+        # Mark city1 as active in local session store
+        save_city(location_input, self.update_type)
+        # Schedule UI work on main thread to dismiss modal and refresh
+        try:
+            from kivy.clock import Clock
+            Clock.schedule_once(lambda dt: self.on_saved(), 0)
+        except Exception:
+            pass
+        self.dismissed = True
+
+    def stop_load(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load)
+        self.ids.loader.opacity = 0
+        
+    def stop_load_firestore(self, *args):
+        # Stops thread once done:
+        if self.ids.address_button.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Once thread done, stop the loader and show the result:
+        Clock.unschedule(self.stop_load_firestore)
+        self.ids.loader.opacity = 0
+        if self.dismissed == True:
+            # kept for backward-compat; prefer scheduled _on_saved
+            try:
+                self.dismiss()
+            except Exception:
+                pass
+            try:
+                self.city.start_load_weather()
+            except Exception:
+                pass
+
+    def on_saved(self, *args):
+        self.dismiss()
+        self.city.start_load_weather()
+        self.dismissed = False
 # ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
@@ -652,6 +780,13 @@ class City2Screen(Screen):
         self._modal_ref = None
         modal = None
 
+    def open_change_location_modal(self) -> None:
+        modal = ChangeLocationModal(city=self, update_type=2)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
     # This runs every time you switch to this screen
     def on_enter(self):
         store = JsonStore('session.json')
@@ -718,6 +853,13 @@ class City2Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+
+    def open_change_location_modal(self) -> None:
+        modal = ChangeLocationModal(city=self, update_type=2)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
 # ---------------------------------------------------------------------------------
 class AddCity2Modal(CModal):
     def __init__(self, city, **kwargs):
@@ -866,6 +1008,13 @@ class City3Screen(Screen):
         
     def open_add_modal(self) -> None:
         modal = AddCity3Modal(city=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def open_change_location_modal(self) -> None:
+        modal = ChangeLocationModal(city=self, update_type=3)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None

@@ -63,8 +63,39 @@ def save_location_request(screen_instance):
              r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
              print(r.json())
         else: 
-            r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
-            print(r.json())
+             r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
+             print(r.json())
+
+
+def update_location_request(screen_instance, update_type):
+    """Update an existing location document in Firestore."""
+    if screen_instance.add_other == True:
+        id_token = screen_instance.city.manager.id_token
+    else:
+        id_token = screen_instance.manager.id_token
+
+    payload = {
+        "location": str(screen_instance.ids.address_input.text.strip()),
+        "lat": float(screen_instance.current_lat),
+        "lon": float(screen_instance.current_lon)
+    }
+    headers = {"Authorization": f"Bearer {id_token}"}
+
+    if update_type == 1:
+        r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
+    elif update_type == 2:
+        r = requests.patch(f"{FIREBASE_URL}/update_location2", json=payload, headers=headers)
+    elif update_type == 3:
+        r = requests.patch(f"{FIREBASE_URL}/update_location3", json=payload, headers=headers)
+    else:
+        # Default to updating city1 if invalid type
+        r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
+
+    try:
+        print(r.json())
+    except ValueError:
+        print(r.text)
+    return r
 
 def save_json(screen_instance, json_string):
     if isinstance(json_string, JsonStore):

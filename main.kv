@@ -429,6 +429,8 @@
                     icon: "edit"
                     bg_color: "#0f62fe"
                     opacity: 0 if not shell_menu_btn.active else 1
+                    on_press:
+                        root.open_change_location_modal()
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
 
@@ -772,6 +774,8 @@
                         icon: "edit"
                         bg_color: "#0f62fe"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_change_location_modal()
 
                     UIShellButton:
                         role: "Large Productive"
@@ -988,6 +992,8 @@
                         icon: "edit"
                         bg_color: "#0f62fe"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_change_location_modal()
 
                     UIShellButton:
                         role: "Large Productive"
@@ -1007,6 +1013,78 @@
         CModalBody:
             CModalBodyContent:
                 text: "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+            CBoxLayout:
+                adaptive: [False, True]
+                padding: [0, dp(64)]
+
+                CTextInputLayout:
+                    CTextInput:
+                        hint_text: "e.g. New York"
+                        id: address_input
+                        on_text: 
+                            root.Setup()
+                            root.suggestion_was_pressed = False
+                    CTextInputLabel:
+                        text: "City Name"
+
+                    CLoadingIndicator:
+                        id: loader
+                        role: "Small"
+                        opacity: 0
+
+            CButtonPrimary:
+                text: "Start typing"
+                id: address_button
+                role: "Large Productive"
+                size_hint_x: 1          
+                size_hint_y: None
+                height: dp(100) 
+                length: 1
+                text_size: self.width - dp(20), None
+                disabled: True
+                icon: "location--filled"
+                on_press:
+                    root.on_address_button_press(self.text.strip())
+
+
+        CModalFooter:
+            CGridLayout:
+                cols: 2
+                adaptive: [False, True]
+                spacing: dp(1)
+
+                CButtonSecondary:
+                    text: "Cancel"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.dismiss()
+                        app.root.current = 'App'
+
+                CButtonPrimary:
+                    text: "Add"
+                    role: "Extra Large"
+                    size_hint_x: 1
+                    on_press:
+                        root.countinue_pressed()
+
+    CModalCloseButton:
+        on_press:
+            root.dismiss()
+            app.root.current = 'App'
+
+# ---------------------------------------------------------------------------------
+
+<ChangeLocationModal>:
+    CModalLayout:
+        CModalHeader:
+            CModalHeaderLabel:
+                text: "Change Location"
+            CModalHeaderTitle:
+                text: "Would You Like To Change Your Location?"
+        CModalBody:
+            CModalBodyContent:
+                text: "Changing your location will update your weather information to reflect the new city."
             CBoxLayout:
                 adaptive: [False, True]
                 padding: [0, dp(64)]
