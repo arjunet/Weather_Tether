@@ -31,6 +31,7 @@ from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_b
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state
 from helpers.sidepanel import CityPanelItem
+from helpers.city2utils import delete_city_2_request, delete_city_3_request
 
 
 Builder.load_file("helpers/sidepanel.kv")
@@ -748,6 +749,33 @@ class DeleteModal(CModal):
         self.dismiss()
         self.settings.start_delete_account()
 # ---------------------------------------------------------------------------------
+
+class DeleteLocationModal(CModal):
+    def __init__(self, city_name, screen_instance, **kwargs):
+        super().__init__(**kwargs)
+        self.city_name = city_name
+        self.screen_instance = screen_instance
+
+    def delete_confirmed(self):
+        self.dismiss()
+        store = JsonStore("session.json")
+
+        if self.city_name == "city2":
+            store.delete("city2")
+
+            self.screen_instance.start_delete_city()
+
+            self.screen_instance.manager.current = "App"
+            notification_success(subtitle="Successfully Deleted City").open()
+
+        elif self.city_name == "city3":
+            store.delete("city3")
+
+            self.screen_instance.start_delete_city()
+
+            self.screen_instance.manager.current = "App"
+            notification_success(subtitle="Successfully Deleted City").open()
+# ---------------------------------------------------------------------------------
 class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
@@ -860,6 +888,16 @@ class City2Screen(Screen):
         modal.open()
         self._modal_ref = None
         modal = None
+
+    def open_delete_location_modal(self) -> None:
+        modal = DeleteLocationModal(city_name="city2", screen_instance=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def start_delete_city(self):
+        delete_city_2_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
 class AddCity2Modal(CModal):
     def __init__(self, city, **kwargs):
@@ -1020,6 +1058,13 @@ class City3Screen(Screen):
         self._modal_ref = None
         modal = None
 
+    def open_delete_location_modal(self) -> None:
+        modal = DeleteLocationModal(city_name="city3", screen_instance=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
     # This runs every time you switch to this screen
     def on_enter(self):
         store = JsonStore('session.json')
@@ -1085,6 +1130,9 @@ class City3Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+
+    def start_delete_city(self):
+        delete_city_3_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
 class AddCity3Modal(CModal):
     def __init__(self, city, **kwargs):
