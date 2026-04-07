@@ -789,16 +789,16 @@
 
 # ----------------------------------------------------------------------------------
 
-<AddCity2Modal>:
+<AddCityModal>:
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
                 text: "Add City"
             CModalHeaderTitle:
-                text: "Would You Like To Add A Second City To Your Account?"
+                id: header_title
         CModalBody:
             CModalBodyContent:
-                text: "Adding a second city to your account will allow you to easily switch between cities in the app without having to change your saved location."
+                id: body
             CBoxLayout:
                 adaptive: [False, True]
                 padding: [0, dp(64)]
@@ -858,7 +858,6 @@
         on_press:
             root.dismiss()
             app.root.current = 'App'
-
 # ---------------------------------------------------------------------------------
 
 
@@ -1006,79 +1005,6 @@
                         opacity: 0 if not shell_menu_btn.active else 1
                         on_press:
                             root.open_delete_location_modal()
-
-# ----------------------------------------------------------------------------------
-
-<AddCity3Modal>:
-    CModalLayout:
-        CModalHeader:
-            CModalHeaderLabel:
-                text: "Add City"
-            CModalHeaderTitle:
-                text: "Would You Like To Add A Third City To Your Account?"
-        CModalBody:
-            CModalBodyContent:
-                text: "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
-            CBoxLayout:
-                adaptive: [False, True]
-                padding: [0, dp(64)]
-
-                CTextInputLayout:
-                    CTextInput:
-                        hint_text: "e.g. New York"
-                        id: address_input
-                        on_text: 
-                            root.suggestion_was_pressed = False 
-                            root.Setup()
-                    CTextInputLabel:
-                        text: "City Name"
-
-                    CLoadingIndicator:
-                        id: loader
-                        role: "Small"
-                        opacity: 0
-
-            CButtonPrimary:
-                text: "Start typing"
-                id: address_button
-                role: "Large Productive"
-                size_hint_x: 1          
-                size_hint_y: None
-                height: dp(100) 
-                length: 1
-                text_size: self.width - dp(20), None
-                disabled: True
-                icon: "location--filled"
-                on_press:
-                    root.on_address_button_press(self.text.strip())
-
-
-        CModalFooter:
-            CGridLayout:
-                cols: 2
-                adaptive: [False, True]
-                spacing: dp(1)
-
-                CButtonSecondary:
-                    text: "Cancel"
-                    role: "Extra Large"
-                    size_hint_x: 1
-                    on_press:
-                        root.dismiss()
-                        app.root.current = 'App'
-
-                CButtonPrimary:
-                    text: "Add"
-                    role: "Extra Large"
-                    size_hint_x: 1
-                    on_press:
-                        root.countinue_pressed()
-
-    CModalCloseButton:
-        on_press:
-            root.dismiss()
-            app.root.current = 'App'
-
 # ---------------------------------------------------------------------------------
 
 <ChangeLocationModal>:

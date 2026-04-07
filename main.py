@@ -33,7 +33,9 @@ from helpers.setup import Request_City, save_location_request, update_location_r
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_2_request, delete_city_3_request
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
+
 from helpers.sidepanel import CityPanelItem
+from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
 
 # load sidepanel kv
 Builder.load_file("helpers/sidepanel.kv")
@@ -545,126 +547,6 @@ class AppScreen(Screen):
         modal = None
 
 # ---------------------------------------------------------------------------------
-class ChangeLocationModal(CModal):
-    def __init__(self, city, update_type, **kwargs):
-        super().__init__(**kwargs)
-        self.suggestion_was_pressed = False
-        self.city = city
-        self.update_type = update_type
-        # Timer setup
-        self._last_request_time = 0
-        self._debounce_event = None  
-
-        # Reset location variables
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.city_found = False
-        self.dismissed = False
-        self.add_2 = False
-        self.add_3 = False
-
-    def Setup(self):
-        # Stop duplicate requests
-        if self.suggestion_was_pressed:
-            return
-        
-        # Timer setup again
-        if self._debounce_event:
-            self._debounce_event.cancel()
-        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
-
-    def make_request_when_ready(self):
-        now = time.time()
-        # Timer setup again
-        if now - self._last_request_time < 2.5:
-            return
-        self._last_request_time = now
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.City,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
-
-    def City(self): # For text input typing
-        Request_City(self)
-
-    # Fill text input when address button is pressed
-    def on_address_button_press(self, text):
-        # Ignore placeholder text
-        if text == "Start typing" or text == "No results found.":
-             return
-        
-        # Fill the text field
-        self.suggestion_was_pressed = True
-        self.ids.address_input.text = text
-
-    def countinue_pressed(self):
-        # Only submit if city was found
-        if not self.city_found == True:
-            return 
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.save_location,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_firestore, 0.1)
-
-    def save_location(self):
-        self.add_other = True
-        update_location_request(self, self.update_type)
-        location_input = str(self.ids.address_input.text.strip())
-        # Save city to local session
-        save_city(location_input, self.update_type)
-        # Schedule UI work on main thread to dismiss modal and refresh
-        try:
-            from kivy.clock import Clock
-            Clock.schedule_once(lambda dt: self.on_saved(), 0)
-        except Exception:
-            pass
-        self.dismissed = True
-
-    def stop_load(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load)
-        self.ids.loader.opacity = 0
-        
-    def stop_load_firestore(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load_firestore)
-        self.ids.loader.opacity = 0
-        if self.dismissed == True:
-            # For backward compatibility
-            try:
-                self.dismiss()
-            except Exception:
-                pass
-            try:
-                self.city.start_load_weather()
-            except Exception:
-                pass
-
-    def on_saved(self, *args):
-        self.dismiss()
-        self.city.start_load_weather()
-        self.dismissed = False
-# ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -749,51 +631,6 @@ class SettingsScreen(Screen):
         self._modal_ref = None
         modal = None
 # ---------------------------------------------------------------------------------
-class LogoutModal(CModal):
-    def __init__(self, settings, **kwargs):
-        super().__init__(**kwargs)
-        self.settings = settings
-
-    def logout_confirmed(self):
-        self.dismiss()
-        self.settings.logout()
-# ---------------------------------------------------------------------------------
-class DeleteModal(CModal):
-    def __init__(self, settings, **kwargs):
-        super().__init__(**kwargs)
-        self.settings = settings
-
-    def delete_confirmed(self):
-        self.dismiss()
-        self.settings.start_delete_account()
-# ---------------------------------------------------------------------------------
-
-class DeleteLocationModal(CModal):
-    def __init__(self, city_name, screen_instance, **kwargs):
-        super().__init__(**kwargs)
-        self.city_name = city_name
-        self.screen_instance = screen_instance
-
-    def delete_confirmed(self):
-        self.dismiss()
-        store = JsonStore("session.json")
-
-        if self.city_name == "city2":
-            store.delete("city2")
-
-            self.screen_instance.start_delete_city()
-
-            self.screen_instance.manager.current = "App"
-            notification_success(subtitle="Successfully Deleted City").open()
-
-        elif self.city_name == "city3":
-            store.delete("city3")
-
-            self.screen_instance.start_delete_city()
-
-            self.screen_instance.manager.current = "App"
-            notification_success(subtitle="Successfully Deleted City").open()
-# ---------------------------------------------------------------------------------
 class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
@@ -820,7 +657,7 @@ class City2Screen(Screen):
         self.wind_chill = None
         
     def open_add_modal(self) -> None:
-        modal = AddCity2Modal(city=self)
+        modal = AddCityModal(city=self, city_number=2)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
@@ -917,126 +754,6 @@ class City2Screen(Screen):
     def start_delete_city(self):
         delete_city_2_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
-class AddCity2Modal(CModal):
-    def __init__(self, city, **kwargs):
-        super().__init__(**kwargs)
-        self.suggestion_was_pressed = False
-        self.city = city
-        # Timer setup
-        self._last_request_time = 0
-        self._debounce_event = None  
-
-        # Reset location variables
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.city_found = False
-        self.dismissed = False
-        self.add_2 = False
-        self.add_3 = False
-
-    def Setup(self):
-        # Stop duplicate requests
-        if self.suggestion_was_pressed:
-            return
-        
-        # Timer setup again
-        if self._debounce_event:
-            self._debounce_event.cancel()
-        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
-
-    def make_request_when_ready(self):
-        now = time.time()
-        # Timer setup again
-        if now - self._last_request_time < 2.5:
-            return
-        self._last_request_time = now
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.City,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
-
-    def City(self): # For text input typing
-        Request_City(self)
-
-    # Fill text input when address button is pressed
-    def on_address_button_press(self, text):
-        # Ignore placeholder text
-        if text == "Start typing" or text == "No results found.":
-             return
-        
-        # Fill the text field
-        self.suggestion_was_pressed = True
-        self.ids.address_input.text = text
-
-    def countinue_pressed(self):
-        # Only submit if city was found
-        if not self.city_found == True:
-            return 
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.save_location,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_firestore, 0.1)
-
-    def save_location(self):
-        self.add_other = True
-        self.add_2 = True
-        save_location_request(self)
-        location_input = str(self.ids.address_input.text.strip())
-        # Save city2 to local session
-        save_city(location_input, 2)
-        # Schedule UI work on main thread to dismiss modal and refresh
-        try:
-            from kivy.clock import Clock
-            Clock.schedule_once(lambda dt: self.on_saved(), 0)
-        except Exception:
-            pass
-        self.dismissed = True
-
-    def stop_load(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load)
-        self.ids.loader.opacity = 0
-        
-    def stop_load_firestore(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load_firestore)
-        self.ids.loader.opacity = 0
-        if self.dismissed == True:
-            # For backward compatibility
-            try:
-                self.dismiss()
-            except Exception:
-                pass
-            try:
-                self.city.start_load_weather()
-            except Exception:
-                pass
-
-    def on_saved(self, *args):
-        self.dismiss()
-        self.city.start_load_weather()
-        self.dismissed = False
-# ---------------------------------------------------------------------------------
 class City3Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
@@ -1063,7 +780,7 @@ class City3Screen(Screen):
         self.wind_chill = None
         
     def open_add_modal(self) -> None:
-        modal = AddCity3Modal(city=self)
+        modal = AddCityModal(city=self, city_number=3)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
@@ -1151,126 +868,6 @@ class City3Screen(Screen):
 
     def start_delete_city(self):
         delete_city_3_request(screen_instance=self, app_instance=self.manager)
-# ---------------------------------------------------------------------------------
-class AddCity3Modal(CModal):
-    def __init__(self, city, **kwargs):
-        super().__init__(**kwargs)
-        self.suggestion_was_pressed = False
-        self.city = city
-        # Timer setup
-        self._last_request_time = 0
-        self._debounce_event = None  
-
-        # Reset location variables
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.city_found = False
-        self.dismissed = False
-        self.add_2 = False
-        self.add_3 = False
-
-    def Setup(self):
-        # Stop duplicate requests
-        if self.suggestion_was_pressed:
-            return
-        
-        # Timer setup again
-        if self._debounce_event:
-            self._debounce_event.cancel()
-        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
-
-    def make_request_when_ready(self):
-        now = time.time()
-        # Timer setup again
-        if now - self._last_request_time < 2.5:
-            return
-        self._last_request_time = now
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.City,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
-
-    def City(self): # For text input typing
-        Request_City(self)
-
-    # Fill text input when address button is pressed
-    def on_address_button_press(self, text):
-        # Ignore placeholder text
-        if text == "Start typing" or text == "No results found.":
-             return
-        
-        # Fill the text field
-        self.suggestion_was_pressed = True
-        self.ids.address_input.text = text
-
-    def countinue_pressed(self):
-        # Only submit if city was found
-        if not self.city_found == True:
-            return 
-
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.save_location,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_firestore, 0.1)
-
-    def save_location(self):
-        self.add_other = True
-        self.add_3 = True
-        save_location_request(self)
-        location_input = str(self.ids.address_input.text.strip())
-        # Save city3 to local session
-        save_city(location_input, 3)
-        # Schedule UI work on main thread to dismiss modal and refresh
-        try:
-            from kivy.clock import Clock
-            Clock.schedule_once(lambda dt: self.on_saved(), 0)
-        except Exception:
-            pass
-        self.dismissed = True
-
-    def stop_load(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load)
-        self.ids.loader.opacity = 0
-        
-    def stop_load_firestore(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load_firestore)
-        self.ids.loader.opacity = 0
-        if self.dismissed == True:
-            # For backward compatibility
-            try:
-                self.dismiss()
-            except Exception:
-                pass
-            try:
-                self.city.start_load_weather()
-            except Exception:
-                pass
-
-    def on_saved(self, *args):
-        self.dismiss()
-        self.city.start_load_weather()
-        self.dismissed = False
 # ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
