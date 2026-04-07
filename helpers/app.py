@@ -1,8 +1,10 @@
 import requests
+
 from carbonkivy.app import App
-import json
+
 from kivy.storage.jsonstore import JsonStore
-from helpers.sidepanel import SidePanel
+
+from helpers.sidepanel import CityPanelItem, SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
@@ -167,7 +169,7 @@ def save_city(city_name, city_number):
     store = JsonStore('session.json')
     store.put(key, name=city_name)
 
-def delete_city_2_request(screen_instance, app_instance):
+def delete_city_request(screen_instance, app_instance):
         screen_instance.get_2 = False
         screen_instance.get_3 = False
         screen_instance.current_lat = 0.0
@@ -184,9 +186,15 @@ def delete_city_2_request(screen_instance, app_instance):
         screen_instance.weather_condition = None
         screen_instance.wind_chill = None
 
-        url = f"{FIREBASE_URL}/delete_location2"
-        id_token = screen_instance.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
+        if screen_instance.delete_2 == True:
+            url = f"{FIREBASE_URL}/delete_location2"
+            id_token = screen_instance.manager.id_token
+            headers = {"Authorization": f"Bearer {id_token}"}
+
+        elif screen_instance.delete_3 == True:
+            url = f"{FIREBASE_URL}/delete_location3"
+            id_token = screen_instance.manager.id_token
+            headers = {"Authorization": f"Bearer {id_token}"}
         
         try:
             r = requests.post(url, headers=headers, timeout=10)
@@ -194,33 +202,3 @@ def delete_city_2_request(screen_instance, app_instance):
             screen_instance.delete_result = r.json()
         except Exception as e:
             screen_instance.delete_r = "error"
-
-def delete_city_3_request(screen_instance, app_instance):
-        screen_instance.get_2 = False
-        screen_instance.get_3 = False
-        screen_instance.current_lat = 0.0
-        screen_instance.current_lon = 0.0
-        screen_instance.current_temp = None
-        screen_instance.feels_like = None
-        screen_instance.is_daytime = False
-        screen_instance.min_temp = None
-        screen_instance.max_temp = None
-        screen_instance.precip_percent = None
-        screen_instance.precip_type = None
-        screen_instance.snow_fall = None
-        screen_instance.thunderstorm_prob = None
-        screen_instance.weather_condition = None
-        screen_instance.wind_chill = None
-
-        url = f"{FIREBASE_URL}/delete_location3"
-        id_token = screen_instance.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
-        
-        try:
-            r = requests.post(url, headers=headers, timeout=10)
-            screen_instance.delete_r = r
-            screen_instance.delete_result = r.json()
-        except Exception as e:
-            screen_instance.delete_r = "error"
-            screen_instance.delete_result = {"detail": str(e)}
-

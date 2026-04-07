@@ -20,7 +20,6 @@ Window.on_restore(Clock.schedule_once(set_softinput, 0.1))
 # Carbon Kivy imports
 from carbonkivy.app import CarbonApp
 from carbonkivy.uix.screenmanager import CScreenManager
-from carbonkivy.uix.modal import CModal
 from carbonkivy.utils import _Dict, update_system_ui
 
 # helper imports
@@ -29,8 +28,8 @@ from helpers.token_management import save_refresh_token, load_refresh_token, cle
 from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
-from helpers.setup import Request_City, save_location_request, update_location_request
-from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_2_request, delete_city_3_request
+from helpers.setup import Request_City, save_location_request
+from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 
@@ -39,7 +38,6 @@ from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, Delete
 
 # load sidepanel kv
 Builder.load_file("helpers/sidepanel.kv")
-from helpers.sidepanel import SidePanel
 
 # other imports
 import time
@@ -545,7 +543,6 @@ class AppScreen(Screen):
         modal.open()
         self._modal_ref = None
         modal = None
-
 # ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
@@ -655,20 +652,6 @@ class City2Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
-        
-    def open_add_modal(self) -> None:
-        modal = AddCityModal(city=self, city_number=2)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
-
-    def open_change_location_modal(self) -> None:
-        modal = ChangeLocationModal(city=self, update_type=2)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -737,6 +720,13 @@ class City2Screen(Screen):
     def update_background(self):
         update_ui_background(self)
 
+    def open_add_modal(self) -> None:
+        modal = AddCityModal(city=self, city_number=2)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
     def open_change_location_modal(self) -> None:
         modal = ChangeLocationModal(city=self, update_type=2)
         self._modal_ref = weakref.ref(modal)
@@ -752,7 +742,8 @@ class City2Screen(Screen):
         modal = None
 
     def start_delete_city(self):
-        delete_city_2_request(screen_instance=self, app_instance=self.manager)
+        self.delete_2 = True
+        delete_city_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
 class City3Screen(Screen):
     icon_path = StringProperty("")
@@ -778,27 +769,6 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
-        
-    def open_add_modal(self) -> None:
-        modal = AddCityModal(city=self, city_number=3)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
-
-    def open_change_location_modal(self) -> None:
-        modal = ChangeLocationModal(city=self, update_type=3)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
-
-    def open_delete_location_modal(self) -> None:
-        modal = DeleteLocationModal(city_name="city3", screen_instance=self)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -866,8 +836,30 @@ class City3Screen(Screen):
     def update_background(self):
         update_ui_background(self)
 
+    def open_add_modal(self) -> None:
+        modal = AddCityModal(city=self, city_number=3)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def open_change_location_modal(self) -> None:
+        modal = ChangeLocationModal(city=self, update_type=3)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def open_delete_location_modal(self) -> None:
+        modal = DeleteLocationModal(city_name="city3", screen_instance=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
     def start_delete_city(self):
-        delete_city_3_request(screen_instance=self, app_instance=self.manager)
+        self.delete_3 = True
+        delete_city_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
