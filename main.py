@@ -544,90 +544,6 @@ class AppScreen(Screen):
         self._modal_ref = None
         modal = None
 # ---------------------------------------------------------------------------------
-class SettingsScreen(Screen):
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.response = None
-
-    def on_enter(self, *args):
-        # Load toggle state from session file
-        store = JsonStore('session.json')
-        toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
-        self.ids.unit_toggle.active = toggle_state
-
-    def logout(self):
-        clear_refresh_token()
-        self.manager.current = "Signup"
-        notification_success(subtitle="Successfully Logged out").open()
-
-    def start_delete_account(self):
-        self.ids.loader.opacity = 1
-        
-        # Reset result variables
-        self.delete_r = None
-        self.delete_result = None
-
-        # Run in background
-        threading.Thread(
-            target=self.delete_user_dat, 
-            daemon=True
-        ).start()
-        
-        # Check for completion
-        Clock.schedule_interval(self.stop_delete_load, 0.1)
-
-    def delete_user_dat(self):
-        delete_request(self)
-
-    def stop_delete_load(self, *args):
-        if self.delete_result is None:
-            return True  # Keep waiting
-
-        Clock.unschedule(self.stop_delete_load)
-        self.ids.loader.opacity = 0
-
-        r = self.delete_r
-        
-        if r == "error" or r.status_code != 200:
-            notification_error(subtitle="Error deleting account. Please try again later.").open()
-
-        else:
-            clear_json()
-            self.manager.id_token = None
-            self.manager.refresh_token = None
-            
-            # Go back to signup
-            self.manager.current = "Signup"
-            
-            notification_success(subtitle="Successfully Deleted Account").open()
-
-    def toggle_pressed(self):
-        toggle_state = self.ids.unit_toggle.active
-        save_toggle_state(toggle_state)
-
-    def open_add_city_modal(self):
-        file = JsonStore("session.json")
-
-        if not file.exists("city2"):
-            self.manager.current = "City2"
-
-        elif not file.exists("city3"):
-            self.manager.current = "City3"
-
-    def open_logout_modal(self) -> None:
-        modal = LogoutModal(settings=self)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
-
-    def open_delete_modal(self) -> None:
-        modal = DeleteModal(settings=self)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-        modal = None
-# ---------------------------------------------------------------------------------
 class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
@@ -861,6 +777,90 @@ class City3Screen(Screen):
         self.delete_3 = True
         delete_city_request(screen_instance=self, app_instance=self.manager)
 # ---------------------------------------------------------------------------------
+class SettingsScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        self.response = None
+
+    def on_enter(self, *args):
+        # Load toggle state from session file
+        store = JsonStore('session.json')
+        toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
+        self.ids.unit_toggle.active = toggle_state
+
+    def logout(self):
+        clear_refresh_token()
+        self.manager.current = "Signup"
+        notification_success(subtitle="Successfully Logged out").open()
+
+    def start_delete_account(self):
+        self.ids.loader.opacity = 1
+        
+        # Reset result variables
+        self.delete_r = None
+        self.delete_result = None
+
+        # Run in background
+        threading.Thread(
+            target=self.delete_user_dat, 
+            daemon=True
+        ).start()
+        
+        # Check for completion
+        Clock.schedule_interval(self.stop_delete_load, 0.1)
+
+    def delete_user_dat(self):
+        delete_request(self)
+
+    def stop_delete_load(self, *args):
+        if self.delete_result is None:
+            return True  # Keep waiting
+
+        Clock.unschedule(self.stop_delete_load)
+        self.ids.loader.opacity = 0
+
+        r = self.delete_r
+        
+        if r == "error" or r.status_code != 200:
+            notification_error(subtitle="Error deleting account. Please try again later.").open()
+
+        else:
+            clear_json()
+            self.manager.id_token = None
+            self.manager.refresh_token = None
+            
+            # Go back to signup
+            self.manager.current = "Signup"
+            
+            notification_success(subtitle="Successfully Deleted Account").open()
+
+    def toggle_pressed(self):
+        toggle_state = self.ids.unit_toggle.active
+        save_toggle_state(toggle_state)
+
+    def open_add_city_modal(self):
+        file = JsonStore("session.json")
+
+        if not file.exists("city2"):
+            self.manager.current = "City2"
+
+        elif not file.exists("city3"):
+            self.manager.current = "City3"
+
+    def open_logout_modal(self) -> None:
+        modal = LogoutModal(settings=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+
+    def open_delete_modal(self) -> None:
+        modal = DeleteModal(settings=self)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+        modal = None
+# ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
     Window = Window
@@ -915,7 +915,7 @@ class MainApp(CarbonApp):
 
     def apply_styles(self, *args) -> None:
         Window.clearcolor = self.background
-        icon_style = "Dark" if self.theme in ["White", "Gray10"] else "Light"
+        icon_style = "Dark" if self.theme in ["Gray100"] else "White"
         update_system_ui(self.background, self.background, icon_style=icon_style, pad_nav=True)
 
 if __name__ == "__main__":

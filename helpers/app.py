@@ -4,7 +4,7 @@ from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
 
-from helpers.sidepanel import CityPanelItem, SidePanel
+from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
@@ -143,17 +143,29 @@ def update_ui_background(screen_instance):
         screen_instance.bg_image = "images/sun_bg.jpg"
         screen_instance.icon_path = "images/sun_icon.png"
 
+        screen_instance.app = App.get_running_app()
+        screen_instance.app.theme = "White"
+
     elif "cloud" in screen_instance.weather_condition.lower():
         screen_instance.bg_image = "images/cloud_bg.jpg"
         screen_instance.icon_path = "images/cloud_icon.png"
+
+        screen_instance.app = App.get_running_app()
+        screen_instance.app.theme = "White"
 
     elif "rain" in screen_instance.weather_condition.lower() or "drizzle" in screen_instance.weather_condition.lower() or "storm" in screen_instance.weather_condition.lower() or "thunder" in screen_instance.weather_condition.lower() or "shower" in screen_instance.weather_condition.lower():
         screen_instance.bg_image = "images/rain_bg.png"
         screen_instance.icon_path = "images/rain_icon.png"
 
+        screen_instance.app = App.get_running_app()
+        screen_instance.app.theme = "White"
+
     elif "snow" in screen_instance.weather_condition.lower() or "sleet" in screen_instance.weather_condition.lower() or "blizzard" in screen_instance.weather_condition.lower():
         screen_instance.bg_image = "images/snow_bg.jpg"
         screen_instance.icon_path = "images/snow_icon.png"
+
+        screen_instance.app = App.get_running_app()
+        screen_instance.app.theme = "White"
 
 def save_city(city_name, city_number):
     # Normalize the city key
