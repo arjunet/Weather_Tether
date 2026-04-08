@@ -66,9 +66,7 @@ def save_location_request(screen_instance):
              r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
              print(r.json())
 
-
 def update_location_request(screen_instance, update_type):
-    """Update an existing location document in Firestore."""
     if screen_instance.add_other == True:
         id_token = screen_instance.city.manager.id_token
     else:

@@ -203,7 +203,6 @@ class AddCityModal(CModal):
             self.ids.header_title.text = "Would You Like To Add A Third City To Your Account?"
             self.ids.body.text = "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
 
-
     def Setup(self):
         # Stop duplicate requests
         if self.suggestion_was_pressed:

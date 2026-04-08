@@ -4,6 +4,7 @@ from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
 
+from helpers.setup import save_location_request
 from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
@@ -29,6 +30,8 @@ def get_dat(screen_instance):
                 # Grab the Firestore location data:
                 lat = user_data.get("lat")
                 lon = user_data.get("lon")
+                screen_instance.current_lat = lat
+                screen_instance.current_lon = lon
                 screen_instance.city = user_data.get("location")
 
                 screen_instance.get_weather(lat, lon)
@@ -203,14 +206,62 @@ def delete_city_request(screen_instance, app_instance):
             id_token = screen_instance.manager.id_token
             headers = {"Authorization": f"Bearer {id_token}"}
 
+            try:
+                r = requests.post(url, headers=headers, timeout=10)
+                screen_instance.delete_r = r
+                screen_instance.delete_result = r.json()
+            except Exception as e:
+                screen_instance.delete_r = "error"
+
+            # Shift city3 to city2 if it exists
+            store = JsonStore("session.json")
+
+            screen_instance.deleted_2 = True
+
+            if screen_instance.deleted_2 == True and store.exists("city3"):
+                # Shift city3 to city2:
+
+                # Get city3 data
+                screen_instance.get_3 = True
+                get_dat(screen_instance)
+
+                # Delete city3 from Firestore
+                url = f"{FIREBASE_URL}/delete_location3"
+                id_token = screen_instance.manager.id_token
+                headers = {"Authorization": f"Bearer {id_token}"}
+
+                try:
+                    r = requests.post(url, headers=headers, timeout=10)
+                    screen_instance.delete_r = r
+                    screen_instance.delete_result = r.json()
+                except Exception as e:
+                    screen_instance.delete_r = "error"
+
+
+                # Save city3 data to city2 in Firestore
+                screen_instance.city_found = True
+                payload = {
+                    "location": str(screen_instance.city), 
+                    "lat": float(screen_instance.current_lat), 
+                    "lon": float(screen_instance.current_lon)
+                }
+                headers_add2 = {"Authorization": f"Bearer {id_token}"}
+                
+                r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers_add2)
+                print(r.json())
+
+                store.delete("city3")
+
+                save_city(screen_instance.city, 2)
+
         elif screen_instance.delete_3 == True:
             url = f"{FIREBASE_URL}/delete_location3"
             id_token = screen_instance.manager.id_token
             headers = {"Authorization": f"Bearer {id_token}"}
         
-        try:
-            r = requests.post(url, headers=headers, timeout=10)
-            screen_instance.delete_r = r
-            screen_instance.delete_result = r.json()
-        except Exception as e:
-            screen_instance.delete_r = "error"
+            try:
+                r = requests.post(url, headers=headers, timeout=10)
+                screen_instance.delete_r = r
+                screen_instance.delete_result = r.json()
+            except Exception as e:
+                screen_instance.delete_r = "error"
