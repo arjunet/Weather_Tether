@@ -24,6 +24,7 @@
             CTextInput:
                 hint_text: "Email"
                 id: email_input
+                input_type: "mail"
 
             CTextInputHelperText:
                 text: "Enter An Email That You Would Like to Use (This will be stored on our servers)"
@@ -106,6 +107,7 @@
             CTextInput:
                 hint_text: "Email"
                 id: email_input
+                input_type: "mail"
 
             CTextInputHelperText:
                 text: "Enter Your Email"
@@ -257,6 +259,7 @@
             CTextInput:
                 hint_text: "City or Zip Code"
                 id: address_input
+                input_type: "address"
                 on_text:
                     root.suggestion_was_pressed = False 
                     root.Setup()
@@ -807,6 +810,7 @@
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
+                        input_type: "address"
                         on_text: 
                             root.suggestion_was_pressed = False 
                             root.Setup()
