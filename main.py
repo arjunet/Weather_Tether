@@ -685,6 +685,7 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
+        self.delete_3 = False
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -790,6 +791,8 @@ class SettingsScreen(Screen):
 
     def logout(self):
         clear_refresh_token()
+        store = JsonStore("session.json")
+        store.clear()
         self.manager.current = "Signup"
         notification_success(subtitle="Successfully Logged out").open()
 

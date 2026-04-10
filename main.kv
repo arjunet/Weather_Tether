@@ -45,6 +45,15 @@
                 text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
                 color: "#000000"
 
+        CButtonSecondary:
+            role: "Large Productive"
+            pos_hint: {"center_y": 0.5}
+            center_x: password_input.center_x + dp(420) 
+            size_hint_x: None
+            icon: "view"
+            on_press:
+                password_input.password = not password_input.password
+
         # Login Button (users already have an account):
         CButtonSecondary:
             text: "Already Have An Account? Login Here"
@@ -127,6 +136,15 @@
             CTextInputHelperText:
                 text: "Enter Your Password"
                 color: "#000000"
+
+        CButtonSecondary:
+            role: "Large Productive"
+            pos_hint: {"center_y": 0.5}
+            center_x: password_input.center_x + dp(420) 
+            size_hint_x: None
+            icon: "view"
+            on_press:
+                password_input.password = not password_input.password
 
         # Back To Signup Button:
         CButtonSecondary:
