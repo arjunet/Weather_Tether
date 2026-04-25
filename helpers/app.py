@@ -202,6 +202,7 @@ def delete_city_request(screen_instance, app_instance):
         screen_instance.wind_chill = None
 
         if screen_instance.delete_2 == True:
+            print("deleting city2")
             url = f"{FIREBASE_URL}/delete_location2"
             id_token = screen_instance.manager.id_token
             headers = {"Authorization": f"Bearer {id_token}"}
@@ -265,3 +266,5 @@ def delete_city_request(screen_instance, app_instance):
                 screen_instance.delete_result = r.json()
             except Exception as e:
                 screen_instance.delete_r = "error"
+
+        screen_instance.delete_done = "done"

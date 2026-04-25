@@ -10,6 +10,7 @@ from kivy.properties import StringProperty
 from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
 from kivy.lang import Builder
+from kivy.core.window import Window
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -34,10 +35,13 @@ from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 
 from helpers.sidepanel import CityPanelItem
+from helpers.modal_loader import ModalLoader
 from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
 
-# load sidepanel kv
+# load other classes kv
 Builder.load_file("helpers/sidepanel.kv")
+Builder.load_file("helpers/modal_loader.kv")
+
 
 # other imports
 import time
@@ -568,6 +572,7 @@ class City2Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
+        self.delete_done = None
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -651,15 +656,37 @@ class City2Screen(Screen):
         modal = None
 
     def open_delete_location_modal(self) -> None:
-        modal = DeleteLocationModal(city_name="city2", screen_instance=self)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
+        self.delete_modal = DeleteLocationModal(city_name="city2", screen_instance=self)
+        self._modal_ref = weakref.ref(self.delete_modal)
+        self.delete_modal.open()
         self._modal_ref = None
-        modal = None
 
     def start_delete_city(self):
+        self.modal_loader = ModalLoader()
+
+        self.delete_2 = True
+        self.delete_modal.add_widget(self.modal_loader)
+
+        threading.Thread(
+            target=self.delete_city_request,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_delete_city, 0.1)
+
+    def delete_city_request(self):
         self.delete_2 = True
         delete_city_request(screen_instance=self, app_instance=self.manager)
+
+    def stop_delete_city(self, *args):
+        if self.delete_done != "done":
+            return True
+    
+        Clock.unschedule(self.stop_delete_city)
+        self.delete_modal.remove_widget(self.modal_loader)
+        self.delete_modal.dismiss()
+
+        self.manager.current = "App"
+        notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
 class City3Screen(Screen):
     icon_path = StringProperty("")
