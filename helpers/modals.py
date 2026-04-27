@@ -5,7 +5,6 @@ from carbonkivy.uix.modal import CModal
 
 from .setup import Request_City, save_location_request, update_location_request
 from .app import save_city
-from .notification import notification_success
 
 import time
 import threading
@@ -129,7 +128,6 @@ class ChangeLocationModal(CModal):
         self.dismiss()
         self.city.start_load_weather()
         self.dismissed = False
-
 # ---------------------------------------------------------------------------------
 class LogoutModal(CModal):
     def __init__(self, settings, **kwargs):
@@ -139,17 +137,15 @@ class LogoutModal(CModal):
     def logout_confirmed(self):
         self.dismiss()
         self.settings.logout()
-
 # ---------------------------------------------------------------------------------
 class DeleteModal(CModal):
     def __init__(self, settings, **kwargs):
         super().__init__(**kwargs)
         self.settings = settings
 
-    def delete_confirmed(self):
+    def delete_confirmed(self, email_input, password_input):
         self.dismiss()
-        self.settings.start_delete_account()
-
+        self.settings.start_delete_account(email_input, password_input)
 # ---------------------------------------------------------------------------------
 class DeleteLocationModal(CModal):
     def __init__(self, city_name, screen_instance, **kwargs):

@@ -184,7 +184,7 @@ def save_city(city_name, city_number):
     store = JsonStore('session.json')
     store.put(key, name=city_name)
 
-def delete_city_request(screen_instance, app_instance):
+def delete_city_request(screen_instance):
         screen_instance.get_2 = False
         screen_instance.get_3 = False
         screen_instance.current_lat = 0.0

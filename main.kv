@@ -637,6 +637,49 @@
         CModalBody:
             CModalBodyContent:
                 text: "Deleting your account will permanently delete all of your data from our servers, including your saved location and unit preference. This action cannot be undone."
+
+            CBoxLayout:
+                adaptive: [False, True]
+                spacing: dp(32)
+                padding: dp(16)
+                orientation: "vertical"
+
+                # Email Text Input:
+                CTextInputLayout:
+                    size_hint_x: None
+                    width: dp(300)
+
+                    CTextInput:
+                        hint_text: "Email"
+                        id: email_input
+                        input_type: "mail"
+
+                    CTextInputHelperText:
+                        text: "Enter Your Email"
+                        color: "#000000"
+
+                # Password Text Input:
+                CTextInputLayout:
+                    size_hint_x: None
+                    width: dp(300)
+
+                    CTextInput:
+                        hint_text: "Password"
+                        password: True
+                        id: password_input
+
+                    CTextInputHelperText:
+                        text: "Enter Your Password"
+                        color: "#000000"
+
+                    CButtonSecondary:
+                        role: "Large Productive"
+                        center_x: password_input.center_x + dp(126)
+                        size_hint_x: None
+                        icon: "view"
+                        on_press:
+                            password_input.password = not password_input.password
+
         CModalFooter:
             CGridLayout:
                 cols: 2
@@ -655,14 +698,12 @@
                     role: "Extra Large"
                     size_hint_x: 1
                     on_press:
-                        root.delete_confirmed()
+                        root.delete_confirmed(root.ids.email_input.text, root.ids.password_input.text)
 
     CModalCloseButton:
         on_press:
             root.dismiss()
-
 # ---------------------------------------------------------------------------------
-
 <City2Screen>:
     CRelativeLayout:
 

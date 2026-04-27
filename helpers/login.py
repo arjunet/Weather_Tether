@@ -18,5 +18,6 @@ def Login_request(screen_instance, email_input, password_input):
         screen_instance.login_r = r
         screen_instance.login_result = result
         screen_instance.email_verified = email_verified
+        screen_instance.manager.id_token = result.get("data", {}).get("idToken")
         screen_instance.email_input = email_input
         screen_instance.password_input = password_input

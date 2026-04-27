@@ -157,7 +157,7 @@ class LoginScreen(Screen):
 
         # Check user input
         if email_input == "" or password_input == "":
-            notification_error(subtitle="Please type in all fields")
+            notification_error(subtitle="Please type in all fields").open()
             return
 
         # Handle errors
@@ -165,11 +165,11 @@ class LoginScreen(Screen):
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
-                notification_error(subtitle="Invalid Email or Password")
+                notification_error(subtitle="Invalid Email or Password").open()
                 return
             
             elif error_code == "INVALID_EMAIL":
-                notification_error(subtitle="Invalid Email Format")
+                notification_error(subtitle="Invalid Email Format").open()
                 return
 
         # Handle success
@@ -355,7 +355,7 @@ class VerifyScreen(Screen):
 
         # Run in background to keep UI responsive
         threading.Thread(
-            target=self.Send_Verification_Email,
+            target=self.Send_verification_Email,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load_send, 0.1)
@@ -573,6 +573,8 @@ class City2Screen(Screen):
         self.weather_condition = None
         self.wind_chill = None
         self.delete_done = None
+        self.delete_2 = False
+        self.delete_3 = False
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -712,6 +714,7 @@ class City3Screen(Screen):
         self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
+        self.delete_2 = False
         self.delete_3 = False
 
     # Runs every time you enter this screen
@@ -809,6 +812,7 @@ class SettingsScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
         self.response = None
+        self.login_result = None
 
     def on_enter(self, *args):
         # Load toggle state from session file
@@ -823,7 +827,9 @@ class SettingsScreen(Screen):
         self.manager.current = "Signup"
         notification_success(subtitle="Successfully Logged out").open()
 
-    def start_delete_account(self):
+    def start_delete_account(self, email_input, password_input):
+        self.email_input = email_input
+        self.password_input = password_input
         self.ids.loader.opacity = 1
         
         # Reset result variables
@@ -840,19 +846,37 @@ class SettingsScreen(Screen):
         Clock.schedule_interval(self.stop_delete_load, 0.1)
 
     def delete_user_dat(self):
+        Login_request(self, self.email_input, self.password_input)
         delete_request(self)
 
     def stop_delete_load(self, *args):
-        if self.delete_result is None:
+        if self.delete_result is None or self.login_result is None:
             return True  # Keep waiting
 
         Clock.unschedule(self.stop_delete_load)
         self.ids.loader.opacity = 0
 
-        r = self.delete_r
-        
-        if r == "error" or r.status_code != 200:
-            notification_error(subtitle="Error deleting account. Please try again later.").open()
+        # Get login results for notifications
+        r = self.login_r
+        result = self.login_result
+
+        # Check user input
+        if not self.email_input.strip() or not self.password_input.strip():
+            self.ids.loader.opacity = 0
+            notification_error(subtitle="Please type in all fields").open()
+            return
+
+        # Handle errors
+        if r.status_code == 400:
+            error_code = result.get("detail", "")
+
+            if error_code == "INVALID_LOGIN_CREDENTIALS":
+                notification_error(subtitle="Invalid Email or Password").open()
+                return
+            
+            elif error_code == "INVALID_EMAIL":
+                notification_error(subtitle="Invalid Email Format").open()
+                return
 
         else:
             clear_json()
