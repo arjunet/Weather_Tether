@@ -123,7 +123,7 @@ def update_ui_labels(screen_instance):
     
         # Combined High/Low/feels like label:
         screen_instance.ids.min_max_label.text = f"{screen_instance.max_temp} / {screen_instance.min_temp}\nFeels like: {screen_instance.feels_like}"   
-        screen_instance.ids.precip_label.text = f"Precip: {screen_instance.precip_percent} ({screen_instance.precip_type})"
+        screen_instance.ids.precip_label.text = f"Precip: {screen_instance.precip_percent} Chance Of {screen_instance.precip_type}"
         screen_instance.ids.snow_label.text = f"Snow: {screen_instance.snow_fall}"
         screen_instance.ids.thunder_label.text = f"Thunder: {screen_instance.thunderstorm_prob}"
         screen_instance.ids.wind_chill_label.text = f"Wind Chill: {screen_instance.wind_chill}"

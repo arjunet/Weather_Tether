@@ -825,6 +825,14 @@ class SettingsScreen(Screen):
         notification_success(subtitle="Successfully Logged out").open()
 
     def start_delete_account(self, email_input, password_input):
+        if not email_input.strip() or not password_input.strip():
+            notification_error(subtitle="Please type in all fields").open()
+            return
+        
+        elif not is_valid_email(email_input):
+            notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
         self.email_input = email_input
         self.password_input = password_input
         self.ids.loader.opacity = 1
@@ -857,22 +865,12 @@ class SettingsScreen(Screen):
         r = self.login_r
         result = self.login_result
 
-        # Check user input
-        if not self.email_input.strip() or not self.password_input.strip():
-            self.ids.loader.opacity = 0
-            notification_error(subtitle="Please type in all fields").open()
-            return
-
         # Handle errors
         if r.status_code == 400:
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
                 notification_error(subtitle="Invalid Email or Password").open()
-                return
-            
-            elif error_code == "INVALID_EMAIL":
-                notification_error(subtitle="Invalid Email Format").open()
                 return
 
         else:
