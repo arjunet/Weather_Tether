@@ -1,4 +1,4 @@
-# Import all necessary files
+# Import all necessary system files
 import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
@@ -30,7 +30,7 @@ from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
 from helpers.setup import Request_City, save_location_request
-from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request
+from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request, is_valid_email
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 
@@ -54,7 +54,16 @@ class SignupScreen(Screen):
         # Reset variables
         self.r = None
 
+    # Check user input
     def start_load(self, email_input, password_input):
+        if not email_input.strip() or not password_input.strip():
+            notification_error(subtitle="Please type in all fields").open()
+            return
+        
+        elif not is_valid_email(email_input):
+            notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
         # Show loading spinner
         self.ids.loader.opacity = 1
 
@@ -86,13 +95,6 @@ class SignupScreen(Screen):
         # Get signup results for notifications
         r = self.signup_r
         result = self.signup_result
-        email_input = self.email_input
-        password_input = self.password_input
-    
-        # Check user input
-        if email_input == "" or password_input == "":
-            notification_error(subtitle="Please Type In All Fields").open()
-            return
         
         # Handle errors
         if r.status_code == 400:
@@ -104,10 +106,6 @@ class SignupScreen(Screen):
             
             elif "WEAK_PASSWORD" in error_code:
                 notification_error(subtitle="Please Choose A stronger Password").open()
-                return
-            
-            elif error_code == "INVALID_EMAIL":
-                notification_error(subtitle="Invalid Email").open()
                 return
             
         # Handle success
@@ -122,6 +120,14 @@ class LoginScreen(Screen):
         self.r = None
 
     def start_load(self, email_input, password_input):
+        if not email_input.strip() or not password_input.strip():
+            notification_error(subtitle="Please type in all fields").open()
+            return
+        
+        elif not is_valid_email(email_input):
+            notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
         # Show loading spinner
         self.ids.loader.opacity = 1
 
@@ -152,13 +158,6 @@ class LoginScreen(Screen):
         # Get login results for notifications
         r = self.login_r
         result = self.login_result
-        email_input = self.email_input
-        password_input = self.password_input
-
-        # Check user input
-        if email_input == "" or password_input == "":
-            notification_error(subtitle="Please type in all fields").open()
-            return
 
         # Handle errors
         if r.status_code == 400:
@@ -166,10 +165,6 @@ class LoginScreen(Screen):
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
                 notification_error(subtitle="Invalid Email or Password").open()
-                return
-            
-            elif error_code == "INVALID_EMAIL":
-                notification_error(subtitle="Invalid Email Format").open()
                 return
 
         # Handle success
@@ -183,6 +178,14 @@ class LoginScreen(Screen):
 # ---------------------------------------------------------------------------------
 class ForgotScreen(Screen):
     def start_load(self, email_input):
+        if not email_input.strip():
+            notification_error(subtitle="Please type in all fields").open()
+            return
+        
+        elif not is_valid_email(email_input):
+            notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
         # Show loading spinner
         self.ids.loader.opacity = 1
 
@@ -213,19 +216,13 @@ class ForgotScreen(Screen):
         # Get results for notifications
         r = self.forgot_r
         result = self.forgot_result
-        email_input = self.email_input
-
-        # Check user input
-        if email_input == "":
-            notification_error(subtitle="Please Type In All Fields").open()
-            return
         
         # Handle errors
         if r.status_code == 400:
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_EMAIL":
-                notification_error(subtitle="User Doesn't Exist").open()
+                notification_error(subtitle="User Does Not Exist").open()
                 return
             
         # Handle success

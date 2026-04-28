@@ -1,10 +1,11 @@
 import requests
+import re
 
 from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
 
-from helpers.setup import save_location_request
+
 from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
@@ -268,3 +269,8 @@ def delete_city_request(screen_instance):
                 screen_instance.delete_r = "error"
 
         screen_instance.delete_done = "done"
+
+def is_valid_email(email):
+        # This pattern checks for: characters + @ + characters + . + characters
+        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
+        return re.match(pattern, email.strip()) is not None
