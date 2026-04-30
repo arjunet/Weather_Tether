@@ -27,7 +27,6 @@ def Request_City(screen_instance):
             screen_instance.ids.address_button.disabled = False
             screen_instance.ids.address_button.text = formatted_address
 
-            # Most Google Place results have geometry -> location -> lat/lng
             screen_instance.current_lat = location_data.get("lat")
             screen_instance.current_lon = location_data.get("lng")
             screen_instance.city_found = True
@@ -36,11 +35,7 @@ def Request_City(screen_instance):
             screen_instance.ids.address_button.disabled = True
             screen_instance.ids.address_button.text = "No results found."
 
-def save_location_request(screen_instance):
-        # Countinue the loading until city is found (extra if-statement, just in-case):
-        if screen_instance.city_found == False:
-            return True # Keep waiting
-        
+def save_location_request(screen_instance): 
         # Sends the location to Firestore:
         location_input = screen_instance.ids.address_input.text
         if screen_instance.add_other == True:
@@ -66,6 +61,8 @@ def save_location_request(screen_instance):
              r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
              print(r.json())
 
+        screen_instance.firestore_done = True
+
 def update_location_request(screen_instance, update_type):
     if screen_instance.add_other == True:
         id_token = screen_instance.city.manager.id_token
@@ -89,11 +86,7 @@ def update_location_request(screen_instance, update_type):
         # Default to updating city1 if invalid type
         r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
 
-    try:
-        print(r.json())
-    except ValueError:
-        print(r.text)
-    return r
+    screen_instance.firestore_done = True
 
 def save_json(screen_instance, json_string):
     if isinstance(json_string, JsonStore):

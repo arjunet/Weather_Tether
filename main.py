@@ -232,10 +232,11 @@ class ForgotScreen(Screen):
 class SetupScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
-        self.suggestion_was_pressed = False
         # Timer setup
-        self._last_request_time = 0
-        self._debounce_event = None  
+        self.pending_search = None
+        self.countinue = False
+        self.suggestion_was_pressed = False
+        self.firestore_done = False
 
         # Reset location variables
         self.current_lat = 0.0
@@ -245,24 +246,18 @@ class SetupScreen(Screen):
         self.add_2 = False
         self.add_3 = False
 
-    def Setup(self):
-        # Stop duplicate requests
-        if self.suggestion_was_pressed:
-            return
-        
-        # Timer setup again
-        if self._debounce_event:
-            self._debounce_event.cancel()
-        self._debounce_event = Clock.schedule_once(lambda dt: self.make_request_when_ready(), 0.9)
+    def start_lookup(self, *args):
+        self.city_found = False
+        # Kill any existing timer
+        if self.pending_search:
+            Clock.unschedule(self.pending_search)
 
-    def make_request_when_ready(self):
-        now = time.time()
-        # Timer setup again
-        if now - self._last_request_time < 2.5:
-            return
-        self._last_request_time = now
+        # Run the actual search after 0.5s of silence
+        if self.countinue == False:
+            self.pending_search = Clock.schedule_once(self.request, 0.5)
 
-        # Show loading spinner
+    def request(self, dt):
+        # 3. THE LOCK: Now we start the thread
         self.ids.loader.opacity = 1
 
         # Run in background to keep UI responsive
@@ -270,24 +265,33 @@ class SetupScreen(Screen):
             target=self.City,
             daemon=True
         ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
+        Clock.schedule_interval(self.stop_lookup, 0.1)
 
     def City(self):
         Request_City(self)
 
-    # Fill text input when address button is pressed
+    def stop_lookup(self, *args):
+        # Check if background task finished
+        if self.ids.address_button.text.strip() == "Start typing":
+            return True # Keep waiting
+        
+        # Hide spinner and handle response
+        Clock.unschedule(self.stop_lookup)
+        self.ids.loader.opacity = 0
+
     def on_address_button_press(self, text):
         # Ignore placeholder text
-        if text == "Start typing" or text == "No results found.":
+        if text == "Start typing" or text == "No results found":
              return
         
         # Fill the text field
+        self.countinue = True
         self.suggestion_was_pressed = True
         self.ids.address_input.text = text
 
     def countinue_pressed(self):
         # Only submit if city was found
-        if not self.city_found == True:
+        if self.suggestion_was_pressed == False:
             return 
 
         # Show loading spinner
@@ -303,18 +307,9 @@ class SetupScreen(Screen):
     def save_location(self):
         save_location_request(self)
 
-    def stop_load(self, *args):
-        # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
-            return True # Keep waiting
-        
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load)
-        self.ids.loader.opacity = 0
-        
     def stop_load_firestore(self, *args):
         # Check if background task finished
-        if self.ids.address_button.text.strip() == "Start typing":
+        if self.firestore_done != True:
             return True # Keep waiting
         
         # Hide spinner and handle response
@@ -505,7 +500,14 @@ class AppScreen(Screen):
 
     def stop_load_weather(self, *args):
         # Check if weather data loaded
-        if self.r != "weather_done":
+        store = JsonStore("session.json")
+
+        if not store.exists("city1"):
+            Clock.unschedule(self.stop_load_weather)
+            self.manager.current = "Setup"
+            return
+
+        elif self.r != "weather_done":
             return True # Keep waiting
         
         # Hide spinner and handle response

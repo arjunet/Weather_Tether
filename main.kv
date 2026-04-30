@@ -279,8 +279,7 @@
                 id: address_input
                 input_type: "address"
                 on_text:
-                    root.suggestion_was_pressed = False 
-                    root.Setup()
+                    root.start_lookup()
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code (This will be stored on our servers)"
@@ -871,8 +870,8 @@
                         id: address_input
                         input_type: "address"
                         on_text: 
-                            root.suggestion_was_pressed = False 
-                            root.Setup()
+                            root.start_lookup()
+
                     CTextInputLabel:
                         text: "City Name"
 
@@ -1089,8 +1088,7 @@
                         hint_text: "e.g. New York"
                         id: address_input
                         on_text: 
-                            root.suggestion_was_pressed = False 
-                            root.Setup()
+                            root.start_lookup()
                     CTextInputLabel:
                         text: "City Name"
 
@@ -1126,7 +1124,6 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
-                        app.root.current = 'App'
 
                 CButtonPrimary:
                     text: "Add"
@@ -1139,7 +1136,6 @@
         on_press:
             root.dismiss()
             app.root.current = 'App'
-
 # ---------------------------------------------------------------------------------
 <DeleteLocationModal>:
     CModalLayout:
