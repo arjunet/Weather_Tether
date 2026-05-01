@@ -45,14 +45,10 @@
                 text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
                 color: "#000000"
 
-        CButtonSecondary:
-            role: "Large Productive"
-            pos_hint: {"center_y": 0.5}
-            center_x: password_input.center_x + dp(376) 
-            size_hint_x: None
-            icon: "view"
-            on_press:
-                password_input.password = not password_input.password
+            CTextInputTrailingIconButton:
+                icon: "view--off" if password_input.password else "view"
+                on_press:
+                    password_input.password = (not password_input.password)
 
         # Login Button (users already have an account):
         CButtonSecondary:
@@ -137,14 +133,10 @@
                 text: "Enter Your Password"
                 color: "#000000"
 
-        CButtonSecondary:
-            role: "Large Productive"
-            pos_hint: {"center_y": 0.5}
-            center_x: password_input.center_x + dp(376) 
-            size_hint_x: None
-            icon: "view"
-            on_press:
-                password_input.password = not password_input.password
+            CTextInputTrailingIconButton:
+                icon: "view--off" if password_input.password else "view"
+                on_press:
+                    password_input.password = (not password_input.password)
 
         # Back To Signup Button:
         CButtonSecondary:
@@ -587,7 +579,6 @@
             role: "Large"
             opacity: 0
             id: loader
-
 # ---------------------------------------------------------------------------------
 
 <LogoutModal>:
@@ -671,13 +662,10 @@
                         text: "Enter Your Password"
                         color: "#000000"
 
-                    CButtonSecondary:
-                        role: "Large Productive"
-                        center_x: password_input.center_x + dp(126)
-                        size_hint_x: None
-                        icon: "view"
+                    CTextInputTrailingIconButton:
+                        icon: "view--off" if password_input.password else "view"
                         on_press:
-                            password_input.password = not password_input.password
+                            password_input.password = (not password_input.password)
 
         CModalFooter:
             CGridLayout:
