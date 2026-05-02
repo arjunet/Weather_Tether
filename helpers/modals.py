@@ -250,7 +250,7 @@ class AddCityModal(CModal):
         self.remove_widget(self.modal_loader)
 
         location_input = self.ids.address_input.text.strip()
-        save_city(location_input, 1)
+        save_city(location_input, self.city_number)
 
         self.dismiss()
         self.city.start_load_weather()

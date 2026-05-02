@@ -238,7 +238,6 @@ def delete_city_request(self):
                 except Exception as e:
                     self.delete_r = "error"
 
-
                 # Save city3 data to city2 in Firestore
                 self.city_found = True
                 payload = {
@@ -268,6 +267,7 @@ def delete_city_request(self):
                 self.delete_r = "error"
 
         self.delete_done = "done"
+        self.delete_modal.dismiss()
 
 def is_valid_email(email):
         # This pattern checks for: characters + @ + characters + . + characters

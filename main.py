@@ -674,7 +674,7 @@ class City2Screen(Screen):
 
     def delete_city_request(self):
         self.delete_2 = True
-        delete_city_request(screen_instance=self, app_instance=self.manager)
+        delete_city_request(self)
 
     def stop_delete_city(self, *args):
         if self.delete_done != "done":
@@ -795,15 +795,15 @@ class City3Screen(Screen):
         modal = None
 
     def open_delete_location_modal(self) -> None:
-        modal = DeleteLocationModal(city_name="city3", screen_instance=self)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
+        self.delete_modal = DeleteLocationModal(city_name="city3", screen_instance=self)
+        self._modal_ref = weakref.ref(self.delete_modal)
+        self.delete_modal.open()
         self._modal_ref = None
-        modal = None
+        self.delete_modal = None
 
     def start_delete_city(self):
         self.delete_3 = True
-        delete_city_request(screen_instance=self, app_instance=self.manager)
+        delete_city_request(self)
 # ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
