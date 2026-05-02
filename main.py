@@ -44,7 +44,6 @@ Builder.load_file("helpers/modal_loader.kv")
 
 
 # other imports
-import time
 import threading
 import weakref
 # ---------------------------------------------------------------------------------
@@ -502,17 +501,17 @@ class AppScreen(Screen):
         # Check if weather data loaded
         store = JsonStore("session.json")
 
-        if not store.exists("city1"):
-            Clock.unschedule(self.stop_load_weather)
-            self.manager.current = "Setup"
-            return
-
-        elif self.r != "weather_done":
+        if self.r != "weather_done":
             return True # Keep waiting
         
         # Hide spinner and handle response
         Clock.unschedule(self.stop_load_weather)
         self.ids.loader.opacity = 0
+
+        if not store.exists("city1"):
+            Clock.unschedule(self.stop_load_weather)
+            self.manager.current = "Setup"
+            return
         self.update_labels()
         self.update_background()
 
