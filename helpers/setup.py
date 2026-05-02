@@ -4,11 +4,11 @@ from kivy.storage.jsonstore import JsonStore
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
-def Request_City(screen_instance):
+def Request_City(self):
         # Variable for Search Query of city:
-        search_query = screen_instance.ids.address_input.text.strip() 
+        search_query = self.ids.address_input.text.strip() 
         # Reset the city_found variable to False for each new search:
-        screen_instance.city_found = False
+        self.city_found = False
 
         # Request for JSON and raise exceptions on errors:
 
@@ -24,55 +24,55 @@ def Request_City(screen_instance):
             location_data = result.get("geometry", {}).get("location", {})
 
             formatted_address = data["results"][0].get("formatted_address")
-            screen_instance.ids.address_button.disabled = False
-            screen_instance.ids.address_button.text = formatted_address
+            self.ids.address_button.disabled = False
+            self.ids.address_button.text = formatted_address
 
-            screen_instance.current_lat = location_data.get("lat")
-            screen_instance.current_lon = location_data.get("lng")
-            screen_instance.city_found = True
+            self.current_lat = location_data.get("lat")
+            self.current_lon = location_data.get("lng")
+            self.city_found = True
 
         else:
-            screen_instance.ids.address_button.disabled = True
-            screen_instance.ids.address_button.text = "No results found."
+            self.ids.address_button.disabled = True
+            self.ids.address_button.text = "No results found."
 
-def save_location_request(screen_instance): 
+def save_location_request(self): 
         # Sends the location to Firestore:
-        location_input = screen_instance.ids.address_input.text
-        if screen_instance.add_other == True:
-            id_token = screen_instance.city.manager.id_token
+        location_input = self.ids.address_input.text
+        if self.add_other == True:
+            id_token = self.city.manager.id_token
 
         else:
-             id_token = screen_instance.manager.id_token
+             id_token = self.manager.id_token
         payload = {
             "location": str(location_input), 
-            "lat": float(screen_instance.current_lat), 
-            "lon": float(screen_instance.current_lon)
+            "lat": float(self.current_lat), 
+            "lon": float(self.current_lon)
         }
         headers = {"Authorization": f"Bearer {id_token}"}
         
-        if screen_instance.add_3 == True:
+        if self.add_3 == True:
              r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
              print(r.json())
 
-        elif screen_instance.add_2 == True:
+        elif self.add_2 == True:
              r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
              print(r.json())
         else: 
              r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
              print(r.json())
 
-        screen_instance.firestore_done = True
+        self.firestore_done = True
 
-def update_location_request(screen_instance, update_type):
-    if screen_instance.add_other == True:
-        id_token = screen_instance.city.manager.id_token
+def update_location_request(self, update_type):
+    if self.add_other == True:
+        id_token = self.city.manager.id_token
     else:
-        id_token = screen_instance.manager.id_token
+        id_token = self.manager.id_token
 
     payload = {
-        "location": str(screen_instance.ids.address_input.text.strip()),
-        "lat": float(screen_instance.current_lat),
-        "lon": float(screen_instance.current_lon)
+        "location": str(self.ids.address_input.text.strip()),
+        "lat": float(self.current_lat),
+        "lon": float(self.current_lon)
     }
     headers = {"Authorization": f"Bearer {id_token}"}
 
@@ -86,15 +86,15 @@ def update_location_request(screen_instance, update_type):
         # Default to updating city1 if invalid type
         r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
 
-    screen_instance.firestore_done = True
+    self.firestore_done = True
 
-def save_json(screen_instance, json_string):
+def save_json(self, json_string):
     if isinstance(json_string, JsonStore):
         json_string = json.dumps({key: json_string.get(key) for key in json_string.keys()})
     elif not isinstance(json_string, str):
         json_string = json.dumps(json_string)
 
-    id_token = screen_instance.manager.id_token
+    id_token = self.manager.id_token
 
     payload = {"json_string": json_string}
     headers = {"Authorization": f"Bearer {id_token}"}

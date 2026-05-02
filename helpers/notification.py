@@ -5,7 +5,7 @@ def notification_error(subtitle):
     return CNotificationInline(
         title="Error",
         status="Error",
-        subtitle=subtitle  # This takes the text from main.py
+        subtitle=subtitle
     )
 
 def notification_success(subtitle):

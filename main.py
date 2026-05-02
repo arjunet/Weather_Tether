@@ -42,7 +42,6 @@ from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, Delete
 Builder.load_file("helpers/sidepanel.kv")
 Builder.load_file("helpers/modal_loader.kv")
 
-
 # other imports
 import threading
 import weakref

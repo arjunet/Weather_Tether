@@ -15,9 +15,5 @@ class CityPanelItem(UIShellPanelSelectionItem):
     text = StringProperty("")
     right_icon = StringProperty("")
 
-    
-
-    
-
 
     

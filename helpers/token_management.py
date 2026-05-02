@@ -37,13 +37,13 @@ def refresh_login(refresh_token):
     except requests.RequestException:
         return None
 # ---------------------------------------------------------------------------------
-def login_request_token(screen_instance):
+def login_request_token(self):
         # If its coming from verify screen, skip going back to verify screen & prevent duplicate login:
-        if getattr(screen_instance.manager, 'coming_from_verify', False):
-            screen_instance.go_to_verify = False
+        if getattr(self.manager, 'coming_from_verify', False):
+            self.go_to_verify = False
             # Reset the flag so it doesn't stay True forever
-            screen_instance.manager.coming_from_verify = False 
-            screen_instance.r = "done"
+            self.manager.coming_from_verify = False 
+            self.r = "done"
             return # Exit early, we're good!
         
         token = load_refresh_token()
@@ -52,16 +52,16 @@ def login_request_token(screen_instance):
             result = refresh_login(token)
 
             if result:
-                screen_instance.manager.id_token = result["idToken"]
-                screen_instance.manager.refresh_token = result["refreshToken"]
+                self.manager.id_token = result["idToken"]
+                self.manager.refresh_token = result["refreshToken"]
 
                 # save new token
                 save_refresh_token(result["refreshToken"])
 
                 if result.get("emailVerified") is True:
-                    screen_instance.go_to_verify = False
+                    self.go_to_verify = False
 
                 else:
-                    screen_instance.go_to_verify = True
+                    self.go_to_verify = True
 
-        screen_instance.r = "done"
+        self.r = "done"
