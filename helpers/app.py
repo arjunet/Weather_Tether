@@ -128,16 +128,18 @@ def update_ui_labels(self):
         self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
 
 def update_ui_background(self):
+    self.app = App.get_running_app()
+    
     # Update the background/icon based on weather condition:
     if "sun" in self.weather_condition.lower():
         self.bg_image = "images/sun_bg.jpg"
         self.icon_path = "images/sun_icon.png"
+        self.app.theme = "White"
 
     elif self.is_daytime == "False":
         self.bg_image = "images/night.jpg"
         self.icon_path = "images/moon.png"
 
-        self.app = App.get_running_app()
         self.app.theme = "Gray100"
 
         self.sidepanel = SidePanel()

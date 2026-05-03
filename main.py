@@ -543,7 +543,6 @@ class AppScreen(Screen):
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 # ---------------------------------------------------------------------------------
 class City2Screen(Screen):
     icon_path = StringProperty("")
@@ -645,14 +644,12 @@ class City2Screen(Screen):
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 
     def open_change_location_modal(self) -> None:
         modal = ChangeLocationModal(city=self, update_type=2)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 
     def open_delete_location_modal(self) -> None:
         self.delete_modal = DeleteLocationModal(city_name="city2", screen_instance=self)
@@ -785,21 +782,18 @@ class City3Screen(Screen):
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 
     def open_change_location_modal(self) -> None:
         modal = ChangeLocationModal(city=self, update_type=3)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 
     def open_delete_location_modal(self) -> None:
         self.delete_modal = DeleteLocationModal(city_name="city3", screen_instance=self)
         self._modal_ref = weakref.ref(self.delete_modal)
         self.delete_modal.open()
         self._modal_ref = None
-        self.delete_modal = None
 
     def start_delete_city(self):
         self.delete_3 = True
@@ -901,14 +895,12 @@ class SettingsScreen(Screen):
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 
     def open_delete_modal(self) -> None:
         modal = DeleteModal(settings=self)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
-        modal = None
 # ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
