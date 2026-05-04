@@ -25,7 +25,7 @@ from carbonkivy.utils import _Dict, update_system_ui
 
 # helper imports
 from helpers.notification import notification_error, notification_success, forgot_notification
-from helpers.token_management import save_refresh_token, load_refresh_token, clear_refresh_token, refresh_login, login_request_token
+from helpers.token_management import save_refresh_token, load_refresh_token, refresh_login, login_request_token
 from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
@@ -437,6 +437,7 @@ class AppScreen(Screen):
         self.wind_chill = None
         self.get_3 = False
         self.get_2 = False
+        self.city1 = True
 
     def on_enter(self):
         store = JsonStore('session.json')
@@ -571,6 +572,7 @@ class City2Screen(Screen):
         self.delete_done = None
         self.delete_2 = False
         self.delete_3 = False
+        self.city1 = False
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -710,6 +712,7 @@ class City3Screen(Screen):
         self.wind_chill = None
         self.delete_2 = False
         self.delete_3 = False
+        self.city1 = False
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -812,7 +815,6 @@ class SettingsScreen(Screen):
         self.ids.unit_toggle.active = toggle_state
 
     def logout(self):
-        clear_refresh_token()
         store = JsonStore("session.json")
         store.clear()
         self.manager.current = "Signup"
@@ -946,7 +948,8 @@ class MainApp(CarbonApp):
                     self.sm.current = "Verify"
                 return
             else:
-                clear_refresh_token()
+                store = JsonStore("Session.json")
+                store.clear()
 
         self.sm.current = "Signup"
 

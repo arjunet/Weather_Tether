@@ -23,6 +23,7 @@ def get_dat(self):
 
         else:
             response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
+            self.city_1 = True
 
         if response.status_code == 200:
                 user_data = response.json()
@@ -37,6 +38,9 @@ def get_dat(self):
                 self.get_weather(lat, lon)
 
                 self.r = "weather_done"
+
+        elif self.city1 == True and response.status_code !=200:
+             self.manager.current = "Setup"
 
 def get_new_device_data(self):
         # Get user dat:

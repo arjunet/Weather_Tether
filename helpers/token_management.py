@@ -14,12 +14,6 @@ def load_refresh_token():
 
     return None
 # ---------------------------------------------------------------------------------
-def clear_refresh_token():
-    store = JsonStore('session.json')
-
-    if store.exists('auth'):
-        store.delete('auth')
-# ---------------------------------------------------------------------------------
 def refresh_login(refresh_token):
     try:
         FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
