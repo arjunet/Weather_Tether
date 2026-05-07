@@ -276,6 +276,5 @@ def delete_city_request(self):
         self.delete_modal.dismiss()
 
 def is_valid_email(email):
-        # This pattern checks for: characters + @ + characters + . + characters
-        pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
-        return re.match(pattern, email.strip()) is not None
+    pattern = r'^[\w.+\-]+@[\w.-]+\.[a-zA-Z]{2,}$'
+    return re.match(pattern, email.strip()) is not None

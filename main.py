@@ -7,10 +7,8 @@ from kivy.uix.screenmanager import Screen
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
-from kivy.core.window import Window
 from kivy.storage.jsonstore import JsonStore
 from kivy.lang import Builder
-from kivy.core.window import Window
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -581,7 +579,6 @@ class City2Screen(Screen):
 
         if not store.exists("city2"):
             self.open_add_modal()
-
         else:
             self.start_load_weather()
 
@@ -721,8 +718,8 @@ class City3Screen(Screen):
 
         if not store.exists("city3"):
             self.open_add_modal()
-
-        self.start_load_weather()
+        else:
+            self.start_load_weather()
 
     def start_load_weather(self):
         self.get_2 = False
@@ -948,7 +945,7 @@ class MainApp(CarbonApp):
                     self.sm.current = "Verify"
                 return
             else:
-                store = JsonStore("Session.json")
+                store = JsonStore("session.json")
                 store.clear()
 
         self.sm.current = "Signup"

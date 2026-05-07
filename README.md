@@ -4,11 +4,11 @@ A CarbonKivy weather app.
 
 Development is still in progress.
 
-Part 1 of Weather Tether was completed on: 11/11/2025.
+v0.1-DEV of Weather Tether was completed on: 11/11/2025.
 
-Part 2 of Weather Tether was completed on: 11/23/2025.
+v0.2-DEV of Weather Tether was completed on: 11/23/2025.
 
-Part 3 of Weather Tether was completed on: 01/17/2026.
+v0.3-DEV of Weather Tether was completed on: 01/17/2026.
 
 ## Features:
 

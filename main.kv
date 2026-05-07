@@ -1,5 +1,7 @@
-<SignupScreen>:
+# Inports (for kv-lang):
+#: import trigger_suggestion helpers.android_utils.trigger_password_suggestion
 
+<SignupScreen>:
     CRelativeLayout:
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
@@ -40,6 +42,8 @@
                 hint_text: "Password"
                 password: True
                 id: password_input
+                on_focus:
+                    trigger_suggestion() 
 
             CTextInputHelperText:
                 text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
@@ -83,11 +87,8 @@
             role: "Large"
             opacity: 0
             id: loader
-
 # ---------------------------------------------------------------------------------
-
 <LoginScreen>:
-
     CRelativeLayout:
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
@@ -128,6 +129,8 @@
                 hint_text: "Password"
                 password: True
                 id: password_input
+                on_focus:
+                    trigger_suggestion() 
 
             CTextInputHelperText:
                 text: "Enter Your Password"
@@ -171,11 +174,8 @@
             role: "Large"
             opacity: 0
             id: loader
-
 # ---------------------------------------------------------------------------------
-
 <ForgotScreen>:
-
     CRelativeLayout:
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
@@ -200,12 +200,12 @@
             CTextInput:
                 hint_text: "Email"
                 id: email_input
+                input_type: 'mail'
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
                 color: "#000000"
                 
-
         # Back To Signup Label:
         CButtonSecondary:
             text: "Back To Signup"
@@ -239,13 +239,9 @@
             role: "Large"
             opacity: 0
             id: loader
-
 # ---------------------------------------------------------------------------------
-
 <SetupScreen>:
-
     CRelativeLayout:
-    
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
@@ -307,9 +303,7 @@
             id: loader
 # ---------------------------------------------------------------------------------
 <AppScreen>:
-
     CRelativeLayout:
-
         AsyncImage:
             source: root.bg_image
             size_hint: 1, 1
@@ -445,9 +439,7 @@
                         root.open_change_location_modal()
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
-
     FloatLayout:
-
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
@@ -493,13 +485,9 @@
             role: "Large"
             opacity: 0
             id: loader
-
 # ---------------------------------------------------------------------------------
-
 <SettingsScreen>:
-
     CRelativeLayout:
-
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
@@ -580,17 +568,19 @@
             opacity: 0
             id: loader
 # ---------------------------------------------------------------------------------
-
 <LogoutModal>:
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
                 text: "Logout"
+
             CModalHeaderTitle:
                 text: "Are you sure you want to logout?"
+
         CModalBody:
             CModalBodyContent:
                 text: "Logging out will require you to login again with your email and password. Your saved location and unit preference will still be saved, but you will need to login again to access them."
+
         CModalFooter:
             CGridLayout:
                 cols: 2
@@ -614,16 +604,16 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-
 # ---------------------------------------------------------------------------------
-
 <DeleteModal>:
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
                 text: "Delete Account"
+
             CModalHeaderTitle:
                 text: "Are you sure you want to delete your account?"
+
         CModalBody:
             CModalBodyContent:
                 text: "Deleting your account will permanently delete all of your data from our servers, including your saved location and unit preference. This action cannot be undone."
@@ -657,6 +647,8 @@
                         hint_text: "Password"
                         password: True
                         id: password_input
+                        on_focus:
+                            trigger_suggestion() 
 
                     CTextInputHelperText:
                         text: "Enter Your Password"
@@ -693,7 +685,6 @@
 # ---------------------------------------------------------------------------------
 <City2Screen>:
     CRelativeLayout:
-
         AsyncImage:
             source: root.bg_image
             size_hint: 1, 1
@@ -835,19 +826,20 @@
                         opacity: 0 if not shell_menu_btn.active else 1
                         on_press:
                             root.open_delete_location_modal()
-
 # ----------------------------------------------------------------------------------
-
 <AddCityModal>:
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
                 text: "Add City"
+
             CModalHeaderTitle:
                 id: header_title
+
         CModalBody:
             CModalBodyContent:
                 id: body
+
             CBoxLayout:
                 adaptive: [False, True]
                 padding: [0, dp(64)]
@@ -882,7 +874,6 @@
                 on_press:
                     root.on_address_button_press(self.text.strip())
 
-
         CModalFooter:
             CGridLayout:
                 cols: 2
@@ -909,11 +900,8 @@
             root.dismiss()
             app.root.current = 'App'
 # ---------------------------------------------------------------------------------
-
-
 <City3Screen>:
     CRelativeLayout:
-
         AsyncImage:
             source: root.bg_image
             size_hint: 1, 1
@@ -1056,7 +1044,6 @@
                         on_press:
                             root.open_delete_location_modal()
 # ---------------------------------------------------------------------------------
-
 <ChangeLocationModal>:
     CModalLayout:
         CModalHeader:
@@ -1099,7 +1086,6 @@
                 on_press:
                     root.on_address_button_press(self.text.strip())
 
-
         CModalFooter:
             CGridLayout:
                 cols: 2
@@ -1130,11 +1116,14 @@
         CModalHeader:
             CModalHeaderLabel:
                 text: "Delete Location"
+
             CModalHeaderTitle:
                 text: "Are you sure you want to delete this location?"
+
         CModalBody:
             CModalBodyContent:
                 text: "Deleting this location will permanently remove it from your account. This action cannot be undone."
+
         CModalFooter:
             CGridLayout:
                 cols: 2
