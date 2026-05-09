@@ -709,6 +709,7 @@ class City3Screen(Screen):
         self.delete_2 = False
         self.delete_3 = False
         self.city1 = False
+        self.delete_done = None
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -795,8 +796,31 @@ class City3Screen(Screen):
         self._modal_ref = None
 
     def start_delete_city(self):
+        self.modal_loader = ModalLoader()
+
+        self.delete_3 = True
+        self.delete_modal.add_widget(self.modal_loader)
+
+        threading.Thread(
+            target=self.delete_city_request,
+            daemon=True
+        ).start()
+        Clock.schedule_interval(self.stop_delete_city, 0.1)
+
+    def delete_city_request(self):
         self.delete_3 = True
         delete_city_request(self)
+
+    def stop_delete_city(self, *args):
+        if self.delete_done != "done":
+            return True
+    
+        Clock.unschedule(self.stop_delete_city)
+        self.delete_modal.remove_widget(self.modal_loader)
+        self.delete_modal.dismiss()
+
+        self.manager.current = "App"
+        notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
 class SettingsScreen(Screen):
     def __init__(self, **kwargs):
