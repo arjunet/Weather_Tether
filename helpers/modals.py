@@ -41,7 +41,6 @@ class ChangeLocationModal(CModal):
             self.pending_search = Clock.schedule_once(self.request, 0.5)
 
     def request(self, dt):
-        # 3. THE LOCK: Now we start the thread
         self.ids.loader.opacity = 1
 
         # Run in background to keep UI responsive
@@ -106,7 +105,7 @@ class ChangeLocationModal(CModal):
         self.remove_widget(self.modal_loader)
 
         location_input = self.ids.address_input.text.strip()
-        save_city(location_input, 1)
+        save_city(location_input, self.update_type)
 
         self.dismiss()
         self.city.start_load_weather()

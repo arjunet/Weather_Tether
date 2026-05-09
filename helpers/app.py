@@ -4,6 +4,7 @@ import re
 from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
+from kivy.clock import Clock
 
 from helpers.sidepanel import SidePanel
 
@@ -37,10 +38,7 @@ def get_dat(self):
 
                 self.get_weather(lat, lon)
 
-                self.r = "weather_done"
-
-        elif self.city1 == True and response.status_code !=200:
-             self.manager.current = "Setup"
+        self.r = "weather_done"
 
 def get_new_device_data(self):
         # Get user dat:
@@ -175,6 +173,8 @@ def update_ui_background(self):
 
         self.app = App.get_running_app()
         self.app.theme = "White"
+
+    self.app.apply_styles(self)
 
 def save_city(city_name, city_number):
     # Normalize the city key

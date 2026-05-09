@@ -31,7 +31,6 @@ from helpers.setup import Request_City, save_location_request
 from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request, is_valid_email
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
-
 from helpers.sidepanel import CityPanelItem
 from helpers.modal_loader import ModalLoader
 from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
@@ -903,7 +902,6 @@ class SettingsScreen(Screen):
 # ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
-    Window = Window
     def __init__(self, *args, **kwargs) -> None:
         self.defaults = False
         super().__init__(*args, **kwargs)
