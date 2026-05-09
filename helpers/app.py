@@ -53,6 +53,10 @@ def get_new_device_data(self):
 
         else:
             self.get3 = "Fail"
+            store = JsonStore("session.json")
+
+            if store.exists("city3"):
+                store.delete("city3")
 
         response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
 
@@ -63,6 +67,10 @@ def get_new_device_data(self):
 
         else:
             self.get2 = "Fail"
+            store = JsonStore("session.json")
+
+            if store.exists("city2"):
+                 store.delete("city2")
 
         response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
         if response.status_code == 200:

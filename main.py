@@ -435,6 +435,7 @@ class AppScreen(Screen):
         self.get_3 = False
         self.get_2 = False
         self.city1 = True
+        self.synced = False
 
     def on_enter(self):
         store = JsonStore('session.json')
@@ -452,6 +453,11 @@ class AppScreen(Screen):
 
     def login(self):
         login_request_token(self)
+
+        # Sync json file city names with cloud
+        if self.synced == False:
+            get_new_device_data(self)
+            self.synced = True
 
     def stop_load(self, *args):
         if self.r is None:
