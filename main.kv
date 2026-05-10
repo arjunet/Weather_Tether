@@ -295,6 +295,54 @@
             opacity: 0
             id: loader
 # ---------------------------------------------------------------------------------
+<VerifyScreen>:
+    FloatLayout:
+        size_hint: 1, 1
+        bg_source: "images/sun_bg.jpg"
+
+        CLabel:
+            text: "Please Verify Your Email Address Before Continuing"
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
+            font_size: sp(24)
+
+        CLabel:
+            text: "The Email Should Already Be In Your Inbox, But If You Can't Find It, Please Check Your Spam Folder, Or Try Resending The Verification Email"
+            style: "body_01"
+            typeface: "IBM Plex Sans"
+            weight_style: "Regular"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
+            font_size: sp(16)
+
+        CButtonPrimary:
+            text: "Resend Verification Email"
+            id: resend_button
+            opacity: 0
+            role: "Large Productive"
+            icon: "send--alt"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            on_press:
+                root.start_load_send()
+
+        CButtonSecondary:
+            text: "Continue To App"
+            role: "Large Productive"
+            icon: "side-panel--open--filled"
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            on_press:
+                root.start_load_check()
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+# ---------------------------------------------------------------------------------
 <AppScreen>:
     CRelativeLayout:
         AsyncImage:
@@ -431,53 +479,293 @@
                     on_press:
                         root.open_change_location_modal()
 # ---------------------------------------------------------------------------------
-<VerifyScreen>:
-    FloatLayout:
-        size_hint: 1, 1
-        bg_source: "images/sun_bg.jpg"
+<City2Screen>:
+    CRelativeLayout:
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
 
         CLabel:
-            text: "Please Verify Your Email Address Before Continuing"
+            id: city_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+            font_size: sp(20)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(100)
+            center_y: weather_icon.center_y - dp(8.5)
+            font_size: sp(20)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(10)
+
+        CLabel:
+            id: min_max_label
             style: "heading_04"
             typeface: "IBM Plex Sans"
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(10)
 
         CLabel:
-            text: "The Email Should Already Be In Your Inbox, But If You Can't Find It, Please Check Your Spam Folder, Or Try Resending The Verification Email"
-            style: "body_01"
+            id: wind_chill_label
+            style: "heading_04"
             typeface: "IBM Plex Sans"
-            weight_style: "Regular"
+            weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-            font_size: sp(16)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(120)
+            font_size: sp(10)
 
-        CButtonPrimary:
-            text: "Resend Verification Email"
-            id: resend_button
-            opacity: 0
-            role: "Large Productive"
-            icon: "send--alt"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            on_press:
-                root.start_load_send()
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
 
-        CButtonSecondary:
-            text: "Continue To App"
-            role: "Large Productive"
-            icon: "side-panel--open--filled"
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            on_press:
-                root.start_load_check()
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
 
         CLoadingIndicator:
             role: "Large"
             opacity: 0
             id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "edit"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_change_location_modal()
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "trash-can"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_delete_location_modal()
+# ---------------------------------------------------------------------------------
+<City3Screen>:
+    CRelativeLayout:
+        AsyncImage:
+            source: root.bg_image
+            size_hint: 1, 1
+            fit_mode: "cover"
+
+        AsyncImage:
+            id: weather_icon
+            source: root.icon_path 
+            size_hint: (None, None)
+            size: ("100dp", "100dp")
+            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
+
+        CLabel:
+            id: city_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
+            font_size: sp(20)
+
+        CLabel:
+            id: current_temp_label
+            style: "heading_02"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(100)
+            center_y: weather_icon.center_y - dp(8.5)
+            font_size: sp(20)
+
+        CLabel:
+            id: condition_label
+            style: "heading_04" 
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(60)
+            font_size: sp(10)
+
+        CLabel:
+            id: min_max_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(90)
+            font_size: sp(10)
+
+        CLabel:
+            id: wind_chill_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            center_x: weather_icon.center_x + dp(5)
+            center_y: weather_icon.center_y - dp(120)
+            font_size: sp(10)
+
+        CLabel:
+            id: precip_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
+            font_size: sp(15)
+
+        CLabel:
+            id: snow_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            font_size: sp(15)
+
+        CLabel:
+            id: thunder_label
+            style: "heading_04"
+            typeface: "IBM Plex Sans"
+            weight_style: "Medium"
+            halign: "center"
+            color: (0,0,0,1)
+            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
+            font_size: sp(15)
+
+        CLoadingIndicator:
+            role: "Large"
+            opacity: 0
+            id: loader
+
+    UIShell:
+        id: left_panel_shell
+
+        SidePanel:
+            id: SidePanel
+            panel_shell: left_panel_shell
+            visibility: shell_menu_btn.active
+
+    UIShell:
+        id: header_shell
+
+        UIShellHeader:
+            id: shell_header
+            -bg_color: app.transparent
+
+            UIShellHeaderMenuButton:
+                id: shell_menu_btn
+
+            CAnchorLayout:
+                anchor_x: "right"
+
+                CGridLayout:
+                    adaptive: [True, True]
+                    rows: 1
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "edit"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_change_location_modal()
+
+                    UIShellButton:
+                        role: "Large Productive"
+                        icon: "trash-can"
+                        bg_color: "#0f62fe"
+                        opacity: 0 if not shell_menu_btn.active else 1
+                        on_press:
+                            root.open_delete_location_modal()
 # ---------------------------------------------------------------------------------
 <SettingsScreen>:
     CRelativeLayout:
@@ -673,150 +961,6 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-# ---------------------------------------------------------------------------------
-<City2Screen>:
-    CRelativeLayout:
-        AsyncImage:
-            source: root.bg_image
-            size_hint: 1, 1
-            fit_mode: "cover"
-
-        AsyncImage:
-            id: weather_icon
-            source: root.icon_path 
-            size_hint: (None, None)
-            size: ("100dp", "100dp")
-            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
-
-        CLabel:
-            id: city_label
-            style: "heading_02"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
-            font_size: sp(20)
-
-        CLabel:
-            id: current_temp_label
-            style: "heading_02"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(100)
-            center_y: weather_icon.center_y - dp(8.5)
-            font_size: sp(20)
-
-        CLabel:
-            id: condition_label
-            style: "heading_04" 
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(60)
-            font_size: sp(10)
-
-        CLabel:
-            id: min_max_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(90)
-            font_size: sp(10)
-
-        CLabel:
-            id: wind_chill_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(120)
-            font_size: sp(10)
-
-        CLabel:
-            id: precip_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(15)
-
-        CLabel:
-            id: snow_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(15)
-
-        CLabel:
-            id: thunder_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            font_size: sp(15)
-
-        CLoadingIndicator:
-            role: "Large"
-            opacity: 0
-            id: loader
-
-    UIShell:
-        id: left_panel_shell
-
-        SidePanel:
-            id: SidePanel
-            panel_shell: left_panel_shell
-            visibility: shell_menu_btn.active
-
-    UIShell:
-        id: header_shell
-
-        UIShellHeader:
-            id: shell_header
-            -bg_color: app.transparent
-
-            UIShellHeaderMenuButton:
-                id: shell_menu_btn
-
-            CAnchorLayout:
-                anchor_x: "right"
-
-                CGridLayout:
-                    adaptive: [True, True]
-                    rows: 1
-
-                    UIShellButton:
-                        role: "Large Productive"
-                        icon: "edit"
-                        bg_color: "#0f62fe"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        on_press:
-                            root.open_change_location_modal()
-
-                    UIShellButton:
-                        role: "Large Productive"
-                        icon: "trash-can"
-                        bg_color: "#0f62fe"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        on_press:
-                            root.open_delete_location_modal()
 # ----------------------------------------------------------------------------------
 <AddCityModal>:
     CModalLayout:
@@ -890,150 +1034,6 @@
         on_press:
             root.dismiss()
             app.root.current = 'App'
-# ---------------------------------------------------------------------------------
-<City3Screen>:
-    CRelativeLayout:
-        AsyncImage:
-            source: root.bg_image
-            size_hint: 1, 1
-            fit_mode: "cover"
-
-        AsyncImage:
-            id: weather_icon
-            source: root.icon_path 
-            size_hint: (None, None)
-            size: ("100dp", "100dp")
-            pos_hint: {'center_x': 0.25, 'center_y': 0.75}
-
-        CLabel:
-            id: city_label
-            style: "heading_02"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.95}
-            font_size: sp(20)
-
-        CLabel:
-            id: current_temp_label
-            style: "heading_02"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(100)
-            center_y: weather_icon.center_y - dp(8.5)
-            font_size: sp(20)
-
-        CLabel:
-            id: condition_label
-            style: "heading_04" 
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(60)
-            font_size: sp(10)
-
-        CLabel:
-            id: min_max_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(90)
-            font_size: sp(10)
-
-        CLabel:
-            id: wind_chill_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            center_x: weather_icon.center_x + dp(5)
-            center_y: weather_icon.center_y - dp(120)
-            font_size: sp(10)
-
-        CLabel:
-            id: precip_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(15)
-
-        CLabel:
-            id: snow_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(15)
-
-        CLabel:
-            id: thunder_label
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Medium"
-            halign: "center"
-            color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            font_size: sp(15)
-
-        CLoadingIndicator:
-            role: "Large"
-            opacity: 0
-            id: loader
-
-    UIShell:
-        id: left_panel_shell
-
-        SidePanel:
-            id: SidePanel
-            panel_shell: left_panel_shell
-            visibility: shell_menu_btn.active
-
-    UIShell:
-        id: header_shell
-
-        UIShellHeader:
-            id: shell_header
-            -bg_color: app.transparent
-
-            UIShellHeaderMenuButton:
-                id: shell_menu_btn
-
-            CAnchorLayout:
-                anchor_x: "right"
-
-                CGridLayout:
-                    adaptive: [True, True]
-                    rows: 1
-
-                    UIShellButton:
-                        role: "Large Productive"
-                        icon: "edit"
-                        bg_color: "#0f62fe"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        on_press:
-                            root.open_change_location_modal()
-
-                    UIShellButton:
-                        role: "Large Productive"
-                        icon: "trash-can"
-                        bg_color: "#0f62fe"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        on_press:
-                            root.open_delete_location_modal()
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:
     CModalLayout:

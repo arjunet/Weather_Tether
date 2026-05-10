@@ -922,6 +922,9 @@ class SettingsScreen(Screen):
         elif not file.exists("city3"):
             self.manager.current = "City3"
 
+        else:
+            notification_error(subtitle="You Have Used All Of Your City Slots. If You Would Like, You May Edit Or Delete An Existing Location").open()
+
     def open_logout_modal(self) -> None:
         modal = LogoutModal(settings=self)
         self._modal_ref = weakref.ref(modal)
