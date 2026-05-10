@@ -463,7 +463,7 @@ class AppScreen(Screen):
             self.synced = True
 
     def stop_load(self, *args):
-        if self.r is None:
+        if self.synced == False:
             return True # Keep waiting
         
         # Hide spinner and handle response
@@ -497,14 +497,15 @@ class AppScreen(Screen):
         get_dat(self)
 
     def get_weather(self, lat, lon):
-        get_user_weather(self, lat, lon)
         store = JsonStore('session.json')
 
         if not store.exists("city1"):
             get_new_device_data(self)
 
+        get_user_weather(self, lat, lon)
+        self.r = "weather_done"
+
     def stop_load_weather(self, *args):
-        # Check if weather data loaded
         store = JsonStore("session.json")
 
         if self.r != "weather_done":

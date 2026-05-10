@@ -78,8 +78,6 @@ def get_new_device_data(self):
                 self.city = user_data.get("location")
                 save_city(self.city, 1)
 
-        self.r = "weather_done"
-
 def get_user_weather(self, lat, lon):
         if lat is None or lon is None:
             return True # Keep waiting
