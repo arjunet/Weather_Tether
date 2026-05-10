@@ -984,8 +984,14 @@ class MainApp(CarbonApp):
 
     def apply_styles(self, *args) -> None:
         Window.clearcolor = self.background
-        icon_style = "Dark" if self.theme in ["Gray100"] else "White"
-        update_system_ui(self.background, self.background, icon_style=icon_style, pad_nav=True)
+      
+        update_system_ui(
+            "#0f62fe", # status_bar_color: hex color code or rgba (tuple or list) values
+            [0.059, 0.384, 0.996, 1.000], # navigation_bar_color: hex color code or rgba (tuple or list) values
+            "Light", # icon_style: "Dark" means dark icons will be drawn, "Light" means light icons will be drawn, Literal["Dark", or "Light"]
+            True, # pad_status: Adds a padding to top of content_view, Will take effect on Android 15+
+            True, # pad_nav: Adds a padding to bottom of content_view, Will take effect on Android 15+
+        )
 
 if __name__ == "__main__":
     MainApp().run()
