@@ -18,6 +18,7 @@ Window.on_restore(Clock.schedule_once(set_softinput, 0.1))
 
 # Carbon Kivy imports
 from carbonkivy.app import CarbonApp
+from carbonkivy.app import App
 from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.utils import _Dict, update_system_ui
 
@@ -438,6 +439,8 @@ class AppScreen(Screen):
         self.synced = False
 
     def on_enter(self):
+        app = App.get_running_app()
+        print(app.transparent)
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
@@ -986,8 +989,8 @@ class MainApp(CarbonApp):
         Window.clearcolor = self.background
       
         update_system_ui(
-            "#0f62fe", # status_bar_color: hex color code or rgba (tuple or list) values
-            [0.059, 0.384, 0.996, 1.000], # navigation_bar_color: hex color code or rgba (tuple or list) values
+            self.background, # status_bar_color: hex color code or rgba (tuple or list) values
+            self.background, # navigation_bar_color: hex color code or rgba (tuple or list) values
             "Light", # icon_style: "Dark" means dark icons will be drawn, "Light" means light icons will be drawn, Literal["Dark", or "Light"]
             True, # pad_status: Adds a padding to top of content_view, Will take effect on Android 15+
             True, # pad_nav: Adds a padding to bottom of content_view, Will take effect on Android 15+
