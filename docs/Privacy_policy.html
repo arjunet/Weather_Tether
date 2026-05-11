@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Privacy Policy — Weather Tether</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --text-primary: #161616;
+      --text-secondary: #525252;
+      --accent: #0f62fe;
+      --accent-light: #d0e2ff;
+      --danger: #da1e28;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+    }
+
+    header {
+      background: var(--text-primary);
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      border-bottom: 4px solid var(--accent);
+    }
+
+    .header-inner {
+      max-width: 760px;
+      margin: 0 auto;
+    }
+
+    .app-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: var(--accent-light);
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: #a8a8a8;
+      font-family: var(--mono);
+    }
+
+    main {
+      max-width: 760px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    .notice {
+      background: var(--accent-light);
+      border-left: 4px solid var(--accent);
+      padding: 1rem 1.25rem;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 3rem;
+      font-size: 0.9rem;
+      color: #00539a;
+    }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--mono);
+      color: var(--accent);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section p {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    section p:last-child { margin-bottom: 0; }
+
+    ul {
+      margin: 0.5rem 0 0.75rem 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    ul li {
+      margin-bottom: 0.4rem;
+      color: var(--text-primary);
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+      margin-right: 0.25rem;
+      margin-bottom: 0.25rem;
+    }
+
+    .tag.red {
+      background: #fff1f1;
+      color: var(--danger);
+    }
+
+    .tag.green {
+      background: #defbe6;
+      color: #0e6027;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.875rem;
+      margin-top: 1rem;
+    }
+
+    .data-table th {
+      text-align: left;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: var(--text-secondary);
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border);
+      background: var(--bg);
+    }
+
+    .data-table td {
+      padding: 0.6rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+      vertical-align: top;
+    }
+
+    .data-table tr:last-child td { border-bottom: none; }
+
+    .contact-box {
+      background: var(--text-primary);
+      color: #fff;
+      border-radius: 4px;
+      padding: 1.5rem 2rem;
+      margin-top: 2rem;
+    }
+
+    .contact-box h3 {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a8a8a8;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-box a {
+      color: var(--accent-light);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .contact-box a:hover { text-decoration: underline; }
+
+    footer {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="app-tag">Legal Document</div>
+    <h1>Privacy Policy</h1>
+    <p>Weather Tether &nbsp;·&nbsp; Effective date: May 11, 2026 &nbsp;·&nbsp; Last updated: May 11, 2026</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="notice">
+    This policy explains what data Weather Tether collects, why it's collected, and how you can control or delete it. We believe in being straightforward — no legalese, no surprises.
+  </div>
+
+  <section>
+    <h2>01 — Overview</h2>
+    <p>Weather Tether ("the app", "we", "us") is an Android weather application developed by Arjune Mithu. The app requires an account to function and stores your location and account on our servers so your data syncs across devices.</p>
+    <p>We do not sell your data. We do not share your data with advertisers. We collect only what is needed to provide the service.</p>
+  </section>
+
+  <section>
+    <h2>02 — Data We Collect</h2>
+    <table class="data-table">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Why</th>
+          <th>Stored</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><span class="tag">Email address</span></td>
+          <td>Account creation, login, password reset, and email verification</td>
+          <td>Firebase Authentication (Google Cloud)</td>
+        </tr>
+        <tr>
+          <td><span class="tag">Password</span></td>
+          <td>Account authentication</td>
+          <td>Stored as a secure hash by Firebase — never in plain text</td>
+        </tr>
+        <tr>
+          <td><span class="tag">City / location</span></td>
+          <td>Fetching weather data for up to 3 saved cities</td>
+          <td>Firebase Firestore (Google Cloud)</td>
+        </tr>
+        <tr>
+          <td><span class="tag">Unit preference</span></td>
+          <td>Remembering whether you prefer imperial or metric units</td>
+          <td>Device only (local JSON file)</td>
+        </tr>
+        <tr>
+          <td><span class="tag">Session tokens</span></td>
+          <td>Keeping you logged in between app launches</td>
+          <td>Device only (local JSON file)</td>
+        </tr>
+      </tbody>
+    </table>
+    <p style="margin-top:1rem;">We do <strong>not</strong> collect your precise GPS location, device identifiers, usage analytics, or any data beyond what is listed above.</p>
+  </section>
+
+  <section>
+    <h2>03 — How We Use Your Data</h2>
+    <ul>
+      <li>Your <strong>email</strong> is used solely for authentication and account recovery. We do not send marketing emails.</li>
+      <li>Your <strong>saved cities</strong> are used to fetch weather data from our weather backend and to sync your cities if you reinstall the app or use a new device.</li>
+      <li>Your <strong>unit preference</strong> is stored locally on your device and never sent to our servers.</li>
+      <li>Your <strong>session token</strong> is stored locally and sent to our servers only to verify your identity on each app launch.</li>
+    </ul>
+  </section>
+
+  <section>
+    <h2>04 — Third-Party Services</h2>
+    <p>Weather Tether uses the following third-party infrastructure:</p>
+    <ul>
+      <li><strong>Firebase Authentication</strong> (Google) — handles account creation, login, email verification, and password reset.</li>
+      <li><strong>Firebase Firestore</strong> (Google) — stores your saved city names tied to your account.</li>
+      <li><strong>Our weather backend</strong> (hosted on Google Cloud Run) — receives your city's coordinates and returns weather data. It does not store your location permanently.</li>
+    </ul>
+    <p>Google's privacy policy applies to Firebase services: <a href="https://policies.google.com/privacy" style="color:var(--accent);">policies.google.com/privacy</a></p>
+  </section>
+
+  <section>
+    <h2>05 — Data Retention</h2>
+    <p>Your data is retained for as long as your account exists. If you delete your account from within the app (Settings → Delete Account), the following happens immediately:</p>
+    <ul>
+      <li>Your Firebase Authentication record is permanently deleted.</li>
+      <li>Your saved city data in Firestore is permanently deleted.</li>
+      <li>Your local session file on the device is cleared.</li>
+    </ul>
+    <p>Account deletion is permanent and cannot be undone.</p>
+  </section>
+
+  <section>
+    <h2>06 — Your Rights</h2>
+    <p>You have the right to:</p>
+    <ul>
+      <li><span class="tag green">Access</span> — know what data we hold about you.</li>
+      <li><span class="tag green">Delete</span> — permanently delete your account and all associated data via Settings → Delete Account, or by contacting us.</li>
+      <li><span class="tag green">Correct</span> — update your saved cities at any time from within the app.</li>
+    </ul>
+    <p>To exercise any of these rights, use the in-app controls or contact us at the address below.</p>
+  </section>
+
+  <section>
+    <h2>07 — Children's Privacy</h2>
+    <p>Weather Tether is not directed at children under 13. We do not knowingly collect personal information from anyone under 13. If you believe a child has provided us with personal data, please contact us and we will delete it promptly.</p>
+  </section>
+
+  <section>
+    <h2>08 — Security</h2>
+    <p>All communication between the app and our servers uses HTTPS. Passwords are never stored in plain text — they are handled entirely by Firebase Authentication using industry-standard secure hashing. Session tokens are stored locally on your device and are refreshed periodically.</p>
+    <p>While we take reasonable steps to protect your data, no system is completely secure. Please use a strong, unique password for your account.</p>
+  </section>
+
+  <section>
+    <h2>09 — Changes to This Policy</h2>
+    <p>If we make material changes to this policy, we will update the effective date at the top of this page. Continued use of the app after changes are posted constitutes your acceptance of the updated policy.</p>
+  </section>
+
+  <section>
+    <h2>10 — Contact</h2>
+    <p>If you have any questions, concerns, or data requests, you can reach us through:</p>
+    <div class="contact-box">
+      <h3>Gmail</h3>
+      <h4>vishmithu13@gmail.com</h4>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  © 2026 Weather Tether &nbsp;·&nbsp; MIT Licensed &nbsp;·&nbsp; Built with CarbonKivy
+</footer>
+
+</body>
+</html>
