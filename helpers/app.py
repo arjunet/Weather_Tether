@@ -124,6 +124,10 @@ def get_user_weather(self, lat, lon):
 
 def update_ui_labels(self):
         # Sets the labels with the fetched weather data:
+        # Precip_type check:
+        if self.precip_type == "None":
+            self.precip_type = "Rain"
+
         self.ids.city_label.text = f"{self.city}"
         self.ids.current_temp_label.text = self.current_temp
         self.ids.condition_label.text = self.weather_condition
@@ -214,7 +218,6 @@ def delete_city_request(self):
         self.wind_chill = None
 
         if self.delete_2 == True:
-            print("deleting city2")
             url = f"{FIREBASE_URL}/delete_location2"
             id_token = self.manager.id_token
             headers = {"Authorization": f"Bearer {id_token}"}
@@ -260,10 +263,8 @@ def delete_city_request(self):
                 headers_add2 = {"Authorization": f"Bearer {id_token}"}
                 
                 r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers_add2)
-                print(r.json())
 
                 store.delete("city3")
-
                 save_city(self.city, 2)
 
         elif self.delete_3 == True:

@@ -380,7 +380,6 @@ class VerifyScreen(Screen):
         result = self.result
 
         error_code = result.get("detail", "")
-        print(error_code)
 
         if error_code == "TOO_MANY_ATTEMPTS_TRY_LATER":
             notification_error(subtitle="Email should already be in your inbox. If you don't see it, try checking your spam").open()
@@ -439,8 +438,6 @@ class AppScreen(Screen):
         self.synced = False
 
     def on_enter(self):
-        app = App.get_running_app()
-        print(app.transparent)
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 

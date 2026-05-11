@@ -11,15 +11,9 @@ def Send_Verification(self):
         payload = {"id_token": id_token}
     
         r = requests.post(url, json=payload, timeout=10)
-        print(r.json())
         result = r.json()
         self.r = r
         self.result = result
-        
-        # Check the response
-        if r.status_code == 200:
-            print("Email resent successfully!")
-            print(r.json())
 
 def check_verification(self, *args):
     token = load_refresh_token()

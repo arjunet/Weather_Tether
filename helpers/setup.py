@@ -52,14 +52,11 @@ def save_location_request(self):
         
         if self.add_3 == True:
              r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
-             print(r.json())
 
         elif self.add_2 == True:
              r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
-             print(r.json())
         else: 
              r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
-             print(r.json())
 
         self.firestore_done = True
 
@@ -100,4 +97,3 @@ def save_json(self, json_string):
     headers = {"Authorization": f"Bearer {id_token}"}
     
     r = requests.post(f"{FIREBASE_URL}/update_json", json=payload, headers=headers)
-    print(r.json())
