@@ -171,7 +171,7 @@ def update_ui_background(self):
         self.app.theme = "White"
 
     elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
-        self.bg_image = "images/rain_bg.png"
+        self.bg_image = "images/rain_bg.jpg"
         self.icon_path = "images/rain_icon.png"
 
         self.app = App.get_running_app()
