@@ -49,6 +49,11 @@ class SignupScreen(Screen):
         super().__init__(**kwargs)
         # Reset variables
         self.r = None
+        self.checked = False
+
+    # Checkbox checker:
+    def check(self):
+        self.checked = self.ids.checkbox.active
 
     # Check user input
     def start_load(self, email_input, password_input):
@@ -58,6 +63,10 @@ class SignupScreen(Screen):
         
         elif not is_valid_email(email_input):
             notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
+        elif self.checked == False:
+            notification_error("Please Agknowledge the Privacy Policy Before Signing Up").open()
             return
         
         # Show loading spinner
@@ -115,6 +124,10 @@ class LoginScreen(Screen):
         # Reset variables
         self.r = None
 
+    # Checkbox checker:
+    def check(self):
+        self.checked = self.ids.checkbox.active
+
     def start_load(self, email_input, password_input):
         if not email_input.strip() or not password_input.strip():
             notification_error(subtitle="Please type in all fields").open()
@@ -122,6 +135,10 @@ class LoginScreen(Screen):
         
         elif not is_valid_email(email_input):
             notification_error(subtitle="Please enter a valid email address").open()
+            return
+        
+        elif self.checked == False:
+            notification_error("Please Agknowledge the Privacy Policy Before Signing Up").open()
             return
         
         # Show loading spinner

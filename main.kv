@@ -16,7 +16,7 @@
 
         # Email Text Input:
         CTextInputLayout:
-            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: dp(300)
 
@@ -31,7 +31,7 @@
 
         # Password Text Input:
         CTextInputLayout:
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: dp(300)
 
@@ -48,6 +48,38 @@
                 icon: "view--off" if password_input.password else "view"
                 on_press:
                     password_input.password = (not password_input.password)
+
+        # Privacy Policy agreement:
+        CLabel:
+            text: "I agree to the Privacy Policy listed in the below link:"
+            pos_hint: {"center_x": 0.5, "center_y": 0.43}
+            typeface: "IBM Plex Sans"
+            halign: "center"
+            color: (0,0,0,1)
+            font_size: sp(15)
+            weight_style: "Medium"
+        
+        CLink:
+            url: "https://arjunet.github.io/Weather_Tether/privacy_policy.html"
+            external: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.37}
+            id: Link
+
+            CLinkText:
+                text: "[b]Privacy Policy[/b]"
+                font_size: sp(15)
+                bg_color: "white"
+
+            CLinkIcon:
+                icon: "arrow--up-right"
+                bg_color: "white"
+
+        CCheckbox:
+            line_width: dp(0.75)
+            center_x: Link.center_x - dp(75)
+            pos_hint: {'center_y': 0.37}
+            id: checkbox
+            on_active: root.check()
 
         # Login Button (users already have an account):
         CButtonSecondary:
@@ -101,7 +133,7 @@
 
         # Email Text Input:
         CTextInputLayout:
-            pos_hint: {"center_x": 0.5, "center_y": 0.7}
+            pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: dp(300)
 
@@ -116,7 +148,7 @@
 
         # Password Text Input:
         CTextInputLayout:
-            pos_hint: {"center_x": 0.5, "center_y": 0.5}
+            pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: dp(300)
 
@@ -133,6 +165,38 @@
                 icon: "view--off" if password_input.password else "view"
                 on_press:
                     password_input.password = (not password_input.password)
+
+        # Privacy Policy agreement:
+        CLabel:
+            text: "I agree to the Privacy Policy listed in the below link:"
+            pos_hint: {"center_x": 0.5, "center_y": 0.43}
+            typeface: "IBM Plex Sans"
+            halign: "center"
+            color: (0,0,0,1)
+            font_size: sp(15)
+            weight_style: "Medium"
+        
+        CLink:
+            url: "https://arjunet.github.io/Weather_Tether/privacy_policy.html"
+            external: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.37}
+            id: Link
+
+            CLinkText:
+                text: "[b]Privacy Policy[/b]"
+                font_size: sp(15)
+                bg_color: "white"
+
+            CLinkIcon:
+                icon: "arrow--up-right"
+                bg_color: "white"
+
+        CCheckbox:
+            line_width: dp(0.75)
+            center_x: Link.center_x - dp(75)
+            pos_hint: {'center_y': 0.37}
+            id: checkbox
+            on_active: root.check()
 
         # Back To Signup Button:
         CButtonSecondary:
@@ -843,6 +907,20 @@
             center_x: unit_toggle.center_x + dp(71)
             center_y: unit_toggle.center_y
             font_size: sp(16)
+
+        CLink:
+            url: "https://arjunet.github.io/Weather_Tether/privacy_policy.html"
+            external: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+
+            CLinkText:
+                text: "[b]Privacy Policy[/b]"
+                font_size: sp(25)
+                bg_color: "white"
+
+            CLinkIcon:
+                icon: "arrow--up-right"
+                bg_color: "white"
 
         CLoadingIndicator:
             role: "Large"

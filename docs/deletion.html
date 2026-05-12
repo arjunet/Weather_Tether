@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Delete Account — Weather Tether</title>
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;600&family=IBM+Plex+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --bg: #f4f4f4;
+      --surface: #ffffff;
+      --border: #e0e0e0;
+      --text-primary: #161616;
+      --text-secondary: #525252;
+      --accent: #0f62fe;
+      --accent-light: #d0e2ff;
+      --danger: #da1e28;
+      --danger-light: #fff1f1;
+      --mono: 'IBM Plex Mono', monospace;
+      --sans: 'IBM Plex Sans', sans-serif;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      font-family: var(--sans);
+      background: var(--bg);
+      color: var(--text-primary);
+      line-height: 1.7;
+      min-height: 100vh;
+    }
+
+    header {
+      background: var(--text-primary);
+      color: #fff;
+      padding: 3rem 2rem 2.5rem;
+      border-bottom: 4px solid var(--danger);
+    }
+
+    .header-inner {
+      max-width: 680px;
+      margin: 0 auto;
+    }
+
+    .app-tag {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      letter-spacing: 0.12em;
+      color: #ffb3b8;
+      text-transform: uppercase;
+      margin-bottom: 0.75rem;
+    }
+
+    header h1 {
+      font-size: 2.25rem;
+      font-weight: 600;
+      letter-spacing: -0.02em;
+      margin-bottom: 0.5rem;
+    }
+
+    header p {
+      font-size: 0.9rem;
+      color: #a8a8a8;
+      font-family: var(--mono);
+    }
+
+    main {
+      max-width: 680px;
+      margin: 0 auto;
+      padding: 3rem 2rem 5rem;
+    }
+
+    .warning-box {
+      background: var(--danger-light);
+      border-left: 4px solid var(--danger);
+      padding: 1rem 1.25rem;
+      border-radius: 0 4px 4px 0;
+      margin-bottom: 2rem;
+      font-size: 0.9rem;
+      color: #a2191f;
+    }
+
+    .warning-box strong { font-weight: 600; }
+
+    section {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    section h2 {
+      font-size: 1rem;
+      font-weight: 600;
+      font-family: var(--mono);
+      color: var(--text-secondary);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 1rem;
+      padding-bottom: 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    section p {
+      font-size: 0.95rem;
+      color: var(--text-primary);
+      margin-bottom: 0.75rem;
+    }
+
+    section p:last-child { margin-bottom: 0; }
+
+    ul {
+      margin: 0.5rem 0 0.75rem 1.25rem;
+      font-size: 0.95rem;
+    }
+
+    ul li { margin-bottom: 0.4rem; }
+
+    .method {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      padding: 2rem;
+      margin-bottom: 1.5rem;
+    }
+
+    .method-header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      margin-bottom: 1.25rem;
+      padding-bottom: 1rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .method-number {
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      font-weight: 600;
+      background: var(--text-primary);
+      color: #fff;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .method h3 {
+      font-size: 1rem;
+      font-weight: 600;
+    }
+
+    .method p {
+      font-size: 0.95rem;
+      margin-bottom: 0.75rem;
+      color: var(--text-primary);
+    }
+
+    .method p:last-child { margin-bottom: 0; }
+
+    .steps {
+      margin: 0.75rem 0 0 0;
+      padding: 0;
+      list-style: none;
+      counter-reset: steps;
+    }
+
+    .steps li {
+      counter-increment: steps;
+      padding: 0.5rem 0 0.5rem 2.25rem;
+      position: relative;
+      font-size: 0.9rem;
+      border-bottom: 1px solid var(--bg);
+    }
+
+    .steps li:last-child { border-bottom: none; }
+
+    .steps li::before {
+      content: counter(steps);
+      position: absolute;
+      left: 0;
+      top: 0.5rem;
+      font-family: var(--mono);
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--accent);
+      background: var(--accent-light);
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .tag {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      background: var(--accent-light);
+      color: var(--accent);
+      padding: 0.15rem 0.5rem;
+      border-radius: 2px;
+    }
+
+    .tag.red {
+      background: var(--danger-light);
+      color: var(--danger);
+    }
+
+    .contact-box {
+      background: var(--text-primary);
+      color: #fff;
+      border-radius: 4px;
+      padding: 1.5rem 2rem;
+      margin-top: 0.5rem;
+    }
+
+    .contact-box h3 {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #a8a8a8;
+      margin-bottom: 0.5rem;
+    }
+
+    .contact-box a {
+      color: var(--accent-light);
+      font-family: var(--mono);
+      font-size: 0.95rem;
+      text-decoration: none;
+    }
+
+    .contact-box a:hover { text-decoration: underline; }
+
+    .back-link {
+      display: inline-block;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--accent);
+      text-decoration: none;
+      margin-top: 2rem;
+    }
+
+    .back-link:hover { text-decoration: underline; }
+
+    footer {
+      text-align: center;
+      font-family: var(--mono);
+      font-size: 0.75rem;
+      color: var(--text-secondary);
+      padding: 2rem;
+      border-top: 1px solid var(--border);
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <div class="header-inner">
+    <div class="app-tag">Account Management</div>
+    <h1>Delete Your Account</h1>
+    <p>Weather Tether &nbsp;·&nbsp; Permanent account and data removal</p>
+  </div>
+</header>
+
+<main>
+
+  <div class="warning-box">
+    <strong>This action is permanent.</strong> Deleting your account will immediately and irreversibly remove all your data from our servers. This cannot be undone.
+  </div>
+
+  <section>
+    <h2>What Gets Deleted</h2>
+    <p>When your account is deleted, the following data is permanently removed:</p>
+    <ul>
+      <li>Your email address and authentication record (Firebase Authentication)</li>
+      <li>All saved city locations — City 1, City 2, and City 3 (Firebase Firestore)</li>
+      <li>Your local session file on the device</li>
+    </ul>
+    <p>Deletion is immediate and cannot be reversed. You would need to create a new account to use Weather Tether again.</p>
+  </section>
+
+  <div class="method">
+    <div class="method-header">
+      <div class="method-number">1</div>
+      <h3>Delete From Within the App <span class="tag">Recommended</span></h3>
+    </div>
+    <p>The fastest way to delete your account is directly from the app:</p>
+    <ol class="steps">
+      <li>Open Weather Tether on your Android device</li>
+      <li>Tap the side panel and go to <strong>Settings</strong></li>
+      <li>Scroll down to <strong>Delete Account</strong></li>
+      <li>Enter your email and password to confirm</li>
+      <li>Tap <strong>Delete Account</strong> — your account and all data will be removed immediately</li>
+    </ol>
+  </div>
+
+  <div class="method">
+    <div class="method-header">
+      <div class="method-number">2</div>
+      <h3>Request Deletion via GitHub <span class="tag red">If you can't access the app</span></h3>
+    </div>
+    <p>If you no longer have access to the app or your device, you can request manual deletion by opening an issue on our GitHub repository. Please include the email address associated with your account.</p>
+    <p>We will process your request and confirm deletion within <strong>7 days</strong>.</p>
+    <div class="contact-box">
+      <h3>Open a Deletion Request</h3>
+      <a href="https://github.com/arjunet/Weather_Tether/issues" target="_blank">github.com/arjunet/Weather_Tether/issues</a>
+    </div>
+  </div>
+
+  <a class="back-link" href="./privacy_policy.html">← Privacy Policy</a>
+
+</main>
+
+<footer>
+  © 2026 Weather Tether &nbsp;·&nbsp; MIT Licensed &nbsp;·&nbsp; Built with CarbonKivy
+</footer>
+
+</body>
+</html>
