@@ -123,6 +123,7 @@ class LoginScreen(Screen):
         super().__init__(**kwargs)
         # Reset variables
         self.r = None
+        self.checked = False
 
     # Checkbox checker:
     def check(self):
@@ -138,7 +139,7 @@ class LoginScreen(Screen):
             return
         
         elif self.checked == False:
-            notification_error("Please Agknowledge the Privacy Policy Before Signing Up").open()
+            notification_error("Please Agknowledge the Privacy Policy Before Logging In").open()
             return
         
         # Show loading spinner
