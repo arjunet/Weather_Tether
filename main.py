@@ -447,7 +447,6 @@ class AppScreen(Screen):
         self.precip_percent = None
         self.precip_type = None
         self.snow_fall = None
-        self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
         self.get_3 = False
@@ -588,7 +587,6 @@ class City2Screen(Screen):
         self.precip_percent = None
         self.precip_type = None
         self.snow_fall = None
-        self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
         self.delete_done = None
@@ -728,7 +726,6 @@ class City3Screen(Screen):
         self.precip_percent = None
         self.precip_type = None
         self.snow_fall = None
-        self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
         self.delete_2 = False
@@ -856,7 +853,7 @@ class SettingsScreen(Screen):
     def on_enter(self, *args):
         app = App.get_running_app()
         app.theme = "White"
-        
+
         # Load toggle state from session file
         store = JsonStore('session.json')
         toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False

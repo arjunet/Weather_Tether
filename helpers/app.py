@@ -90,17 +90,16 @@ def get_user_weather(self, lat, lon):
                 data = response.json()
 
                 # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°F")
-                self.feels_like = (f"{data['feels_like']}°F")
+                self.current_temp = (f"{data['current_temp']}")
+                self.feels_like = (f"{data['feels_like']}")
                 self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°F")
-                self.max_temp = (f"{data['max_temp']}°F")
-                self.precip_percent = (f"{data['precip_percent']}%")
+                self.min_temp = (f"{data['min_temp']}")
+                self.max_temp = (f"{data['max_temp']}")
+                self.precip_percent = (f"{data['precip_percent']}")
                 self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Inches")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.snow_fall = (f"{data['snow_fall']}")
                 self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°F")
+                self.wind_chill = (f"{data['wind_chill']}")
 
         elif self.toggle_state == True:
             url = f"{WEATHER_API_URL}/weather?lat={lat}&lon={lon}&unit=metric"
@@ -110,17 +109,16 @@ def get_user_weather(self, lat, lon):
                 data = response.json()
 
                 # Get the weather data:
-                self.current_temp = (f"{data['current_temp']}°C")
-                self.feels_like = (f"{data['feels_like']}°C")
+                self.current_temp = (f"{data['current_temp']}")
+                self.feels_like = (f"{data['feels_like']}")
                 self.is_daytime = (f"{data['is_daytime']}")
-                self.min_temp = (f"{data['min_temp']}°C")
-                self.max_temp = (f"{data['max_temp']}°C")
-                self.precip_percent = (f"{data['precip_percent']}%")
+                self.min_temp = (f"{data['min_temp']}")
+                self.max_temp = (f"{data['max_temp']}")
+                self.precip_percent = (f"{data['precip_percent']}")
                 self.precip_type = (f"{data['precip_type']}")
-                self.snow_fall = (f"{data['snow_fall']} Centimeters")
-                self.thunderstorm_prob = (f"{data['thunderstorm_prob']}%")
+                self.snow_fall = (f"{data['snow_fall']}")
                 self.weather_condition = (f"{data['weather_condition']}")
-                self.wind_chill = (f"{data['wind_chill']}°C")  
+                self.wind_chill = (f"{data['wind_chill']}")  
 
 def update_ui_labels(self):
         # Sets the labels with the fetched weather data:
@@ -136,7 +134,6 @@ def update_ui_labels(self):
         self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
         self.ids.precip_label.text = f"Precip: {self.precip_percent} Chance Of {self.precip_type}"
         self.ids.snow_label.text = f"Snow: {self.snow_fall}"
-        self.ids.thunder_label.text = f"Thunder: {self.thunderstorm_prob}"
         self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
 
 def update_ui_background(self):
@@ -213,7 +210,6 @@ def delete_city_request(self):
         self.precip_percent = None
         self.precip_type = None
         self.snow_fall = None
-        self.thunderstorm_prob = None
         self.weather_condition = None
         self.wind_chill = None
 
