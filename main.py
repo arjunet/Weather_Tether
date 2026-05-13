@@ -854,6 +854,9 @@ class SettingsScreen(Screen):
         self.login_result = None
 
     def on_enter(self, *args):
+        app = App.get_running_app()
+        app.theme = "White"
+        
         # Load toggle state from session file
         store = JsonStore('session.json')
         toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
