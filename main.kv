@@ -908,7 +908,7 @@
 
         CModalBody:
             CModalBodyContent:
-                text: "Logging out will require you to login again with your email and password. Your saved location and unit preference will still be saved, but you will need to login again to access them."
+                text: "Logging out will require you to login again with your email and password. Your saved location and unit preference will not be saved."
 
         CModalFooter:
             CGridLayout:
@@ -1011,6 +1011,8 @@
             root.dismiss()
 # ----------------------------------------------------------------------------------
 <AddCityModal>:
+    auto_dismiss: False
+
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
@@ -1069,7 +1071,7 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
-                        app.root.current = 'App'
+                        app.root.current = 'Settings'
 
                 CButtonPrimary:
                     text: "Add"
@@ -1081,9 +1083,11 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-            app.root.current = 'App'
+            app.root.current = 'Settings'
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:
+    auto_dismiss: False
+
     CModalLayout:
         CModalHeader:
             CModalHeaderLabel:
@@ -1148,7 +1152,6 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-            app.root.current = 'App'
 # ---------------------------------------------------------------------------------
 <DeleteLocationModal>:
     CModalLayout:
@@ -1175,7 +1178,6 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
-                        app.root.current = 'App'
 
                 CButtonDanger:
                     text: "Delete"
@@ -1187,4 +1189,3 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-            app.root.current = 'App'
