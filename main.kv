@@ -1,8 +1,12 @@
 <SplashScreen>:
-    AsyncImage:
-        source: "./images/presplash.png"
-        size_hint: 1, 1
-        fit_mode: "cover"
+    Image:
+        source: './images/presplash.png'
+        nocache: True
+        keep_ratio: True
+        allow_stretch: True
+        size_hint: None, None
+        size: dp(150), dp(150)
+        pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
