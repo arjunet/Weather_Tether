@@ -160,7 +160,7 @@ def update_ui_background(self):
         self.app = App.get_running_app()
         self.app.theme = "White"
 
-    elif "cloud" in self.weather_condition.lower():
+    elif "cloud" in self.weather_condition.lower() or "fog" in self.weather_condition.lower():
         self.bg_image = "images/cloud_bg.jpg"
         self.icon_path = "images/cloud_icon.png"
 
