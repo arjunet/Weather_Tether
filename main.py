@@ -44,6 +44,35 @@ Builder.load_file("helpers/modal_loader.kv")
 import threading
 import weakref
 # ---------------------------------------------------------------------------------
+class SplashScreen(Screen):
+    def on_enter(self):
+        Clock.schedule_once(self.auto_login, 0)
+
+    def auto_login(self, *args):
+        token = load_refresh_token()
+
+        if token:
+            result = refresh_login(token)
+
+            if result:
+                self.id_token = result["idToken"]
+                self.refresh_token = result["refreshToken"]
+
+                # Save new token
+                save_refresh_token(result["refreshToken"])
+
+                if result.get("emailVerified") is True:
+                    self.manager.current = "App"
+
+                else:
+                    self.manager.current = "Verify"
+                return
+            else:
+                store = JsonStore("session.json")
+                store.clear()
+
+        self.manager.current = "Signup"
+# ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -964,6 +993,7 @@ class MainApp(CarbonApp):
 
         # Set up screen manager
         self.sm = CScreenManager()
+        self.sm.add_widget(SplashScreen(name="splash"))
         self.sm.add_widget(SignupScreen(name='Signup'))
         self.sm.add_widget(LoginScreen(name='Login'))
         self.sm.add_widget(ForgotScreen(name='Forgot'))
@@ -976,29 +1006,7 @@ class MainApp(CarbonApp):
         return self.sm
 
     def on_start(self):
-        token = load_refresh_token()
-
-        if token:
-            result = refresh_login(token)
-
-            if result:
-                self.sm.id_token = result["idToken"]
-                self.sm.refresh_token = result["refreshToken"]
-
-                # Save new token
-                save_refresh_token(result["refreshToken"])
-
-                if result.get("emailVerified") is True:
-                    self.sm.current = "App"
-
-                else:
-                    self.sm.current = "Verify"
-                return
-            else:
-                store = JsonStore("session.json")
-                store.clear()
-
-        self.sm.current = "Signup"
+        self.sm.current = "splash"
 
     def on_theme(self, *args) -> None:
         super(CarbonApp, self).on_theme(*args)
