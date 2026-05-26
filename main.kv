@@ -525,10 +525,11 @@
                     adaptive: [True, True]
                     rows: 1
 
-                UIShellButton:
-                    role: "Large Productive"
+                CButtonCircular:
+                    bg_color: [0, 0, 0, 1]
                     icon: "edit"
                     opacity: 0 if not shell_menu_btn.active else 1
+                    radius: [self.height/2]
                     on_press:
                         root.open_change_location_modal()
 # ---------------------------------------------------------------------------------
@@ -650,17 +651,19 @@
                     adaptive: [True, True]
                     rows: 1
 
-                    UIShellButton:
-                        role: "Large Productive"
+                    CButtonCircular:
+                        bg_color: [0, 0, 0, 1]
                         icon: "edit"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        radius: [self.height/2]
                         on_press:
                             root.open_change_location_modal()
 
-                    UIShellButton:
-                        role: "Large Productive"
+                    CButtonCircular:
+                        bg_color: [0, 0, 0, 1]
                         icon: "trash-can"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        radius: [self.height/2]
                         on_press:
                             root.open_delete_location_modal()
 # ---------------------------------------------------------------------------------
@@ -782,17 +785,19 @@
                     adaptive: [True, True]
                     rows: 1
 
-                    UIShellButton:
-                        role: "Large Productive"
+                    CButtonCircular:
+                        bg_color: [0, 0, 0, 1]
                         icon: "edit"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        radius: [self.height/2]
                         on_press:
                             root.open_change_location_modal()
 
-                    UIShellButton:
-                        role: "Large Productive"
+                    CButtonCircular:
+                        bg_color: [0, 0, 0, 1]
                         icon: "trash-can"
                         opacity: 0 if not shell_menu_btn.active else 1
+                        radius: [self.height/2]
                         on_press:
                             root.open_delete_location_modal()
 # ---------------------------------------------------------------------------------
