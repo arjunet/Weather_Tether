@@ -65,4 +65,4 @@ Ensure your Firestore rules:
 **Example principle:**
 
 ```js
-allow write: if request.auth != null;
+allow write: if request.auth != null; 
