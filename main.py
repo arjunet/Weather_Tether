@@ -567,6 +567,8 @@ class AppScreen(Screen):
         self.edit_day = Edit_Day()
         self.edit_night = Edit_Night()
 
+        self.ids.container.clear_widgets()
+
         if self.ids.shell_menu_btn.active:
             if self.is_daytime != "False":
                 self.ids.container.add_widget(self.edit_day)
@@ -681,6 +683,8 @@ class City2Screen(Screen):
         self.edit_night = Edit_Night()
         self.delete_day = Delete_Day()
         self.delete_night = Delete_Night()
+
+        self.ids.container.clear_widgets()
 
         if self.ids.shell_menu_btn.active:
             if self.is_daytime != "False":
@@ -837,6 +841,8 @@ class City3Screen(Screen):
         self.edit_night = Edit_Night()
         self.delete_day = Delete_Day()
         self.delete_night = Delete_Night()
+
+        self.ids.container.clear_widgets()
 
         if self.ids.shell_menu_btn.active:
             if self.is_daytime != "False":
