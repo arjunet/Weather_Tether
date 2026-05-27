@@ -1,0 +1,33 @@
+<Edit_Day>:
+    CButtonCircular:
+        bg_color: [0, 0, 0, 1]
+        icon: "edit"
+        radius: [self.height/2]
+        on_press:
+            app.root.current_screen.open_change_location_modal()
+
+<Delete_Day>:
+    CButtonCircular:
+        bg_color: [0, 0, 0, 1]
+        icon: "trash-can"
+        radius: [self.height/2]
+        on_press:
+            app.root.current_screen.open_delete_location_modal()
+
+<Edit_Night>:
+    CButtonCircular:
+        bg_color: [1, 1, 1, 1]
+        text_color: [0, 0, 0, 1]
+        icon: "edit"
+        radius: [self.height/2]
+        on_press:
+            app.root.current_screen.open_change_location_modal()
+
+<Delete_Night>:
+    CButtonCircular:
+        bg_color: [1, 1, 1, 1]
+        text_color: [0, 0, 0, 1]
+        icon: "trash-can"
+        radius: [self.height/2]
+        on_press:
+            app.root.current_screen.open_delete_location_modal()

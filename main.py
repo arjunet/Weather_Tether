@@ -34,11 +34,13 @@ from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 from helpers.sidepanel import CityPanelItem
 from helpers.modal_loader import ModalLoader
+from helpers.menu_buttons import Edit_Day, Edit_Night, Delete_Day, Delete_Night
 from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
 
 # load other classes kv
 Builder.load_file("helpers/sidepanel.kv")
 Builder.load_file("helpers/modal_loader.kv")
+Builder.load_file("helpers/menu_buttons.kv")
 
 # other imports
 import threading
@@ -559,6 +561,19 @@ class AppScreen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_option_buttons()
+
+    def add_option_buttons(self):
+        self.edit_day = Edit_Day()
+        self.edit_night = Edit_Night()
+
+        if self.ids.shell_menu_btn.active:
+            if self.is_daytime != "False":
+                self.ids.container.add_widget(self.edit_day)
+            else:
+                self.ids.container.add_widget(self.edit_night)
+        else:
+            self.ids.container.clear_widgets()
 
     def open_change_location_modal(self) -> None:
         modal = ChangeLocationModal(city=self, update_type=1)
@@ -659,6 +674,23 @@ class City2Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_option_buttons()
+
+    def add_option_buttons(self):
+        self.edit_day = Edit_Day()
+        self.edit_night = Edit_Night()
+        self.delete_day = Delete_Day()
+        self.delete_night = Delete_Night()
+
+        if self.ids.shell_menu_btn.active:
+            if self.is_daytime != "False":
+                self.ids.container.add_widget(self.edit_day)
+                self.ids.container.add_widget(self.delete_day)
+            else:
+                self.ids.container.add_widget(self.edit_night)
+                self.ids.container.add_widget(self.delete_night)
+        else:
+            self.ids.container.clear_widgets()
 
     def open_add_modal(self) -> None:
         modal = AddCityModal(city=self, city_number=2)
@@ -798,6 +830,23 @@ class City3Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_option_buttons()
+
+    def add_option_buttons(self):
+        self.edit_day = Edit_Day()
+        self.edit_night = Edit_Night()
+        self.delete_day = Delete_Day()
+        self.delete_night = Delete_Night()
+
+        if self.ids.shell_menu_btn.active:
+            if self.is_daytime != "False":
+                self.ids.container.add_widget(self.edit_day)
+                self.ids.container.add_widget(self.delete_day)
+            else:
+                self.ids.container.add_widget(self.edit_night)
+                self.ids.container.add_widget(self.delete_night)
+        else:
+            self.ids.container.clear_widgets()
 
     def open_add_modal(self) -> None:
         modal = AddCityModal(city=self, city_number=3)

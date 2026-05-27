@@ -517,6 +517,7 @@
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn
+                on_press: root.add_option_buttons()
 
             CAnchorLayout:
                 anchor_x: "right"
@@ -524,14 +525,8 @@
                 CGridLayout:
                     adaptive: [True, True]
                     rows: 1
-
-                CButtonCircular:
-                    bg_color: [0, 0, 0, 1]
-                    icon: "edit"
-                    opacity: 0 if not shell_menu_btn.active else 1
-                    radius: [self.height/2]
-                    on_press:
-                        root.open_change_location_modal()
+                    spacing: dp(10)
+                    id: container
 # ---------------------------------------------------------------------------------
 <City2Screen>:
     CRelativeLayout:
@@ -643,6 +638,7 @@
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn
+                on_press: root.add_option_buttons()
 
             CAnchorLayout:
                 anchor_x: "right"
@@ -650,22 +646,8 @@
                 CGridLayout:
                     adaptive: [True, True]
                     rows: 1
-
-                    CButtonCircular:
-                        bg_color: [0, 0, 0, 1]
-                        icon: "edit"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        radius: [self.height/2]
-                        on_press:
-                            root.open_change_location_modal()
-
-                    CButtonCircular:
-                        bg_color: [0, 0, 0, 1]
-                        icon: "trash-can"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        radius: [self.height/2]
-                        on_press:
-                            root.open_delete_location_modal()
+                    spacing: dp(10)
+                    id: container
 # ---------------------------------------------------------------------------------
 <City3Screen>:
     CRelativeLayout:
@@ -777,6 +759,7 @@
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn
+                on_press: root.add_option_buttons()
 
             CAnchorLayout:
                 anchor_x: "right"
@@ -784,22 +767,8 @@
                 CGridLayout:
                     adaptive: [True, True]
                     rows: 1
-
-                    CButtonCircular:
-                        bg_color: [0, 0, 0, 1]
-                        icon: "edit"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        radius: [self.height/2]
-                        on_press:
-                            root.open_change_location_modal()
-
-                    CButtonCircular:
-                        bg_color: [0, 0, 0, 1]
-                        icon: "trash-can"
-                        opacity: 0 if not shell_menu_btn.active else 1
-                        radius: [self.height/2]
-                        on_press:
-                            root.open_delete_location_modal()
+                    spacing: dp(10)
+                    id: container
 # ---------------------------------------------------------------------------------
 <SettingsScreen>:
     CRelativeLayout:
@@ -841,10 +810,11 @@
             on_press:
                 root.open_delete_modal()
 
-        CButtonSecondary:
-            role: "Large Productive"
+        CButtonCircular:
             icon: "right-panel--open--filled"
             pos_hint: {'center_x': 0.1, 'center_y': 0.9}
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press:
                 root.manager.current = 'App'
 
