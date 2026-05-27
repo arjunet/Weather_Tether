@@ -82,21 +82,25 @@
             on_active: root.check()
 
         # Login Button (users already have an account):
-        CButtonSecondary:
+        CButtonCircular:
             text: "Already Have An Account? Login Here"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             icon: "right-panel--close--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press: 
                 root.manager.current = 'Login'
                 root.manager.transition.direction = 'left'
 
         # Forgot Password Button:
-        CButtonSecondary:
+        CButtonCircular:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             icon: "help--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press:
                 root.manager.current = 'Forgot'
                 root.manager.transition.direction = 'left'
@@ -199,21 +203,25 @@
             on_active: root.check()
 
         # Back To Signup Button:
-        CButtonSecondary:
+        CButtonCircular:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             icon: "right-panel--open--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press: 
                 root.manager.current = 'Signup'
                 root.manager.transition.direction = 'right'
 
         # Forgot Password Button:
-        CButtonSecondary:
+        CButtonCircular:
             text: "Forgot Your Password?"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             icon: "help--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press:
                 root.manager.current = 'Forgot'
                 root.manager.transition.direction = 'left'
@@ -264,21 +272,25 @@
                 color: "#000000"
                 
         # Back To Signup Label:
-        CButtonSecondary:
+        CButtonCircular:
             text: "Back To Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             icon: "right-panel--open--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press: 
                 root.manager.current = 'Signup'
                 root.manager.transition.direction = 'right'
 
         # Back To Login Button:
-        CButtonSecondary:
+        CButtonCircular:
             text: "Back To Login"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.2}
             icon: "right-panel--open--filled"
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press: 
                 root.manager.current = 'Login'
                 root.manager.transition.direction = 'right'
