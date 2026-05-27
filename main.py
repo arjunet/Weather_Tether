@@ -563,6 +563,7 @@ class AppScreen(Screen):
         update_ui_background(self)
         self.add_option_buttons()
 
+    # Option button config
     def add_option_buttons(self):
         self.edit_day = Edit_Day()
         self.edit_night = Edit_Night()
@@ -678,6 +679,7 @@ class City2Screen(Screen):
         update_ui_background(self)
         self.add_option_buttons()
 
+    # Option button config
     def add_option_buttons(self):
         self.edit_day = Edit_Day()
         self.edit_night = Edit_Night()
@@ -836,6 +838,7 @@ class City3Screen(Screen):
         update_ui_background(self)
         self.add_option_buttons()
 
+    # Option button config
     def add_option_buttons(self):
         self.edit_day = Edit_Day()
         self.edit_night = Edit_Night()
