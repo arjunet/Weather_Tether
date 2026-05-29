@@ -1,5 +1,6 @@
 # Import all necessary system files
 import os, sys
+os.envrion["KIVY_WINDOW"] = "sdl3"
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Kivy imports
