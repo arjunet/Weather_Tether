@@ -53,7 +53,7 @@ class SignupScreen(Screen):
         self.r = None
         self.checked = False
 
-    # Checkbox checker:
+    # Checkbox checker
     def check(self):
         self.checked = self.ids.checkbox.active
 
@@ -127,7 +127,7 @@ class LoginScreen(Screen):
         self.r = None
         self.checked = False
 
-    # Checkbox checker:
+    # Checkbox checker
     def check(self):
         self.checked = self.ids.checkbox.active
 
