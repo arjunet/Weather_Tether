@@ -338,7 +338,7 @@ p4a.branch = develop
 #p4a.hook =
 
 # (str) Bootstrap to use for android builds
-p4a.bootstrap = sdl3
+# p4a.bootstrap = sdl3
 
 # (int) port number to specify an explicit --port= p4a argument (eg for bootstrap flask)
 #p4a.port =
@@ -351,7 +351,7 @@ p4a.bootstrap = sdl3
 #p4a.setup_py = false
 
 # (str) extra command line arguments to pass when invoking pythonforandroid.toolchain
-p4a.extra_args = --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a 
+# p4a.extra_args = --extra-index-url https://anshdadwal.is-a.dev/p4a-wheels/p4a 
 
 
 
