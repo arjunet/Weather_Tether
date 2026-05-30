@@ -4,8 +4,8 @@ import re
 from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
-from kivy.clock import Clock
 
+from helpers.menu_buttons import Edit_Day, Edit_Night
 from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
@@ -281,3 +281,24 @@ def delete_city_request(self):
 def is_valid_email(email):
     pattern = r'^[\w.+\-]+@[\w.-]+\.[a-zA-Z]{2,}$'
     return re.match(pattern, email.strip()) is not None
+
+def add_option_buttons(self):
+    self.edit_day = Edit_Day()
+    self.edit_night = Edit_Night()
+
+    self.ids.container.clear_widgets()
+
+    if self.ids.shell_menu_btn.active:
+        if self.is_daytime != "False":
+            self.ids.container.add_widget(self.edit_day)
+        else:
+            self.ids.container.add_widget(self.edit_night)
+    else:
+        self.ids.container.clear_widgets()
+
+    if self.is_daytime != "False":
+        self.ids.shell_menu_btn.bg_color = (0, 0, 0, 1)
+        self.ids.shell_menu_btn.text_color = (1, 1, 1, 1)
+    else:
+         self.ids.shell_menu_btn.bg_color = (1, 1, 1, 1)
+         self.ids.shell_menu_btn.text_color = (0, 0, 0, 1)

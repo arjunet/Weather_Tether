@@ -29,7 +29,7 @@ from helpers.signup import Signup_request
 from helpers.login import Login_request
 from helpers.forgot import Send_Forgot_Email
 from helpers.setup import Request_City, save_location_request
-from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request, is_valid_email
+from helpers.app import get_dat, get_user_weather, update_ui_labels, update_ui_background, save_city, get_new_device_data, delete_city_request, is_valid_email, add_option_buttons
 from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 from helpers.sidepanel import CityPanelItem
@@ -561,22 +561,11 @@ class AppScreen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_option_buttons()
+        self.add_buttons()
 
     # Option button config
-    def add_option_buttons(self):
-        self.edit_day = Edit_Day()
-        self.edit_night = Edit_Night()
-
-        self.ids.container.clear_widgets()
-
-        if self.ids.shell_menu_btn.active:
-            if self.is_daytime != "False":
-                self.ids.container.add_widget(self.edit_day)
-            else:
-                self.ids.container.add_widget(self.edit_night)
-        else:
-            self.ids.container.clear_widgets()
+    def add_buttons(self):
+        add_option_buttons(self)
 
     def open_change_location_modal(self) -> None:
         modal = ChangeLocationModal(city=self, update_type=1)
@@ -677,26 +666,11 @@ class City2Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_option_buttons()
+        self.add_buttons()
 
     # Option button config
-    def add_option_buttons(self):
-        self.edit_day = Edit_Day()
-        self.edit_night = Edit_Night()
-        self.delete_day = Delete_Day()
-        self.delete_night = Delete_Night()
-
-        self.ids.container.clear_widgets()
-
-        if self.ids.shell_menu_btn.active:
-            if self.is_daytime != "False":
-                self.ids.container.add_widget(self.edit_day)
-                self.ids.container.add_widget(self.delete_day)
-            else:
-                self.ids.container.add_widget(self.edit_night)
-                self.ids.container.add_widget(self.delete_night)
-        else:
-            self.ids.container.clear_widgets()
+    def add_buttons(self):
+        add_option_buttons(self)
 
     def open_add_modal(self) -> None:
         modal = AddCityModal(city=self, city_number=2)
@@ -836,26 +810,11 @@ class City3Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_option_buttons()
+        self.add_buttons()
 
     # Option button config
-    def add_option_buttons(self):
-        self.edit_day = Edit_Day()
-        self.edit_night = Edit_Night()
-        self.delete_day = Delete_Day()
-        self.delete_night = Delete_Night()
-
-        self.ids.container.clear_widgets()
-
-        if self.ids.shell_menu_btn.active:
-            if self.is_daytime != "False":
-                self.ids.container.add_widget(self.edit_day)
-                self.ids.container.add_widget(self.delete_day)
-            else:
-                self.ids.container.add_widget(self.edit_night)
-                self.ids.container.add_widget(self.delete_night)
-        else:
-            self.ids.container.clear_widgets()
+    def add_buttons(self):
+        add_option_buttons(self)
 
     def open_add_modal(self) -> None:
         modal = AddCityModal(city=self, city_number=3)
