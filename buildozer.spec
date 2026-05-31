@@ -13,20 +13,20 @@ package.domain = com.arjunits
 source.dir = .
 
 # (list) Source files to include (let empty to include all the files)
-source.include_exts = py,png,jpg,kv,atlas
+source.include_exts = py,png,jpg,kv
 
 # (list) List of inclusions using pattern matching
 source.include_patterns = images/*.png
 
 # (list) Source files to exclude (let empty to not exclude anything)
-#source.exclude_exts = spec
+source.exclude_exts = spec, md
 
 # (list) List of directory to exclude (let empty to not exclude anything)
-#source.exclude_dirs = tests, bin, venv
+source.exclude_dirs = .github, docs
 
 # (list) List of exclusions using pattern matching
 # Do not prefix with './'
-#source.exclude_patterns = license,images/*/*.jpg
+source.exclude_patterns = LICENSE,SECURITY.md,README.md,.gitignore
 
 # (str) Application versioning (method 1)
 version = 0.1
@@ -44,7 +44,7 @@ requirements = python3, kivy, android, https://github.com/CarbonKivy/CarbonKivy/
 # requirements.source.kivy = ../../kivy
 
 # (str) Presplash of the application
-presplash.filename = %(source.dir)s/images/presplash.png
+presplash.filename = %(source.dir)s/images/presplash.jpg
 
 # (str) Icon of the application
 icon.filename = %(source.dir)s/images/icon.png
