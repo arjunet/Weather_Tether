@@ -1,6 +1,4 @@
 from carbonkivy.uix.button import CButtonCircular
-from kivy.lang import builder
-
 
 class Edit_Day(CButtonCircular):
     def __init__(self, **kwargs):

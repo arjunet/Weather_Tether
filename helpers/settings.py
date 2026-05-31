@@ -1,6 +1,5 @@
 import requests
 from kivy.storage.jsonstore import JsonStore
-from helpers.login import Login_request
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 
