@@ -976,6 +976,9 @@ class MainApp(CarbonApp):
         super().__init__(*args, **kwargs)
         
     def build(self):
+        # Listener for android native back button
+        Window.bind(on_keyboard=self.on_back_button)
+
         # Set light mode
         Window.clearcolor = (1, 1, 1, 1)
 
@@ -985,12 +988,31 @@ class MainApp(CarbonApp):
         self.sm.add_widget(LoginScreen(name='Login'))
         self.sm.add_widget(ForgotScreen(name='Forgot'))
         self.sm.add_widget(SetupScreen(name='Setup'))
-        self.sm.add_widget(AppScreen(name='App'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
-        self.sm.add_widget(SettingsScreen(name='Settings'))
+        self.sm.add_widget(AppScreen(name='App'))
         self.sm.add_widget(City2Screen(name='City2'))
         self.sm.add_widget(City3Screen(name='City3'))
+        self.sm.add_widget(SettingsScreen(name='Settings'))
         return self.sm
+    
+    def on_back_button(self, window, key, *args):
+        # check if the back button was pressed
+
+        if key == 27:  # 27 is the keycode for the back button
+            if self.sm.current in ["Login", "Forgot"]:
+                self.sm.current = "Signup"
+                return True  # Return True to indicate that we've handled the event
+            
+            elif self.sm.current in ["City2", "City3", "Settings"]:
+                self.sm.current = "App"
+                return True
+            
+            elif self.sm.current in ["Signup", "App", "Verify", "Setup"]:
+                return False  # Let Android close the app
+            
+            return True
+        
+        return False  # For any other keys, do nothing
 
     def on_start(self):
         token = load_refresh_token()
