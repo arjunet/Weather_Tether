@@ -1,4 +1,4 @@
-# Imports (crazy, I know. But it works, and it's only 2 extra imports, so who cares?)
+# Imports for Kv file?? (crazy, I know. But it works, and it's only 1 extra import, so who cares?)
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
@@ -394,7 +394,7 @@
             id: loader
 # ---------------------------------------------------------------------------------
 <VerifyScreen>:
-    FloatLayout:
+    CRelativeLayout:
         size_hint: 1, 1
         bg_source: "images/sun_bg.jpg"
 
@@ -418,21 +418,25 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.7}
             font_size: sp(16)
 
-        CButtonPrimary:
+        CButtonCircular:
             text: "Resend Verification Email"
             id: resend_button
             opacity: 0
             role: "Large Productive"
             icon: "send--alt"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            radius: [self.height/2]
+            bg_color: [0, 0, 0, 1]
             on_press:
                 root.start_load_send()
 
-        CButtonSecondary:
+        CButtonCircular:
             text: "Continue To App"
             role: "Large Productive"
             icon: "side-panel--open--filled"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
+            radius: [self.height/2]
+            bg_color: app.button_primary
             on_press:
                 root.start_load_check()
 
@@ -973,6 +977,7 @@
                 CTextInputLayout:
                     size_hint_x: None
                     width: dp(300)
+                    pos_hint: {"center_x": 0.5}
 
                     CTextInput:
                         hint_text: "Email"
@@ -988,6 +993,7 @@
                 CTextInputLayout:
                     size_hint_x: None
                     width: dp(300)
+                    pos_hint: {"center_x": 0.5}
 
                     CTextInput:
                         hint_text: "Password"

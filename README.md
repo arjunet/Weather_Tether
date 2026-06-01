@@ -10,16 +10,22 @@ v0.2-DEV of Weather Tether was completed on: 11/23/2025.
 
 v0.3-DEV of Weather Tether was completed on: 01/17/2026.
 
+v0.4-DEV of Weather Tether was completed on: 05/29/2026.
+
 ## Features:
 
 - 🌤️ Modern **CarbonKivy UI** with smooth animations  
-- 6 Screens Completed:
+- 9 Screens Completed:
   - Signup screen  
   - Signin screen  
   - Forgot Password screen  
   - Setup screen
   - Verify screen
-  - Appscreen (partial)
+  - App screen 
+  - City2 Screen
+  - City3 Screen
+  - Settings screen
+
 - 📦 **APK successfully compiled** with Buildozer
 
 ## Join the discord:

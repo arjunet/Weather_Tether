@@ -1,3 +1,5 @@
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+
 <SidePanel>:
     size_hint_x: 0.5
 
@@ -14,4 +16,5 @@
         icon: "settings"
         pos_hint: {"x": 0.2, "y": 0.1}
         on_press:
+            app.sm.current_screen.manager.transition = FadeTransition()
             app.root.current = 'Settings'

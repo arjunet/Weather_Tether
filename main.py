@@ -3,7 +3,7 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Kivy imports
-from kivy.uix.screenmanager import Screen, SlideTransition
+from kivy.uix.screenmanager import Screen, FadeTransition
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
@@ -440,7 +440,7 @@ class VerifyScreen(Screen):
         if self.email_verified == True:
             # Add a coming from verify so that the app screen will not malfunction
             self.manager.coming_from_verify = True
-            self.manager.transition = SlideTransition(direction='left')
+            self.manager.transition = FadeTransition()
             self.manager.current = "App"
             notification_success(subtitle="Email verified successfully").open()
 
@@ -506,7 +506,7 @@ class AppScreen(Screen):
         Clock.unschedule(self.stop_load)
         self.ids.loader.opacity = 0
 
-        if self.go_to_verify==True:
+        if self.go_to_verify == True:
             Clock.unschedule(self.stop_load)
             self.ids.loader.opacity = 0
             self.manager.current = "Verify"
@@ -734,7 +734,7 @@ class City2Screen(Screen):
         self.delete_modal.remove_widget(self.modal_loader)
         self.delete_modal.dismiss()
 
-        self.manager.transition = SlideTransition(direction='right')
+        self.manager.transition = FadeTransition()
         self.manager.current = "App"
         notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
@@ -900,7 +900,7 @@ class SettingsScreen(Screen):
     def logout(self):
         store = JsonStore("session.json")
         store.clear()
-        self.manager.transition = SlideTransition(direction='right')
+        self.manager.transition = FadeTransition()
         self.manager.current = "Signup"
         notification_success(subtitle="Successfully Logged out").open()
 
@@ -959,7 +959,7 @@ class SettingsScreen(Screen):
             self.manager.refresh_token = None
             
             # Go back to signup
-            self.manager.transition = SlideTransition(direction='right')
+            self.manager.transition = FadeTransition()
             self.manager.current = "Signup"
             
             notification_success(subtitle="Successfully Deleted Account").open()
