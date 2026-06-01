@@ -23,7 +23,7 @@ from carbonkivy.uix.screenmanager import CScreenManager
 from carbonkivy.utils import _Dict, update_system_ui
 
 # helper imports
-from helpers.notification import notification_error, notification_success, forgot_notification
+from helpers.notification import notification_error, notification_success
 from helpers.token_management import save_refresh_token, load_refresh_token, refresh_login, login_request_token
 from helpers.signup import Signup_request
 from helpers.login import Login_request
@@ -262,7 +262,9 @@ class ForgotScreen(Screen):
             
         # Handle success
         if r.status_code == 200:
-            forgot_notification().open()
+            notification_success(
+                subtitle="Successfully Sent Reset Email. If You Don't See It, Check Your Spam Folder. If You Still Don't See It, The Email May Not Be Registered.",
+            ).open()
 # ---------------------------------------------------------------------------------
 class SetupScreen(Screen):
     def __init__(self, **kwargs):
