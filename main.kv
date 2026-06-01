@@ -1,6 +1,5 @@
 # Imports (crazy, I know. But it works, and it's only 2 extra imports, so who cares?)
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
-#:import SlideTransition kivy.uix.screenmanager.SlideTransition
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
@@ -120,7 +119,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.manager.transition = SlideTransition(direction='left')
+                root.manager.transition = FadeTransition()
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
         CLoadingIndicator:
@@ -224,7 +223,7 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
-                root.manager.transition = SlideTransition(direction='right')
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
 
         # Forgot Password Button:
@@ -246,7 +245,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
-                root.manager.transition = SlideTransition(direction='left')
+                root.manager.transition = FadeTransition()
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
         CLoadingIndicator:
@@ -296,7 +295,7 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
-                root.manager.transition = SlideTransition(direction='right')
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
 
         # Back To Login Button:
@@ -308,7 +307,7 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
-                root.manager.transition = SlideTransition(direction='right')
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
 
         # Send Email Button:
@@ -319,7 +318,7 @@
             icon: "send--alt"
             on_press:
                 root.start_load(root.ids.email_input.text.strip())
-                root.manager.transition = SlideTransition(direction='right')
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
 
         CLoadingIndicator:
@@ -386,7 +385,7 @@
             bg_color: [0, 0, 0, 1]
             pos_hint: {'right': 0.98, 'top': 0.93}
             on_press:
-                root.manager.transition = SlideTransition(direction='left')
+                root.manager.transition = FadeTransition()
                 root.countinue_pressed()
 
         CLoadingIndicator:
@@ -836,7 +835,7 @@
             text: "Add City"
             pos_hint: {'center_x': 0.5, 'center_y': 0.43}
             on_press:
-                root.manager.transition = SlideTransition(direction='left')
+                root.manager.transition = FadeTransition()
                 root.open_add_city_modal()
 
         CButtonDanger:
@@ -862,7 +861,7 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press:
-                root.manager.transition = SlideTransition(direction='right')
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'App'
 
         CToggle:
@@ -1091,7 +1090,7 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
-                        root.manager.transition = SlideTransition(direction='right')
+                        root.manager.transition = FadeTransition()
                         app.root.current = 'Settings'
 
                 CButtonPrimary:
@@ -1104,7 +1103,7 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-            root.manager.transition = SlideTransition(direction='right')
+            root.manager.transition = FadeTransition()
             app.root.current = 'Settings'
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:
