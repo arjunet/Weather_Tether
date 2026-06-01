@@ -1,3 +1,7 @@
+# Imports (crazy, I know. But it works, and it's only 2 extra imports, so who cares?)
+#:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import SlideTransition kivy.uix.screenmanager.SlideTransition
+# ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
         size_hint: 1, 1
@@ -93,9 +97,9 @@
             icon: "right-panel--close--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
-            on_press: 
+            on_press:
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
-                root.manager.transition.direction = 'left'
 
         # Forgot Password Button:
         CButtonCircular:
@@ -106,8 +110,8 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press:
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Forgot'
-                root.manager.transition.direction = 'left'
 
         # Signup Button:
         CButtonPrimary:
@@ -116,6 +120,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
+                root.manager.transition = SlideTransition(direction='left')
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
         CLoadingIndicator:
@@ -219,8 +224,8 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
+                root.manager.transition = SlideTransition(direction='right')
                 root.manager.current = 'Signup'
-                root.manager.transition.direction = 'right'
 
         # Forgot Password Button:
         CButtonCircular:
@@ -231,8 +236,8 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press:
+                root.manager.transition = FadeTransition()
                 root.manager.current = 'Forgot'
-                root.manager.transition.direction = 'left'
 
         # Login Button:
         CButtonPrimary:
@@ -241,6 +246,7 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
             on_press:
+                root.manager.transition = SlideTransition(direction='left')
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
         CLoadingIndicator:
@@ -290,8 +296,8 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
+                root.manager.transition = SlideTransition(direction='right')
                 root.manager.current = 'Signup'
-                root.manager.transition.direction = 'right'
 
         # Back To Login Button:
         CButtonCircular:
@@ -302,8 +308,8 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press: 
+                root.manager.transition = SlideTransition(direction='right')
                 root.manager.current = 'Login'
-                root.manager.transition.direction = 'right'
 
         # Send Email Button:
         CButtonPrimary:
@@ -313,6 +319,8 @@
             icon: "send--alt"
             on_press:
                 root.start_load(root.ids.email_input.text.strip())
+                root.manager.transition = SlideTransition(direction='right')
+                root.manager.current = 'Login'
 
         CLoadingIndicator:
             role: "Large"
@@ -378,6 +386,7 @@
             bg_color: [0, 0, 0, 1]
             pos_hint: {'right': 0.98, 'top': 0.93}
             on_press:
+                root.manager.transition = SlideTransition(direction='left')
                 root.countinue_pressed()
 
         CLoadingIndicator:
@@ -827,6 +836,7 @@
             text: "Add City"
             pos_hint: {'center_x': 0.5, 'center_y': 0.43}
             on_press:
+                root.manager.transition = SlideTransition(direction='left')
                 root.open_add_city_modal()
 
         CButtonDanger:
@@ -852,6 +862,7 @@
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press:
+                root.manager.transition = SlideTransition(direction='right')
                 root.manager.current = 'App'
 
         CToggle:
@@ -1080,6 +1091,7 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
+                        root.manager.transition = SlideTransition(direction='right')
                         app.root.current = 'Settings'
 
                 CButtonPrimary:
@@ -1092,6 +1104,7 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
+            root.manager.transition = SlideTransition(direction='right')
             app.root.current = 'Settings'
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:

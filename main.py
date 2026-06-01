@@ -3,7 +3,7 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Kivy imports
-from kivy.uix.screenmanager import Screen
+from kivy.uix.screenmanager import Screen, SlideTransition
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
@@ -34,7 +34,6 @@ from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 from helpers.sidepanel import CityPanelItem
 from helpers.modal_loader import ModalLoader
-from helpers.menu_buttons import Edit_Day, Edit_Night, Delete_Day, Delete_Night
 from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
 
 # load other classes kv
@@ -56,6 +55,12 @@ class SignupScreen(Screen):
     # Checkbox checker
     def check(self):
         self.checked = self.ids.checkbox.active
+
+    def on_enter(self):
+        self.ids.checkbox.active = False
+        self.checked = False
+        self.ids.email_input.text = ""
+        self.ids.password_input.text = ""
 
     # Check user input
     def start_load(self, email_input, password_input):
@@ -131,6 +136,12 @@ class LoginScreen(Screen):
     def check(self):
         self.checked = self.ids.checkbox.active
 
+    def on_enter(self):
+        self.ids.checkbox.active = False
+        self.checked = False
+        self.ids.email_input.text = ""
+        self.ids.password_input.text = ""
+
     def start_load(self, email_input, password_input):
         if not email_input.strip() or not password_input.strip():
             notification_error(subtitle="Please type in all fields").open()
@@ -193,6 +204,14 @@ class LoginScreen(Screen):
             self.manager.current = "App"
 # ---------------------------------------------------------------------------------
 class ForgotScreen(Screen):
+    def __init__(self, **kwargs):
+        super().__init__(**kwargs)
+        # Reset variables
+        self.r = None
+
+    def on_enter(self):
+        self.ids.email_input.text = ""
+
     def start_load(self, email_input):
         if not email_input.strip():
             notification_error(subtitle="Please type in all fields").open()
@@ -421,6 +440,7 @@ class VerifyScreen(Screen):
         if self.email_verified == True:
             # Add a coming from verify so that the app screen will not malfunction
             self.manager.coming_from_verify = True
+            self.manager.transition = SlideTransition(direction='left')
             self.manager.current = "App"
             notification_success(subtitle="Email verified successfully").open()
 
@@ -714,6 +734,7 @@ class City2Screen(Screen):
         self.delete_modal.remove_widget(self.modal_loader)
         self.delete_modal.dismiss()
 
+        self.manager.transition = SlideTransition(direction='right')
         self.manager.current = "App"
         notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
@@ -879,6 +900,7 @@ class SettingsScreen(Screen):
     def logout(self):
         store = JsonStore("session.json")
         store.clear()
+        self.manager.transition = SlideTransition(direction='right')
         self.manager.current = "Signup"
         notification_success(subtitle="Successfully Logged out").open()
 
@@ -937,6 +959,7 @@ class SettingsScreen(Screen):
             self.manager.refresh_token = None
             
             # Go back to signup
+            self.manager.transition = SlideTransition(direction='right')
             self.manager.current = "Signup"
             
             notification_success(subtitle="Successfully Deleted Account").open()
