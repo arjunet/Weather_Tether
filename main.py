@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.lang import Builder
+from kivy.graphics.texture import Texture
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -480,6 +481,12 @@ class AppScreen(Screen):
 
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
+
+        blank_texture = Texture.create(size=(1, 1))
+        blank_texture.blit_buffer(pbuffer=b'\x00\x00\x00\x00', colorfmt='rgba', bufferfmt='ubyte')
+
+        self.ids.weather_icon.texture = blank_texture
+
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
@@ -627,6 +634,12 @@ class City2Screen(Screen):
     # Runs every time you enter this screen
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
+        
+        blank_texture = Texture.create(size=(1, 1))
+        blank_texture.blit_buffer(pbuffer=b'\x00\x00\x00\x00', colorfmt='rgba', bufferfmt='ubyte')
+
+        self.ids.weather_icon.texture = blank_texture
+
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
@@ -773,6 +786,12 @@ class City3Screen(Screen):
     # Runs every time you enter this screen
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
+
+        blank_texture = Texture.create(size=(1, 1))
+        blank_texture.blit_buffer(pbuffer=b'\x00\x00\x00\x00', colorfmt='rgba', bufferfmt='ubyte')
+
+        self.ids.weather_icon.texture = blank_texture
+
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
