@@ -5,7 +5,7 @@ from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
 
-from helpers.menu_buttons import Edit_Day, Edit_Night
+from helpers.menu_buttons import Delete_Day, Delete_Night, Edit_Day, Edit_Night
 from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
@@ -285,14 +285,18 @@ def is_valid_email(email):
 def add_option_buttons(self):
     self.edit_day = Edit_Day()
     self.edit_night = Edit_Night()
+    self.delete_day = Delete_Day()
+    self.delete_night = Delete_Night()
 
     self.ids.container.clear_widgets()
 
     if self.ids.shell_menu_btn.active:
         if self.is_daytime != "False":
             self.ids.container.add_widget(self.edit_day)
+            self.ids.container.add_widget(self.delete_day)
         else:
             self.ids.container.add_widget(self.edit_night)
+            self.ids.container.add_widget(self.delete_night)
     else:
         self.ids.container.clear_widgets()
 

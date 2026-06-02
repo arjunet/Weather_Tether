@@ -479,6 +479,7 @@ class AppScreen(Screen):
         self.synced = False
 
     def on_enter(self):
+        self.ids.shell_menu_btn.active = False
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
@@ -625,6 +626,7 @@ class City2Screen(Screen):
 
     # Runs every time you enter this screen
     def on_enter(self):
+        self.ids.shell_menu_btn.active = False
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
@@ -770,6 +772,7 @@ class City3Screen(Screen):
 
     # Runs every time you enter this screen
     def on_enter(self):
+        self.ids.shell_menu_btn.active = False
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
