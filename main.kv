@@ -1,5 +1,6 @@
-# Imports for Kv file?? (crazy, I know. But it works, and it's only 1 extra import, so who cares?)
+# Imports for Kv file?? (crazy, I know. But it works, and it's only 2 extra imports, so who cares?)
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
+#:import Window kivy.core.window.Window
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
@@ -15,12 +16,13 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            font_size: Window.width * 0.075
 
         # Email Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: Window.width * 0.83
 
             CTextInput:
                 hint_text: "Email"
@@ -30,13 +32,14 @@
                 background_color: [1, 1, 1, 1]
 
             CTextInputHelperText:
-                text: "Enter An Email That You Would Like to Use (This will be stored on our servers)"
+                text: "Enter An Email That You Would Like to Use"
                 color: "#000000"
 
         # Password Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: Window.width * 0.83
 
             CTextInput:
                 hint_text: "Password"
@@ -46,7 +49,7 @@
                 background_color: [1, 1, 1, 1]
 
             CTextInputHelperText:
-                text: "Enter A Password That You Would Like to Use (This will be stored on our servers)"
+                text: "Enter A Password That You Would Like to Use"
                 color: "#000000"
 
             CTextInputTrailingIconButton:
@@ -139,7 +142,7 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            font_size: Window.width * 0.075
 
         # Email Text Input:
         CTextInputLayout:
@@ -263,7 +266,7 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            font_size: Window.width * 0.075
 
         # Email Text Input:
         CTextInputLayout:
@@ -969,7 +972,6 @@
 
                 # Email Text Input:
                 CTextInputLayout:
-                    size_hint_x: 0.65
                     pos_hint: {"center_x": 0.5}
 
                     CTextInput:
@@ -984,7 +986,6 @@
 
                 # Password Text Input:
                 CTextInputLayout:
-                    size_hint_x: 0.65
                     pos_hint: {"center_x": 0.5}
 
                     CTextInput:
