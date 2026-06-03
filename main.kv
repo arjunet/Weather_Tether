@@ -16,13 +16,13 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: Window.width * 0.075
+            font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
-            width: Window.width * 0.83
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "Email"
@@ -39,7 +39,7 @@
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
-            width: Window.width * 0.83
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "Password"
@@ -142,12 +142,13 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: Window.width * 0.075
+            font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "Email"
@@ -163,7 +164,8 @@
         # Password Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "Password"
@@ -266,12 +268,13 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: Window.width * 0.075
+            font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "Email"
@@ -338,13 +341,14 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
             id: setup_label
+            font_size: min(Window.width * 0.075, sp(32))
 
         # Address Text Input:
         CTextInputLayout:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
-            size_hint_x: 0.65
+            size_hint_x: None
+            width: min(Window.width * 0.83, dp(400))
 
             CTextInput:
                 hint_text: "City or Zip Code"
@@ -356,7 +360,7 @@
                     root.start_lookup()
 
             CTextInputHelperText:
-                text: "Enter Your City or Zip Code (This will be stored on our servers)"
+                text: "Enter Your City or Zip Code"
                 color: "#000000"
 
         # Search Result Button:
@@ -374,16 +378,20 @@
             on_press:
                 root.on_address_button_press(self.text.strip())
 
-        # Continue Button:
-        CButtonCircular:
-            icon: "arrow--right"
-            text: "Finish"
-            radius: [self.height/2]
-            bg_color: [0, 0, 0, 1]
-            pos_hint: {'right': 0.98, 'top': 0.93}
-            on_press:
-                root.manager.transition = FadeTransition()
-                root.countinue_pressed()
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "top"
+            padding: [dp(15), dp(15), dp(15), dp(15)]
+            
+            # Continue Button:
+            CButtonCircular:
+                icon: "arrow--right"
+                text: "Finish"
+                radius: [self.height/2]
+                bg_color: [0, 0, 0, 1]
+                on_press:
+                    root.manager.transition = FadeTransition()
+                    root.countinue_pressed()
 
         CLoadingIndicator:
             role: "Large"
@@ -403,17 +411,17 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            font_size: min(Window.width * 0.075, sp(32))
 
         CLabel:
-            text: "The Email Should Already Be In Your Inbox, But If You Can't Find It, Please Check Your Spam Folder, Or Try Resending The Verification Email"
+            text: "The Email Should Be In Your Inbox. If You Can't Find It, Check Your Spam"
             style: "body_01"
             typeface: "IBM Plex Sans"
             weight_style: "Regular"
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.7}
-            font_size: sp(16)
+            font_size: min(Window.width * 0.04, sp(16))
 
         CButtonCircular:
             text: "Resend Verification Email"
