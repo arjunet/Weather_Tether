@@ -44,6 +44,8 @@ import weakref
 # Hot Reload (FOR WINDOWS USE ONLY)
 if platform == "win":
     from carbonkivy.devtools import LiveApp
+    # We store both classes in a tuple
+    BASE_CLASSES = (CarbonApp, LiveApp)
 
 elif platform == "android":
     from kivy.lang import Builder
@@ -51,6 +53,7 @@ elif platform == "android":
     Builder.load_file("helpers/sidepanel.kv")
     Builder.load_file("helpers/modal_loader.kv")
     Builder.load_file("helpers/menu_buttons.kv")
+    BASE_CLASSES = (CarbonApp,)
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):
@@ -1023,7 +1026,7 @@ class SettingsScreen(Screen):
         self._modal_ref = None
 # ---------------------------------------------------------------------------------
 # Build and run the app
-class MainApp(CarbonApp, LiveApp):
+class MainApp(*BASE_CLASSES):
     def __init__(self, *args, **kwargs) -> None:
         self.defaults = False
         super().__init__(*args, **kwargs)
