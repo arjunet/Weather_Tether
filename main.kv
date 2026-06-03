@@ -64,7 +64,7 @@
             typeface: "IBM Plex Sans"
             halign: "center"
             color: (0,0,0,1)
-            font_size: sp(15)
+            font_size: min(Window.width * 0.04, sp(16))
             weight_style: "Medium"
         
         CLink:
@@ -87,6 +87,8 @@
             center_x: Link.center_x - dp(75)
             pos_hint: {'center_y': 0.37}
             id: checkbox
+            width: min(Window.width * 0.07, dp(28))
+            height: min(Window.width * 0.07, dp(28))
             on_active: root.check()
 
         # Login Button (users already have an account):
@@ -97,6 +99,9 @@
             icon: "right-panel--close--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: min(Window.width * 0.935, dp(330))
+            font_size: min(Window.width * 0.044, sp(15))
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
@@ -109,16 +114,21 @@
             icon: "help--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: max(Window.width * 0.136, dp(200))
+            font_size: min(Window.width * 0.043, sp(14))
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Forgot'
 
         # Signup Button:
-        CButtonPrimary:
+        CButtonCircular:
             text: "Signup"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "login"
+            bg_color: app.button_primary
+            radius: [self.height/2]
             on_press:
                 root.manager.transition = FadeTransition()
                 root.start_load(root.ids.email_input.text, root.ids.password_input.text)
@@ -190,7 +200,7 @@
             typeface: "IBM Plex Sans"
             halign: "center"
             color: (0,0,0,1)
-            font_size: sp(15)
+            font_size: min(Window.width * 0.04, sp(16))
             weight_style: "Medium"
         
         CLink:
@@ -213,6 +223,8 @@
             center_x: Link.center_x - dp(75)
             pos_hint: {'center_y': 0.37}
             id: checkbox
+            width: min(Window.width * 0.07, dp(28))
+            height: min(Window.width * 0.07, dp(28))
             on_active: root.check()
 
         # Back To Signup Button:
@@ -223,6 +235,9 @@
             icon: "right-panel--open--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: max(Window.width * 0.136, dp(200))
+            font_size: min(Window.width * 0.043, sp(14))
             on_press: 
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
@@ -235,15 +250,20 @@
             icon: "help--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: max(Window.width * 0.136, dp(200))
+            font_size: min(Window.width * 0.043, sp(14))
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Forgot'
 
         # Login Button:
-        CButtonPrimary:
+        CButtonCircular:
             text: "Login"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            bg_color: app.button_primary
+            radius: [self.height/2]
             icon: "login"
             on_press:
                 root.manager.transition = FadeTransition()
@@ -295,6 +315,9 @@
             icon: "right-panel--open--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: max(Window.width * 0.136, dp(200))
+            font_size: min(Window.width * 0.043, sp(14))
             on_press: 
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
@@ -307,16 +330,21 @@
             icon: "right-panel--open--filled"
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
+            size_hint: None, None
+            width: max(Window.width * 0.136, dp(200))
+            font_size: min(Window.width * 0.043, sp(14))
             on_press: 
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
 
         # Send Email Button:
-        CButtonPrimary:
+        CButtonCircular:
             text: "Send Email"
             role: "Large Productive"
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             icon: "send--alt"
+            bg_color: app.button_primary
+            radius: [self.height/2]
             on_press:
                 root.start_load(root.ids.email_input.text.strip())
                 root.manager.transition = FadeTransition()
@@ -364,17 +392,20 @@
                 color: "#000000"
 
         # Search Result Button:
-        CButtonPrimary:
+        CButtonCircular:
             text: "Start typing"
             id: address_button
             role: "Large Productive"
-            size_hint_x: 1          
+            size_hint_x: 0.8          
             size_hint_y: None
             height: dp(180)
             pos_hint: {'y': 0}  
             text_size: self.width - dp(20), None
             disabled: True
             icon: "location--filled"
+            bg_color: app.button_primary
+            radius: [self.height/2]
+            pos_hint: {'center_x': 0.5}
             on_press:
                 root.on_address_button_press(self.text.strip())
 

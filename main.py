@@ -8,8 +8,8 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.storage.jsonstore import JsonStore
-from kivy.lang import Builder
 from kivy.graphics.texture import Texture
+from kivy.utils import platform
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -37,14 +37,20 @@ from helpers.sidepanel import CityPanelItem
 from helpers.modal_loader import ModalLoader
 from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
 
-# load other classes kv
-Builder.load_file("helpers/sidepanel.kv")
-Builder.load_file("helpers/modal_loader.kv")
-Builder.load_file("helpers/menu_buttons.kv")
-
 # other imports
 import threading
 import weakref
+
+# Hot Reload (FOR WINDOWS USE ONLY)
+if platform == "win":
+    from carbonkivy.devtools import LiveApp
+
+elif platform == "android":
+    from kivy.lang import Builder
+    # load other classes kv
+    Builder.load_file("helpers/sidepanel.kv")
+    Builder.load_file("helpers/modal_loader.kv")
+    Builder.load_file("helpers/menu_buttons.kv")
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):
@@ -1017,12 +1023,13 @@ class SettingsScreen(Screen):
         self._modal_ref = None
 # ---------------------------------------------------------------------------------
 # Build and run the app
-class MainApp(CarbonApp):
+class MainApp(CarbonApp, LiveApp):
     def __init__(self, *args, **kwargs) -> None:
         self.defaults = False
         super().__init__(*args, **kwargs)
+        self.DEBUG = True
         
-    def build(self):
+    def build_app(self):
         # Listener for android native back button
         Window.bind(on_keyboard=self.on_back_button)
 
