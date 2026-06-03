@@ -836,13 +836,15 @@
             halign: "center"
             color: (0,0,0,1)
             pos_hint: {'center_x': 0.5, 'center_y': 0.9}
-            font_size: sp(24)
+            font_size: min(Window.width * 0.075, sp(32))
 
-        CButtonSecondary:
+        CButtonCircular:
             role: "Large Productive"
             icon: "building"
             text: "Add City"
             pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+            bg_color: [0, 0, 0, 1]
+            radius: [self.height/2]
             on_press:
                 root.manager.transition = FadeTransition()
                 root.open_add_city_modal()
@@ -863,15 +865,20 @@
             on_press:
                 root.open_delete_modal()
 
-        CButtonCircular:
-            icon: "right-panel--open--filled"
-            text: "Back"
-            pos_hint: {'right': 0.35, 'top': 0.93}
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
-            on_press:
-                root.manager.transition = FadeTransition()
-                root.manager.current = 'App'
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "top"
+            padding: [dp(15), dp(15), dp(15), dp(15)]
+
+            CButtonCircular:
+                icon: "right-panel--open--filled"
+                text: "Back"
+                pos_hint: {'right': 0.35, 'top': 0.93}
+                bg_color: [0, 0, 0, 1]
+                radius: [self.height/2]
+                on_press:
+                    root.manager.transition = FadeTransition()
+                    root.manager.current = 'App'
 
         CToggle:
             id: unit_toggle
