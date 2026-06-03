@@ -463,6 +463,9 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.3}
             radius: [self.height/2]
             bg_color: [0, 0, 0, 1]
+            size_hint: None, None
+            width: max(Window.width * 0.11, dp(270))
+            font_size: min(Window.width * 0.05, sp(17))
             on_press:
                 root.start_load_send()
 
@@ -473,6 +476,9 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.5}
             radius: [self.height/2]
             bg_color: app.button_primary
+            size_hint: None, None
+            width: max(Window.width * 0.11, dp(220))
+            font_size: min(Window.width * 0.05, sp(17))
             on_press:
                 root.start_load_check()
 
