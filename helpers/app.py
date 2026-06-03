@@ -293,10 +293,12 @@ def add_option_buttons(self):
     if self.ids.shell_menu_btn.active:
         if self.is_daytime != "False":
             self.ids.container.add_widget(self.edit_day)
-            self.ids.container.add_widget(self.delete_day)
+            if self.city_1 != True: 
+                self.ids.container.add_widget(self.delete_day)
         else:
             self.ids.container.add_widget(self.edit_night)
-            self.ids.container.add_widget(self.delete_night)
+            if self.city_1 != True: 
+                self.ids.container.add_widget(self.delete_night)
     else:
         self.ids.container.clear_widgets()
 
