@@ -3,13 +3,12 @@ import os, sys
 sys.path.insert(0, os.path.dirname(__file__))
 
 # Kivy imports
-from kivy.uix.screenmanager import Screen, FadeTransition
+from kivy.uix.screenmanager import Builder, Screen, FadeTransition
 from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.graphics.texture import Texture
-from kivy.utils import platform
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -41,19 +40,10 @@ from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, Delete
 import threading
 import weakref
 
-# Hot Reload (FOR WINDOWS USE ONLY)
-if platform == "win":
-    from carbonkivy.devtools import LiveApp
-    # We store both classes in a tuple
-    BASE_CLASSES = (CarbonApp, LiveApp)
-
-elif platform == "android":
-    from kivy.lang import Builder
-    # load other classes kv
-    Builder.load_file("helpers/sidepanel.kv")
-    Builder.load_file("helpers/modal_loader.kv")
-    Builder.load_file("helpers/menu_buttons.kv")
-    BASE_CLASSES = (CarbonApp,)
+# load other classes kv
+Builder.load_file("helpers/sidepanel.kv")
+Builder.load_file("helpers/modal_loader.kv")
+Builder.load_file("helpers/menu_buttons.kv")
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):
@@ -1026,13 +1016,12 @@ class SettingsScreen(Screen):
         self._modal_ref = None
 # ---------------------------------------------------------------------------------
 # Build and run the app
-class MainApp(*BASE_CLASSES):
+class MainApp(CarbonApp):
     def __init__(self, *args, **kwargs) -> None:
         self.defaults = False
         super().__init__(*args, **kwargs)
-        self.DEBUG = True
         
-    def build_app(self):
+    def build(self):
         # Listener for android native back button
         Window.bind(on_keyboard=self.on_back_button)
 
