@@ -522,8 +522,8 @@
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(100)
-            center_y: weather_icon.center_y - dp(8.5)
-            font_size: sp(20)
+            center_y: weather_icon.center_y + dp(38)
+            font_size: min(Window.width * 0.06, sp(27))
 
         CLabel:
             id: condition_label
@@ -534,7 +534,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(60)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: min_max_label
@@ -545,7 +545,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(90)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: wind_chill_label
@@ -556,7 +556,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(120)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: precip_label
@@ -565,8 +565,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(200)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLabel:
             id: snow_label
@@ -575,8 +576,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(250)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLoadingIndicator:
             role: "Large"
@@ -646,8 +648,8 @@
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(100)
-            center_y: weather_icon.center_y - dp(8.5)
-            font_size: sp(20)
+            center_y: weather_icon.center_y + dp(38)
+            font_size: min(Window.width * 0.06, sp(27))
 
         CLabel:
             id: condition_label
@@ -658,7 +660,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(60)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: min_max_label
@@ -669,7 +671,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(90)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: wind_chill_label
@@ -680,7 +682,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(120)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: precip_label
@@ -689,8 +691,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(200)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLabel:
             id: snow_label
@@ -699,8 +702,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(250)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLoadingIndicator:
             role: "Large"
@@ -770,8 +774,8 @@
             halign: "center"
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(100)
-            center_y: weather_icon.center_y - dp(8.5)
-            font_size: sp(20)
+            center_y: weather_icon.center_y + dp(38)
+            font_size: min(Window.width * 0.06, sp(27))
 
         CLabel:
             id: condition_label
@@ -782,7 +786,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(60)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: min_max_label
@@ -793,7 +797,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(90)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: wind_chill_label
@@ -804,7 +808,7 @@
             color: (0,0,0,1)
             center_x: weather_icon.center_x + dp(5)
             center_y: weather_icon.center_y - dp(120)
-            font_size: sp(10)
+            font_size: min(Window.width * 0.03, sp(12))
 
         CLabel:
             id: precip_label
@@ -813,8 +817,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(200)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLabel:
             id: snow_label
@@ -823,8 +828,9 @@
             weight_style: "Medium"
             halign: "center"
             color: (0,0,0,1)
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            font_size: sp(15)
+            pos_hint: {'center_x': 0.5}
+            center_y: weather_icon.center_y - dp(250)
+            font_size: min(Window.width * 0.03, sp(15))
 
         CLoadingIndicator:
             role: "Large"
