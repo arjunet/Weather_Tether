@@ -1149,8 +1149,6 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
-                        root.manager.transition = FadeTransition()
-                        app.root.current = 'Settings'
 
                 CButtonPrimary:
                     text: "Add"
@@ -1162,33 +1160,39 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
-            root.manager.transition = FadeTransition()
-            app.root.current = 'Settings'
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:
     auto_dismiss: False
 
     CModalLayout:
+
         CModalHeader:
+        
             CModalHeaderLabel:
                 text: "Change Location"
+
             CModalHeaderTitle:
                 text: "Would You Like To Change Your Location?"
+
         CModalBody:
+
             CModalBodyContent:
                 text: "Changing your location will update your weather information to reflect the new city."
+
             CBoxLayout:
                 adaptive: [False, True]
                 padding: [0, dp(64)]
 
                 CTextInputLayout:
                     size_hint_x: 0.65
+
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
                         bg_color: [1, 1, 1, 1]
                         on_text: 
                             root.start_lookup()
+
                     CTextInputLabel:
                         text: "City Name"
 
