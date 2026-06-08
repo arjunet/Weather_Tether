@@ -1090,7 +1090,9 @@
     auto_dismiss: False
 
     CModalLayout:
+
         CModalHeader:
+        
             CModalHeaderLabel:
                 text: "Add City"
 
@@ -1107,6 +1109,7 @@
 
                 CTextInputLayout:
                     size_hint_x: 0.65
+
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
@@ -1149,6 +1152,7 @@
                     size_hint_x: 1
                     on_press:
                         root.dismiss()
+                        app.sm.current = "Settings"
 
                 CButtonPrimary:
                     text: "Add"
@@ -1160,6 +1164,7 @@
     CModalCloseButton:
         on_press:
             root.dismiss()
+            app.sm.current = "Settings"
 # ---------------------------------------------------------------------------------
 <ChangeLocationModal>:
     auto_dismiss: False
