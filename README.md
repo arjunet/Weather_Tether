@@ -37,8 +37,7 @@ A beautiful, modern weather application built with **CarbonKivy** UI framework f
 - 🌡️ Real-time weather data integration  
 - 📱 Responsive design optimized for mobile  
 - 🔐 Secure authentication system (Signup, Sign-in, Forgot Password)  
-- 🌍 Multi-city weather tracking (3+ cities support)  
-- 📍 Automatic location detection  
+- 🌍 Multi-city weather tracking (3 cities supported)    
 - 🎨 Dynamic backgrounds based on weather conditions  
 - ⚙️ Comprehensive settings panel  
 - 🔔 Real-time notifications  
@@ -96,18 +95,21 @@ A beautiful, modern weather application built with **CarbonKivy** UI framework f
 
 ## 📦 Key Dependencies
 
-<pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>kivy>=2.3.1
+```
+kivy>=2.3.1
 CarbonKivy (from GitHub)
 requests
 pyjnius
 python3
-android</code></pre>
+android
+```
 
 ---
 
 ## 🏗️ Project Structure
 
-<pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>Weather_Tether/
+```
+Weather_Tether/
 ├── main.py                 # Application entry point
 ├── main.kv                 # Main UI layout
 ├── pyproject.toml          # Project configuration
@@ -132,7 +134,8 @@ android</code></pre>
 │   └── ...                 # More assets
 └── docs/                   # Documentation
     ├── privacy_policy.html
-    └── deletion.html</code></pre>
+    └── deletion.html
+```
 
 ---
 
@@ -147,22 +150,32 @@ android</code></pre>
 ### Installation
 
 1. **Clone the repository**
-   <pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>git clone https://github.com/arjunet/Weather_Tether.git
-cd Weather_Tether</code></pre>
+   ```bash
+   git clone https://github.com/arjunet/Weather_Tether.git
+   cd Weather_Tether
+   ```
 
 2. **Create virtual environment**
-   <pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>python -m venv .venv
-source .venv/bin/activate  # On Windows: .venv\Scripts\activate</code></pre>
+   ```bash
+   python -m venv .venv
+   source .venv/bin/activate  # On Windows: .venv\Scripts\activate
+   ```
 
 3. **Install dependencies**
-   <pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>pip install -e .</code></pre>
+   ```bash
+   pip install https://github.com/CarbonKivy/CarbonKivy/archive/master.zip
+   ```
 
 4. **Run the app**
-   <pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>python main.py</code></pre>
+   ```bash
+   python main.py
+   ```
 
 ### Building APK
 
-<pre style="background-color: #000000; color: #ffffff; padding: 12px; border-radius: 6px; overflow-x: auto;"><code>buildozer android debug</code></pre>
+```bash
+buildozer android debug
+```
 
 ---
 
