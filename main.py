@@ -749,6 +749,7 @@ class City2Screen(Screen):
         Clock.unschedule(self.stop_delete_city)
         self.delete_modal.remove_widget(self.modal_loader)
         self.delete_modal.dismiss()
+        self.clear_widgets()
 
         self.manager.transition = FadeTransition()
         self.manager.current = "App"
@@ -901,6 +902,7 @@ class City3Screen(Screen):
         Clock.unschedule(self.stop_delete_city)
         self.delete_modal.remove_widget(self.modal_loader)
         self.delete_modal.dismiss()
+        self.clear_widgets()
 
         self.manager.current = "App"
         notification_success(subtitle="Successfully Deleted City").open()
