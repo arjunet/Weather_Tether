@@ -7,7 +7,6 @@ def notification_error(subtitle):
         status="Error",
         subtitle=subtitle
     )
-
     Clock.schedule_once(lambda dt: notif.dismiss(), 4.5)
     return notif 
 
