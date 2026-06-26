@@ -51,8 +51,6 @@
                 multiline: False
                 on_text_validate: 
                     self.focus: False
-                    root.manager.transition = FadeTransition()
-                    root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
             CTextInputHelperText:
                 text: "Enter A Password That You Would Like to Use"
@@ -194,8 +192,6 @@
                 multiline: False
                 on_text_validate: 
                     self.focus: False
-                    root.manager.transition = FadeTransition()
-                    root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
             CTextInputHelperText:
                 text: "Enter Your Password"
