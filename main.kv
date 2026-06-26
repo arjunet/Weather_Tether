@@ -1,4 +1,3 @@
-# Imports for Kv file?? (crazy, I know. But it works, and it's only 2 extra imports, so who cares?)
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Window kivy.core.window.Window
 # ---------------------------------------------------------------------------------
@@ -30,6 +29,8 @@
                 input_type: "mail"
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
+                multiline: False
+                on_text_validate: password_input.focus = True
 
             CTextInputHelperText:
                 text: "Enter An Email That You Would Like to Use"
@@ -47,6 +48,11 @@
                 id: password_input
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
+                multiline: False
+                on_text_validate: 
+                    self.focus: False
+                    root.manager.transition = FadeTransition()
+                    root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
             CTextInputHelperText:
                 text: "Enter A Password That You Would Like to Use"
@@ -166,6 +172,8 @@
                 input_type: "mail"
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
+                multiline: False
+                on_text_validate: password_input.focus = True
 
             CTextInputHelperText:
                 text: "Enter Your Email"
@@ -183,6 +191,11 @@
                 id: password_input
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
+                multiline: False
+                on_text_validate: 
+                    self.focus: False
+                    root.manager.transition = FadeTransition()
+                    root.start_load(root.ids.email_input.text, root.ids.password_input.text)
 
             CTextInputHelperText:
                 text: "Enter Your Password"
@@ -302,6 +315,12 @@
                 input_type: 'mail'
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
+                multiline: False
+                on_text_validate:
+                    self.focus: False
+                    root.start_load(root.ids.email_input.text.strip())
+                    root.manager.transition = FadeTransition()
+                    root.manager.current = 'Login'
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
@@ -384,8 +403,11 @@
                 input_type: "address"
                 bg_color: [1, 1, 1, 1]
                 background_color: [1, 1, 1, 1]
-                on_text:
-                    root.start_lookup()
+                multiline: False
+                on_text: root.start_lookup()
+                on_text_validate: 
+                    address_button.dispatch('on_press')
+                    self.focus: False
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code"
@@ -1038,6 +1060,8 @@
                         id: email_input
                         input_type: "mail"
                         bg_color: [1, 1, 1, 1]
+                        multiline: False
+                        on_text_validate: password_input.focus = True
 
                     CTextInputHelperText:
                         text: "Enter Your Email"
@@ -1052,6 +1076,8 @@
                         password: True
                         id: password_input
                         bg_color: [1, 1, 1, 1]
+                        multiline: False
+                        on_text_validate: self.focus = False
 
                     CTextInputHelperText:
                         text: "Enter Your Password"
@@ -1115,8 +1141,11 @@
                         id: address_input
                         input_type: "address"
                         bg_color: [1, 1, 1, 1]
-                        on_text: 
-                            root.start_lookup()
+                        multiline: False
+                        on_text: root.start_lookup()
+                        on_text_validate: 
+                            address_button.dispatch('on_press')
+                            self.focus: False
 
                     CTextInputLabel:
                         text: "City Name"
@@ -1195,8 +1224,11 @@
                         hint_text: "e.g. New York"
                         id: address_input
                         bg_color: [1, 1, 1, 1]
-                        on_text: 
-                            root.start_lookup()
+                        multiline: False
+                        on_text: root.start_lookup()
+                        on_text_validate: 
+                            address_button.dispatch('on_press')
+                            self.focus: False
 
                     CTextInputLabel:
                         text: "City Name"

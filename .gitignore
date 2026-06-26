@@ -1,11 +1,6 @@
-venv/
+.venv/
 __pycache__/
-*.pyc
-.env
-.DS_Store
-.idea/
 *.toml
 session.json
 /CarbonKivy
 cloudrun.py
-customlabel.py
