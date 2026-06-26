@@ -138,9 +138,10 @@ def update_ui_labels(self):
 
 def update_ui_background(self):
     self.app = App.get_running_app()
+    condition = (self.weather_condition or "").lower()
     
     # Update the background/icon based on weather condition:
-    if "sun" in self.weather_condition.lower():
+    if "sun" in condition:
         self.bg_image = "images/sun_bg.jpg"
         self.icon_path = "images/sun_icon.png"
         self.app.theme = "White"
@@ -153,28 +154,28 @@ def update_ui_background(self):
 
         self.sidepanel = SidePanel()
 
-    elif "clear" in self.weather_condition.lower() and self.is_daytime != "False":
+    elif "clear" in condition and self.is_daytime != "False":
         self.bg_image = "images/sun_bg.jpg"
         self.icon_path = "images/sun_icon.png"
 
         self.app = App.get_running_app()
         self.app.theme = "White"
 
-    elif "cloud" in self.weather_condition.lower() or "fog" in self.weather_condition.lower():
+    elif "cloud" in condition or "fog" in condition:
         self.bg_image = "images/cloud_bg.jpg"
         self.icon_path = "images/cloud_icon.png"
 
         self.app = App.get_running_app()
         self.app.theme = "White"
 
-    elif "rain" in self.weather_condition.lower() or "drizzle" in self.weather_condition.lower() or "storm" in self.weather_condition.lower() or "thunder" in self.weather_condition.lower() or "shower" in self.weather_condition.lower():
+    elif "rain" in condition or "drizzle" in condition or "storm" in condition or "thunder" in condition or "shower" in condition:
         self.bg_image = "images/rain_bg.jpg"
         self.icon_path = "images/rain_icon.png"
 
         self.app = App.get_running_app()
         self.app.theme = "White"
 
-    elif "snow" in self.weather_condition.lower() or "sleet" in self.weather_condition.lower() or "blizzard" in self.weather_condition.lower():
+    elif "snow" in condition or "sleet" in condition or "blizzard" in condition:
         self.bg_image = "images/snow_bg.jpg"
         self.icon_path = "images/snow_icon.png"
 
@@ -182,6 +183,11 @@ def update_ui_background(self):
         self.app.theme = "White"
 
     self.app.apply_styles(self)
+
+    if hasattr(self, "ids") and hasattr(self.ids, "weather_icon"):
+        self.ids.weather_icon.source = self.icon_path or ""
+        self.ids.weather_icon.opacity = 1
+        self.ids.weather_icon.reload()
 
 def save_city(city_name, city_number):
     # Normalize the city key
