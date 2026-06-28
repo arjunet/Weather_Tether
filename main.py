@@ -1083,6 +1083,11 @@ class MainApp(CarbonApp):
 
         self.sm.current = "Signup"
 
+        print("APP_NAME - Weather Tether")
+        print("APP_VER - 1.0")
+        print("APP_GUI - Kivy")
+        print("APP_DESIGN_SYSTEM - Carbon")
+
     def on_theme(self, *args) -> None:
         super(CarbonApp, self).on_theme(*args)
         self.apply_styles()

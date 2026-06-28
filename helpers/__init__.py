@@ -1,1 +1,1 @@
-# Init files for android to recognize helper files
+# INIT FILE - DO NOT REMOVE (PACKAGES/MODULES WILL NOT BE RECOGNIZED)
