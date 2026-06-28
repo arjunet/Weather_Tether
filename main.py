@@ -262,7 +262,9 @@ class ForgotScreen(Screen):
         # Handle success
         if r.status_code == 200:
             notification_success(
-                subtitle="Successfully Sent Reset Email. If You Don't See It, Check Your Spam Folder. If You Still Don't See It, The Email May Not Be Registered.",
+                subtitle="Successfully Sent Reset Email. " \
+                "If You Don't See It, Check Your Spam Folder. " \
+                "If You Still Don't See It, The Email May Not Be Registered.",
             ).open()
 # ---------------------------------------------------------------------------------
 class SetupScreen(Screen):
@@ -425,7 +427,9 @@ class VerifyScreen(Screen):
             notification_error(subtitle="Email should already be in your inbox. If you don't see it, try checking your spam").open()
 
         elif r.status_code == 200:
-            notification_success(subtitle="Verification email successfully sent. If you dont see it try checking your spam. Click on the link to verify your email.").open()
+            notification_success(subtitle="Verification email successfully sent. " \
+            "If you dont see it try checking your spam. " \
+            "Click on the link to verify your email.").open()
             
     def stop_load_check(self, *args):  
         if self.email_verified is None:
@@ -480,7 +484,6 @@ class AppScreen(Screen):
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
 
-        self.ids.weather_icon.opacity = 0
         self.ids.weather_icon.source = self.icon_path or ""
         if self.icon_path:
             self.ids.weather_icon.reload()
@@ -589,10 +592,6 @@ class AppScreen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_buttons()
-
-    # Option button config
-    def add_buttons(self):
         add_option_buttons(self)
 
     def open_change_location_modal(self) -> None:
@@ -632,7 +631,6 @@ class City2Screen(Screen):
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
         
-        self.ids.weather_icon.opacity = 0
         self.ids.weather_icon.source = self.icon_path or ""
         if self.icon_path:
             self.ids.weather_icon.reload()
@@ -700,10 +698,6 @@ class City2Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_buttons()
-
-    # Option button config
-    def add_buttons(self):
         add_option_buttons(self)
 
     def open_add_modal(self) -> None:
@@ -852,10 +846,6 @@ class City3Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
-        self.add_buttons()
-
-    # Option button config
-    def add_buttons(self):
         add_option_buttons(self)
 
     def open_add_modal(self) -> None:
@@ -999,7 +989,8 @@ class SettingsScreen(Screen):
             self.manager.current = "City3"
 
         else:
-            notification_error(subtitle="You Have Used All Of Your City Slots. If You Would Like, You May Edit Or Delete An Existing Location").open()
+            notification_error(subtitle="You Have Used All Of Your City Slots. " \
+            "If You Would Like, You May Edit Or Delete An Existing Location").open()
 
     def open_logout_modal(self) -> None:
         modal = LogoutModal(settings=self)
