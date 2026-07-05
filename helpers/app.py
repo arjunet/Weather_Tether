@@ -38,6 +38,9 @@ def get_dat(self):
 
                 self.get_weather(lat, lon)
 
+        else:
+             self.get_r = "Fail"
+
         self.r = "weather_done"
 
 def get_new_device_data(self):
@@ -59,7 +62,6 @@ def get_new_device_data(self):
                 store.delete("city3")
 
         response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
-
         if response.status_code == 200:
                 user_data = response.json()
                 self.city2 = user_data.get("location")
@@ -71,12 +73,6 @@ def get_new_device_data(self):
 
             if store.exists("city2"):
                  store.delete("city2")
-
-        response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
-        if response.status_code == 200:
-                user_data = response.json()
-                self.city = user_data.get("location")
-                save_city(self.city, 1)
 
 def get_user_weather(self, lat, lon):
         if lat is None or lon is None:

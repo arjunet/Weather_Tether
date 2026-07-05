@@ -480,6 +480,8 @@ class AppScreen(Screen):
         self.get_2 = False
         self.city1 = True
         self.synced = False
+        self.get_r = None
+        self.background_city_sync_started = False
 
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
@@ -504,15 +506,7 @@ class AppScreen(Screen):
     def login(self):
         login_request_token(self)
 
-        # Sync json file city names with cloud
-        if self.synced == False:
-            get_new_device_data(self)
-            self.synced = True
-
     def stop_load(self, *args):
-        if self.synced == False:
-            return True # Keep waiting
-        
         # Hide spinner and handle response
         Clock.unschedule(self.stop_load)
         self.ids.loader.opacity = 0
@@ -533,45 +527,65 @@ class AppScreen(Screen):
 
         self.r = None
 
-        # Run in background to keep UI responsive
+        # Kick off the primary city request immediately.
         threading.Thread(
             target=self.get_user_dat,
             daemon=True
         ).start()
         Clock.schedule_interval(self.stop_load_weather, 0.1)
 
+    def start_background_city_sync(self):
+        if self.background_city_sync_started:
+            return
+
+        self.background_city_sync_started = True
+        threading.Thread(
+            target=self.sync_background_cities,
+            daemon=True
+        ).start()
+
+    def sync_background_cities(self):
+        try:
+            get_new_device_data(self)
+        except Exception:
+            pass
+        finally:
+            Clock.schedule_once(lambda dt: self.refresh_city_panel(), 0)
+
     def get_user_dat(self):
         get_dat(self)
 
     def get_weather(self, lat, lon):
-        store = JsonStore('session.json')
-
-        if not store.exists("city1"):
-            get_new_device_data(self)
-
         get_user_weather(self, lat, lon)
         self.r = "weather_done"
 
     def stop_load_weather(self, *args):
-        store = JsonStore("session.json")
-
         if self.r != "weather_done":
             return True # Keep waiting
         
-        # Hide spinner and handle response
-        Clock.unschedule(self.stop_load_weather)
-        self.ids.loader.opacity = 0
+        if not self.get_r == "Fail":
+            # Hide spinner and handle response
+            Clock.unschedule(self.stop_load_weather)
+            self.ids.loader.opacity = 0
+            save_city(self.city, 1)
 
-        if not store.exists("city1"):
+        else:
             Clock.unschedule(self.stop_load_weather)
             self.manager.current = "Setup"
             return
+        
         self.update_labels()
         self.update_background()
+        self.start_background_city_sync()
 
     def update_labels(self):
+        if self.r != "weather_done":
+            return True # Keep waiting
+        
         update_ui_labels(self)
+        self.refresh_city_panel()
 
+    def refresh_city_panel(self):
         file = JsonStore("session.json")
         sidepanel = self.ids.SidePanel
         widget_container = sidepanel.ids.widgets
@@ -592,6 +606,10 @@ class AppScreen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_buttons()
+
+    # Option button config
+    def add_buttons(self):
         add_option_buttons(self)
 
     def open_change_location_modal(self) -> None:
@@ -627,6 +645,7 @@ class City2Screen(Screen):
         self.delete_2 = False
         self.delete_3 = False
         self.city1 = False
+        self.get_r = None
 
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
@@ -698,6 +717,10 @@ class City2Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_buttons()
+
+    # Option button config
+    def add_buttons(self):
         add_option_buttons(self)
 
     def open_add_modal(self) -> None:
@@ -773,6 +796,7 @@ class City3Screen(Screen):
         self.delete_3 = False
         self.city1 = False
         self.delete_done = None
+        self.get_r = None
 
     # Runs every time you enter this screen
     def on_enter(self):
@@ -846,6 +870,10 @@ class City3Screen(Screen):
 
     def update_background(self):
         update_ui_background(self)
+        self.add_buttons()
+
+    # Option button config
+    def add_buttons(self):
         add_option_buttons(self)
 
     def open_add_modal(self) -> None:
