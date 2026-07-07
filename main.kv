@@ -98,12 +98,13 @@
 
         # Login Button (users already have an account):
         ClickableLabel:
-            text: "Already Have An Account? [b][u]Login[/u][/b]"
+            text: "Already Have An Account? [u]Login[/u]"
             markup: True
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             color: [0, 0, 0, 1]
             size_hint: None, None
-            font_size: min(Window.width * 0.043, sp(14))
+            font_size: min(Window.width * 0.04, sp(16))
+            weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
@@ -220,12 +221,13 @@
 
         # Back To Signup Button:
         ClickableLabel:
-            text: "No Account Yet? [b][u]Signup[/u][/b]"
+            text: "No Account Yet? [u]Signup[/u]"
             markup: True
             pos_hint: {'center_x': 0.5, 'center_y': 0.07}
             color: [0, 0, 0, 1]
             size_hint: None, None
-            font_size: min(Window.width * 0.043, sp(14))
+            font_size: min(Window.width * 0.04, sp(16))
+            weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
@@ -237,7 +239,8 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.19}
             color: [0, 0, 0, 1]
             size_hint: None, None
-            font_size: min(Window.width * 0.043, sp(14))
+            font_size: min(Window.width * 0.04, sp(16))
+            weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Forgot'
@@ -305,7 +308,8 @@
             pos_hint: {'center_x': 0.5, 'center_y': 0.1}
             color: [0, 0, 0, 1]
             size_hint: None, None
-            font_size: min(Window.width * 0.043, sp(14))
+            font_size: min(Window.width * 0.04, sp(16))
+            weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
@@ -392,11 +396,12 @@
             
             # Continue Button:
             ClickableLabel:
-                text: "[b]Countinue       [/u]"
+                text: "[u]Countinue[/u]       "
                 markup: True
                 color: [0, 0, 0, 1]
                 size_hint: None, None
-                font_size: min(Window.width * 0.07, sp(18))
+                font_size: min(Window.width * 0.04, sp(16))
+                weight_style: "Medium"
                 on_press:
                     root.manager.transition = FadeTransition()
                     root.countinue_pressed()
@@ -461,11 +466,12 @@
             
             # Continue Button:
             ClickableLabel:
-                text: "[b]Finish       [/b]"
+                text: "[u]Finish[/u]       "
                 markup: True
                 color: [0, 0, 0, 1]
                 size_hint: None, None
-                font_size: min(Window.width * 0.07, sp(18))
+                font_size: min(Window.width * 0.04, sp(16))
+                weight_style: "Medium"
                 on_press:
                     root.start_load_check()
 
@@ -1540,14 +1546,23 @@
         AnchorLayout:
             anchor_x: "left"
             anchor_y: "top"
+            padding: [dp(15), dp(18), dp(15), dp(15)]
+
+            CIcon:
+                icon: "arrow--left"
+
+        AnchorLayout:
+            anchor_x: "left"
+            anchor_y: "top"
             padding: [dp(15), dp(15), dp(15), dp(15)]
 
-            CButtonCircular:
-                icon: "right-panel--open--filled"
-                text: "Back"
-                pos_hint: {'right': 0.35, 'top': 0.93}
-                bg_color: [0, 0, 0, 1]
-                radius: [self.height/2]
+            ClickableLabel:
+                text: "       [u]Back[/u]"
+                markup: True
+                color: [0, 0, 0, 1]
+                size_hint: None, None
+                font_size: min(Window.width * 0.04, sp(16))
+                weight_style: "Medium"
                 on_press:
                     root.manager.transition = FadeTransition()
                     root.manager.current = 'App'
