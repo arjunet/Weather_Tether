@@ -266,6 +266,11 @@ class ForgotScreen(Screen):
                 "If You Don't See It, Check Your Spam Folder. " \
                 "If You Still Don't See It, The Email May Not Be Registered.",
             ).open()
+
+            Clock.schedule_once(self.go_to_login, 2.0)
+
+    def go_to_login(self, dt):
+        self.manager.current = "Login"
 # ---------------------------------------------------------------------------------
 class SetupScreen(Screen):
     def __init__(self, **kwargs):

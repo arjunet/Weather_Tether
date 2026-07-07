@@ -1,5 +1,6 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Window kivy.core.window.Window
+#:import ClickableLabel helpers.clickablelabel
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
@@ -23,9 +24,7 @@
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
             bg_color: [1, 1, 1, 0.3]
-            background_normal: ''
-            background_active: ''
-            background_disabled_normal: ''
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
@@ -44,6 +43,7 @@
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
             bg_color: [1, 1, 1, 0.3]
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
@@ -97,40 +97,22 @@
             on_active: root.check()
 
         # Login Button (users already have an account):
-        CButtonCircular:
-            text: "Already Have An Account? Login Here"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            icon: "right-panel--close--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
+        ClickableLabel:
+            text: "Already Have An Account? [b][u]Login[/u][/b]"
+            markup: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            color: [0, 0, 0, 1]
             size_hint: None, None
-            width: min(Window.width * 0.935, dp(330))
-            font_size: min(Window.width * 0.044, sp(15))
-            on_press:
-                root.manager.transition = FadeTransition()
-                root.manager.current = 'Login'
-
-        # Forgot Password Button:
-        CButtonCircular:
-            text: "Forgot Your Password?"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            icon: "help--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
-            size_hint: None, None
-            width: max(Window.width * 0.136, dp(200))
             font_size: min(Window.width * 0.043, sp(14))
             on_press:
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Forgot'
+                root.manager.current = 'Login'
 
         # Signup Button:
         CButtonCircular:
             text: "Signup"
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.25}
             icon: "login"
             bg_color: app.button_primary
             radius: [self.height/2]
@@ -165,9 +147,7 @@
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
             bg_color: [1, 1, 1, 0.3]
-            background_normal: ''
-            background_active: ''
-            background_disabled_normal: ''
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
@@ -185,6 +165,7 @@
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
             bg_color: [1, 1, 1, 0.3]
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
@@ -238,30 +219,24 @@
             on_active: root.check()
 
         # Back To Signup Button:
-        CButtonCircular:
-            text: "Back To Signup"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            icon: "right-panel--open--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
+        ClickableLabel:
+            text: "No Account Yet? [b][u]Signup[/u][/b]"
+            markup: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.07}
+            color: [0, 0, 0, 1]
             size_hint: None, None
-            width: max(Window.width * 0.136, dp(200))
             font_size: min(Window.width * 0.043, sp(14))
-            on_press: 
+            on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Signup'
 
         # Forgot Password Button:
-        CButtonCircular:
-            text: "Forgot Your Password?"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            icon: "help--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
+        ClickableLabel:
+            text: "[u]Forgot Your Password?[/u]"
+            markup: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.19}
+            color: [0, 0, 0, 1]
             size_hint: None, None
-            width: max(Window.width * 0.136, dp(200))
             font_size: min(Window.width * 0.043, sp(14))
             on_press:
                 root.manager.transition = FadeTransition()
@@ -271,7 +246,7 @@
         CButtonCircular:
             text: "Login"
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.27}
             bg_color: app.button_primary
             radius: [self.height/2]
             icon: "login"
@@ -306,6 +281,7 @@
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
             bg_color: [1, 1, 1, 0.3]
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
@@ -321,34 +297,16 @@
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
                 color: "#000000"
-                
-        # Back To Signup Label:
-        CButtonCircular:
-            text: "Back To Signup"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.3}
-            icon: "right-panel--open--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
-            size_hint: None, None
-            width: max(Window.width * 0.136, dp(200))
-            font_size: min(Window.width * 0.043, sp(14))
-            on_press: 
-                root.manager.transition = FadeTransition()
-                root.manager.current = 'Signup'
 
         # Back To Login Button:
-        CButtonCircular:
-            text: "Back To Login"
-            role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.2}
-            icon: "right-panel--open--filled"
-            bg_color: [0, 0, 0, 1]
-            radius: [self.height/2]
+        ClickableLabel:
+            text: "[u]Back To Login[/u]"
+            markup: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            color: [0, 0, 0, 1]
             size_hint: None, None
-            width: max(Window.width * 0.136, dp(200))
             font_size: min(Window.width * 0.043, sp(14))
-            on_press: 
+            on_press:
                 root.manager.transition = FadeTransition()
                 root.manager.current = 'Login'
 
@@ -356,14 +314,13 @@
         CButtonCircular:
             text: "Send Email"
             role: "Large Productive"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.33}
             icon: "send--alt"
             bg_color: app.button_primary
             radius: [self.height/2]
             on_press:
                 root.start_load(root.ids.email_input.text.strip())
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Login'
 
         CLoadingIndicator:
             role: "Large"
@@ -388,17 +345,17 @@
             font_size: min(Window.width * 0.075, sp(32))
 
         # Address Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
+            hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "City or Zip Code"
                 id: address_input
                 input_type: "address"
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text: root.start_lookup()
                 on_text_validate: 
@@ -422,6 +379,7 @@
             disabled: True
             icon: "location--filled"
             bg_color: app.button_primary
+            hover_color: app.button_primary
             radius: [self.height/2]
             pos_hint: {'center_x': 0.5}
             on_press:
@@ -433,14 +391,23 @@
             padding: [dp(15), dp(15), dp(15), dp(15)]
             
             # Continue Button:
-            CButtonCircular:
-                icon: "arrow--right"
-                text: "Finish"
-                radius: [self.height/2]
-                bg_color: [0, 0, 0, 1]
+            ClickableLabel:
+                text: "[b]Countinue       [/u]"
+                markup: True
+                color: [0, 0, 0, 1]
+                size_hint: None, None
+                font_size: min(Window.width * 0.07, sp(18))
                 on_press:
                     root.manager.transition = FadeTransition()
                     root.countinue_pressed()
+
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "top"
+            padding: [dp(15), dp(18), dp(15), dp(15)]
+
+            CIcon:
+                icon: "arrow--right"
 
         CLoadingIndicator:
             role: "Large"
@@ -453,7 +420,7 @@
         bg_source: "images/default_bg.jpg"
 
         CLabel:
-            text: "Please Verify Your Email Address Before Continuing"
+            text: "Check Your Inbox"
             style: "heading_07"
             typeface: "IBM Plex Sans"
             weight_style: "Medium"
@@ -463,7 +430,7 @@
             font_size: min(Window.width * 0.075, sp(32))
 
         CLabel:
-            text: "The Email Should Be In Your Inbox. If You Can't Find It, Check Your Spam."
+            text: "We Sent You An Email To Your Inbox. If You Can't Find It, Check Your Spam."
             style: "body_01"
             typeface: "IBM Plex Sans"
             weight_style: "Regular"
@@ -487,18 +454,28 @@
             on_press:
                 root.start_load_send()
 
-        CButtonCircular:
-            text: "Continue To App"
-            role: "Large Productive"
-            icon: "side-panel--open--filled"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
-            radius: [self.height/2]
-            bg_color: app.button_primary
-            size_hint: None, None
-            width: max(Window.width * 0.11, dp(220))
-            font_size: min(Window.width * 0.05, sp(17))
-            on_press:
-                root.start_load_check()
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "top"
+            padding: [dp(15), dp(15), dp(15), dp(15)]
+            
+            # Continue Button:
+            ClickableLabel:
+                text: "[b]Finish       [/b]"
+                markup: True
+                color: [0, 0, 0, 1]
+                size_hint: None, None
+                font_size: min(Window.width * 0.07, sp(18))
+                on_press:
+                    root.start_load_check()
+
+        AnchorLayout:
+            anchor_x: "right"
+            anchor_y: "top"
+            padding: [dp(15), dp(18), dp(15), dp(15)]
+
+            CIcon:
+                icon: "arrow--right"
 
         CLoadingIndicator:
             role: "Large"
