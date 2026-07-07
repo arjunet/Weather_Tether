@@ -483,6 +483,17 @@
             CIcon:
                 icon: "arrow--right"
 
+        ClickableLabel:
+            text: "Wrong Email?"
+            markup: True
+            pos_hint: {'center_x': 0.5, 'center_y': 0.1}
+            color: [0, 0, 0, 1]
+            size_hint: None, None
+            font_size: min(Window.width * 0.04, sp(16))
+            weight_style: "Medium"
+            on_press:
+                root.open_logout_modal()
+
         CLoadingIndicator:
             role: "Large"
             opacity: 0

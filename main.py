@@ -459,6 +459,19 @@ class VerifyScreen(Screen):
             notification_error(subtitle="Email is not verified").open()
             
         self.email_verified = None
+
+    def open_logout_modal(self) -> None:
+        modal = LogoutModal(settings=self) #(reused function call from settings screen :D
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
+
+    def logout(self):
+        store = JsonStore("session.json")
+        store.clear()
+        self.manager.transition = FadeTransition()
+        self.manager.current = "Signup"
+        notification_success(subtitle="Successfully Logged out").open()
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
     # Default background image
