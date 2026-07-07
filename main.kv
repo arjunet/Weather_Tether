@@ -18,17 +18,19 @@
             font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
+            background_normal: ''
+            background_active: ''
+            background_disabled_normal: ''
 
             CTextInput:
                 hint_text: "Email"
                 id: email_input
                 input_type: "mail"
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text_validate: password_input.focus = True
 
@@ -37,17 +39,16 @@
                 color: "#000000"
 
         # Password Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
                 password: True
                 id: password_input
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text_validate: 
                     self.focus: False
@@ -159,17 +160,18 @@
             font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
+            background_normal: ''
+            background_active: ''
+            background_disabled_normal: ''
 
             CTextInput:
                 hint_text: "Email"
                 id: email_input
-                input_type: "mail"
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text_validate: password_input.focus = True
 
@@ -178,17 +180,16 @@
                 color: "#000000"
 
         # Password Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
                 password: True
                 id: password_input
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text_validate: 
                     self.focus: False
@@ -300,17 +301,16 @@
             font_size: min(Window.width * 0.075, sp(32))
 
         # Email Text Input:
-        CTextInputLayout:
+        CTextInputLayoutCircular:
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
+            bg_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
                 id: email_input
                 input_type: 'mail'
-                bg_color: [1, 1, 1, 1]
-                background_color: [1, 1, 1, 1]
                 multiline: False
                 on_text_validate:
                     self.focus: False
