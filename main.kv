@@ -520,16 +520,6 @@
             spacing: dp(10)
             bg_color: (1, 1, 1, 0.1)
 
-            CLabel:
-                id: city_label
-                style: "heading_02"
-                typeface: "IBM Plex Sans"
-                weight_style: "Medium"
-                halign: "center"
-                color: (0,0,0,1)
-                pos_hint: {'center_x': 0.5, 'top': 0.97}
-                font_size: min(Window.width * 0.05, dp(27))
-
         # Scrollable content
         CScrollView:
             size_hint: 1, 1
@@ -551,30 +541,21 @@
                     padding: [dp(20), dp(20), dp(20), dp(20)]
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
                             radius: [dp(20)]
-                    on_touch_down: True
-                    on_touch_move: True
-                    on_touch_up: True
 
                     CBoxLayout:
                         size_hint: None, 1
                         width: dp(100)
-                        on_touch_down: True
-                        on_touch_move: True
-                        on_touch_up: True
                         
                         AsyncImage:
                             id: weather_icon
                             source: root.icon_path
                             size_hint: 1, 1
                             opacity: 0
-                            on_touch_down: True
-                            on_touch_move: True
-                            on_touch_up: True
 
                     CBoxLayout:
                         orientation: 'vertical'
@@ -584,7 +565,7 @@
 
                         CLabel:
                             id: current_temp_label
-                            text: "81°F"
+                            text: "--°F"
                             style: "heading_02"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -593,18 +574,6 @@
                             font_size: min(Window.width * 0.08, sp(48))
                             size_hint_y: None
                             height: dp(60)
-
-                        CLabel:
-                            id: condition_label
-                            text: "Cloudy"
-                            style: "heading_06"
-                            typeface: "IBM Plex Sans"
-                            weight_style: "Regular"
-                            halign: "left"
-                            color: (0.4, 0.4, 0.4, 1)
-                            font_size: min(Window.width * 0.04, sp(16))
-                            size_hint_y: None
-                            height: dp(30)
 
                 # 2x2 Grid for weather details
                 CGridLayout:
@@ -622,7 +591,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -639,8 +608,8 @@
                             height: dp(20)
 
                         CLabel:
-                            id: condition_label_card
-                            text: "Cloudy"
+                            id: condition_label
+                            text: "?"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -658,7 +627,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -676,7 +645,7 @@
 
                         CLabel:
                             id: min_max_label
-                            text: "88° / 72°"
+                            text: "--° / --°"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -694,7 +663,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -712,7 +681,7 @@
 
                         CLabel:
                             id: feels_like_label
-                            text: "78°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -730,7 +699,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -748,7 +717,7 @@
 
                         CLabel:
                             id: wind_chill_label
-                            text: "72°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -766,7 +735,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -784,7 +753,7 @@
 
                     CLabel:
                         id: precip_label
-                        text: "10%"
+                        text: "--%"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -802,7 +771,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -820,7 +789,7 @@
 
                     CLabel:
                         id: snow_label
-                        text: "0 in"
+                        text: "- in"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -833,6 +802,7 @@
             role: "Large"
             opacity: 0
             id: loader
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
     UIShell:
         id: left_panel_shell
@@ -848,6 +818,16 @@
         UIShellHeader:
             id: shell_header
             -bg_color: app.transparent
+
+            CLabel:
+                id: city_label
+                style: "heading_02"
+                typeface: "IBM Plex Sans"
+                weight_style: "Medium"
+                halign: "center"
+                color: (0,0,0,1)
+                pos_hint: {'center_x': 0.5}
+                font_size: min(Window.width * 0.045, dp(27))
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn
@@ -877,16 +857,6 @@
             spacing: dp(10)
             bg_color: (1, 1, 1, 0.1)
 
-            CLabel:
-                id: city_label
-                style: "heading_02"
-                typeface: "IBM Plex Sans"
-                weight_style: "Medium"
-                halign: "center"
-                color: (0,0,0,1)
-                pos_hint: {'center_x': 0.5, 'top': 0.97}
-                font_size: min(Window.width * 0.05, dp(27))
-
         # Scrollable content
         CScrollView:
             size_hint: 1, 1
@@ -908,30 +878,21 @@
                     padding: [dp(20), dp(20), dp(20), dp(20)]
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
                             radius: [dp(20)]
-                    on_touch_down: True
-                    on_touch_move: True
-                    on_touch_up: True
 
                     CBoxLayout:
                         size_hint: None, 1
                         width: dp(100)
-                        on_touch_down: True
-                        on_touch_move: True
-                        on_touch_up: True
                         
                         AsyncImage:
                             id: weather_icon
                             source: root.icon_path
                             size_hint: 1, 1
                             opacity: 0
-                            on_touch_down: True
-                            on_touch_move: True
-                            on_touch_up: True
 
                     CBoxLayout:
                         orientation: 'vertical'
@@ -941,7 +902,7 @@
 
                         CLabel:
                             id: current_temp_label
-                            text: "81°F"
+                            text: "--°F"
                             style: "heading_02"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -950,18 +911,6 @@
                             font_size: min(Window.width * 0.08, sp(48))
                             size_hint_y: None
                             height: dp(60)
-
-                        CLabel:
-                            id: condition_label
-                            text: "Cloudy"
-                            style: "heading_06"
-                            typeface: "IBM Plex Sans"
-                            weight_style: "Regular"
-                            halign: "left"
-                            color: (0.4, 0.4, 0.4, 1)
-                            font_size: min(Window.width * 0.04, sp(16))
-                            size_hint_y: None
-                            height: dp(30)
 
                 # 2x2 Grid for weather details
                 CGridLayout:
@@ -979,7 +928,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -996,13 +945,13 @@
                             height: dp(20)
 
                         CLabel:
-                            id: condition_label_card
-                            text: "Cloudy"
+                            id: condition_label
+                            text: "?"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
                             color: (0, 0, 0, 1)
-                            font_size: min(Window.width * 0.045, sp(20))
+                            font_size: min(Window.width * 0.08, sp(20))
                             size_hint_y: None
                             height: dp(50)
 
@@ -1015,7 +964,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1033,12 +982,12 @@
 
                         CLabel:
                             id: min_max_label
-                            text: "88° / 72°"
+                            text: "--° / --°"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
                             color: (0, 0, 0, 1)
-                            font_size: min(Window.width * 0.045, sp(20))
+                            font_size: min(Window.width * 0.08, sp(20))
                             size_hint_y: None
                             height: dp(50)
 
@@ -1051,7 +1000,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1069,7 +1018,7 @@
 
                         CLabel:
                             id: feels_like_label
-                            text: "78°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1087,7 +1036,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1105,7 +1054,7 @@
 
                         CLabel:
                             id: wind_chill_label
-                            text: "72°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1123,7 +1072,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -1141,7 +1090,7 @@
 
                     CLabel:
                         id: precip_label
-                        text: "10%"
+                        text: "--%"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -1159,7 +1108,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -1177,7 +1126,7 @@
 
                     CLabel:
                         id: snow_label
-                        text: "0 in"
+                        text: "- in"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -1190,6 +1139,7 @@
             role: "Large"
             opacity: 0
             id: loader
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
     UIShell:
         id: left_panel_shell
@@ -1205,6 +1155,16 @@
         UIShellHeader:
             id: shell_header
             -bg_color: app.transparent
+
+            CLabel:
+                id: city_label
+                style: "heading_02"
+                typeface: "IBM Plex Sans"
+                weight_style: "Medium"
+                halign: "center"
+                color: (0,0,0,1)
+                pos_hint: {'center_x': 0.5}
+                font_size: min(Window.width * 0.045, dp(27))
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn
@@ -1234,16 +1194,6 @@
             spacing: dp(10)
             bg_color: (1, 1, 1, 0.1)
 
-            CLabel:
-                id: city_label
-                style: "heading_02"
-                typeface: "IBM Plex Sans"
-                weight_style: "Medium"
-                halign: "center"
-                color: (0,0,0,1)
-                pos_hint: {'center_x': 0.5, 'top': 0.97}
-                font_size: min(Window.width * 0.05, dp(27))
-
         # Scrollable content
         CScrollView:
             size_hint: 1, 1
@@ -1265,30 +1215,21 @@
                     padding: [dp(20), dp(20), dp(20), dp(20)]
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
                             radius: [dp(20)]
-                    on_touch_down: True
-                    on_touch_move: True
-                    on_touch_up: True
 
                     CBoxLayout:
                         size_hint: None, 1
                         width: dp(100)
-                        on_touch_down: True
-                        on_touch_move: True
-                        on_touch_up: True
                         
                         AsyncImage:
                             id: weather_icon
                             source: root.icon_path
                             size_hint: 1, 1
                             opacity: 0
-                            on_touch_down: True
-                            on_touch_move: True
-                            on_touch_up: True
 
                     CBoxLayout:
                         orientation: 'vertical'
@@ -1298,7 +1239,7 @@
 
                         CLabel:
                             id: current_temp_label
-                            text: "81°F"
+                            text: "--°F"
                             style: "heading_02"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1307,18 +1248,6 @@
                             font_size: min(Window.width * 0.08, sp(48))
                             size_hint_y: None
                             height: dp(60)
-
-                        CLabel:
-                            id: condition_label
-                            text: "Cloudy"
-                            style: "heading_06"
-                            typeface: "IBM Plex Sans"
-                            weight_style: "Regular"
-                            halign: "left"
-                            color: (0.4, 0.4, 0.4, 1)
-                            font_size: min(Window.width * 0.04, sp(16))
-                            size_hint_y: None
-                            height: dp(30)
 
                 # 2x2 Grid for weather details
                 CGridLayout:
@@ -1336,7 +1265,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1353,8 +1282,8 @@
                             height: dp(20)
 
                         CLabel:
-                            id: condition_label_card
-                            text: "Cloudy"
+                            id: condition_label
+                            text: "?"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1372,7 +1301,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1390,7 +1319,7 @@
 
                         CLabel:
                             id: min_max_label
-                            text: "88° / 72°"
+                            text: "--° / --°"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1408,7 +1337,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1426,7 +1355,7 @@
 
                         CLabel:
                             id: feels_like_label
-                            text: "78°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1444,7 +1373,7 @@
                         spacing: dp(5)
                         canvas.before:
                             Color:
-                                rgba: (1, 1, 1, 0.9)
+                                rgba: (1, 1, 1, 0.35)
                             RoundedRectangle:
                                 size: self.size
                                 pos: self.pos
@@ -1462,7 +1391,7 @@
 
                         CLabel:
                             id: wind_chill_label
-                            text: "72°F"
+                            text: "--°F"
                             style: "heading_05"
                             typeface: "IBM Plex Sans"
                             weight_style: "Medium"
@@ -1480,7 +1409,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -1498,7 +1427,7 @@
 
                     CLabel:
                         id: precip_label
-                        text: "10%"
+                        text: "--%"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -1516,7 +1445,7 @@
                     spacing: dp(5)
                     canvas.before:
                         Color:
-                            rgba: (1, 1, 1, 0.9)
+                            rgba: (1, 1, 1, 0.35)
                         RoundedRectangle:
                             size: self.size
                             pos: self.pos
@@ -1534,7 +1463,7 @@
 
                     CLabel:
                         id: snow_label
-                        text: "0 in"
+                        text: "- in"
                         style: "heading_05"
                         typeface: "IBM Plex Sans"
                         weight_style: "Medium"
@@ -1547,6 +1476,7 @@
             role: "Large"
             opacity: 0
             id: loader
+            pos_hint: {'center_x': 0.5, 'center_y': 0.5}
 
     UIShell:
         id: left_panel_shell
@@ -1562,6 +1492,16 @@
         UIShellHeader:
             id: shell_header
             -bg_color: app.transparent
+
+            CLabel:
+                id: city_label
+                style: "heading_02"
+                typeface: "IBM Plex Sans"
+                weight_style: "Medium"
+                halign: "center"
+                color: (0,0,0,1)
+                pos_hint: {'center_x': 0.5}
+                font_size: min(Window.width * 0.045, dp(27))
 
             UIShellHeaderMenuButton:
                 id: shell_menu_btn

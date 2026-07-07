@@ -127,7 +127,8 @@ def update_ui_labels(self):
         self.ids.condition_label.text = self.weather_condition
     
         # Combined High/Low/feels like label:
-        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}\nFeels like: {self.feels_like}"   
+        self.ids.min_max_label.text = f"{self.max_temp} / {self.min_temp}"   
+        self.ids.feels_like_label.text = f"Feels Like: {self.feels_like}"
         self.ids.precip_label.text = f"{self.precip_percent} Chance Of {self.precip_type}"
         self.ids.snow_label.text = f"{self.snow_fall} Of Snow"
         self.ids.wind_chill_label.text = f"Wind Chill: {self.wind_chill}"
