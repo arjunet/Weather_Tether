@@ -525,6 +525,8 @@ class AppScreen(Screen):
         login_request_token(self)
 
     def stop_load(self, *args):
+        if self.r != "done":
+            return True # Keep waiting
         # Hide spinner and handle response
         Clock.unschedule(self.stop_load)
         self.ids.loader.opacity = 0
