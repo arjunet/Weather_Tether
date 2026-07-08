@@ -1148,16 +1148,22 @@ class MainApp(CarbonApp):
         )
 
     def on_pause(self):
-        # MUST return True to tell the OS to keep the app alive in the background
+        # Keeps the app context alive in background memory
         return True
 
     def on_resume(self):
-        # Force the engine to redraw the screen layout immediately upon returning
-        self.force_screen_refresh()
+        # Schedule a hard redraw on the next frame loop 
+        # to re-push the textures to the GPU
+        Clock.schedule_once(self.force_canvas_reload, 0.05)
 
     @mainthread
-    def force_screen_refresh(self):
+    def force_canvas_reload(self, dt=0):
+        # 1. Recalculate viewport boundaries
         Window.update_viewport()
+        
+        # 2. Tell the root window engine to re-draw its canvas from scratch
+        if self.root:
+            self.root.canvas.ask_update()
 
 if __name__ == "__main__":
     MainApp().run()
