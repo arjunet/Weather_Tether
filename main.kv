@@ -5,7 +5,7 @@
 <SignupScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
 
         # Signup Label:
         CLabel:
@@ -28,6 +28,7 @@
 
             CTextInput:
                 hint_text: "Email"
+                hint_text_color: "#2c2c2c"
                 id: email_input
                 input_type: "mail"
                 multiline: False
@@ -47,6 +48,7 @@
 
             CTextInput:
                 hint_text: "Password"
+                hint_text_color: "#2c2c2c"
                 password: True
                 id: password_input
                 multiline: False
@@ -81,11 +83,11 @@
             CLinkText:
                 text: "[b]Privacy Policy[/b]"
                 font_size: sp(15)
-                bg_color: "white"
+                bg_color: app.transparent
 
             CLinkIcon:
                 icon: "arrow--up-right"
-                bg_color: "white"
+                bg_color: app.transparent
 
         CCheckbox:
             line_width: dp(0.75)
@@ -129,7 +131,7 @@
 <LoginScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
 
         # Login Label:
         CLabel:
@@ -152,6 +154,7 @@
 
             CTextInput:
                 hint_text: "Email"
+                hint_text_color: "#2c2c2c"
                 id: email_input
                 multiline: False
                 on_text_validate: password_input.focus = True
@@ -170,6 +173,7 @@
 
             CTextInput:
                 hint_text: "Password"
+                hint_text_color: "#2c2c2c"
                 password: True
                 id: password_input
                 multiline: False
@@ -204,11 +208,11 @@
             CLinkText:
                 text: "[b]Privacy Policy[/b]"
                 font_size: sp(15)
-                bg_color: "white"
+                bg_color: app.transparent
 
             CLinkIcon:
                 icon: "arrow--up-right"
-                bg_color: "white"
+                bg_color: app.transparent
 
         CCheckbox:
             line_width: dp(0.75)
@@ -265,7 +269,7 @@
 <ForgotScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
 
         # Forgot Password Label:
         CLabel:
@@ -288,6 +292,7 @@
 
             CTextInput:
                 hint_text: "Email"
+                hint_text_color: "#2c2c2c"
                 id: email_input
                 input_type: 'mail'
                 multiline: False
@@ -334,7 +339,7 @@
 <SetupScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
 
         # Setup Label:
         CLabel:
@@ -358,6 +363,7 @@
 
             CTextInput:
                 hint_text: "City or Zip Code"
+                hint_text_color: "#2c2c2c"
                 id: address_input
                 input_type: "address"
                 multiline: False
@@ -422,7 +428,7 @@
 <VerifyScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
 
         CLabel:
             text: "Check Your Inbox"
@@ -1513,7 +1519,7 @@
 <SettingsScreen>:
     CRelativeLayout:
         size_hint: 1, 1
-        bg_source: "images/default_bg.jpg"
+        bg_color: app.blue_30
         spacing: dp(80)
 
         # Settings Label:
