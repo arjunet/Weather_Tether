@@ -9,6 +9,8 @@ from .modal_loader import ModalLoader
 
 import threading
 
+# ---------------------------------------------------------------------------------------
+
 class ChangeLocationModal(CModal):
     def __init__(self, city, update_type, **kwargs):
         super().__init__(**kwargs)
@@ -108,6 +110,7 @@ class ChangeLocationModal(CModal):
         save_city(location_input, self.update_type)
 
         self.dismiss()
+        self.city.ids.shell_menu_btn.active = False
         self.city.start_load_weather()
 # ---------------------------------------------------------------------------------
 class LogoutModal(CModal):
