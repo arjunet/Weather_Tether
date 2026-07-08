@@ -119,6 +119,15 @@ class LogoutModal(CModal):
         self.dismiss()
         self.settings.logout()
 # ---------------------------------------------------------------------------------
+class LogoutVerifyModal(CModal):
+    def __init__(self, screen_instance, **kwargs):
+        super().__init__(**kwargs)
+        self.screen_instance = screen_instance
+
+    def logout_confirmed(self):
+        self.dismiss()
+        self.screen_instance.logout()
+# ---------------------------------------------------------------------------------
 class DeleteModal(CModal):
     def __init__(self, settings, **kwargs):
         super().__init__(**kwargs)

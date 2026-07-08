@@ -8,6 +8,7 @@ from kivy.core.window import Window
 from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.storage.jsonstore import JsonStore
+from kivy.properties import ColorProperty
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -33,7 +34,7 @@ from helpers.verify import Send_Verification, check_verification
 from helpers.settings import delete_request, save_toggle_state, clear_json
 from helpers.sidepanel import CityPanelItem
 from helpers.modal_loader import ModalLoader
-from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal
+from helpers.modals import ChangeLocationModal, LogoutModal, DeleteModal, DeleteLocationModal, AddCityModal, LogoutVerifyModal
 
 # other imports
 import threading
@@ -461,7 +462,7 @@ class VerifyScreen(Screen):
         self.email_verified = None
 
     def open_logout_modal(self) -> None:
-        modal = LogoutModal(settings=self) #(reused function call from settings screen :D
+        modal = LogoutVerifyModal(screen_instance=self) #(reused function call from settings screen :D
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
@@ -471,12 +472,13 @@ class VerifyScreen(Screen):
         store.clear()
         self.manager.transition = FadeTransition()
         self.manager.current = "Signup"
-        notification_success(subtitle="Successfully Logged out").open()
+        notification_success(subtitle="You May Now Signup With The Correct Email").open()
 # ---------------------------------------------------------------------------------
 class AppScreen(Screen):
     # Default background image
     bg_image = StringProperty("")
     icon_path = StringProperty("")
+    transparency_color = ColorProperty([1, 1, 1, 0.35])
 
     def __init__(self, **kw):
         super().__init__(**kw)
@@ -641,6 +643,7 @@ class AppScreen(Screen):
 class City2Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
+    transparency_color = ColorProperty([1, 1, 1, 0.35])
 
     def __init__(self, **kwargs):
         super().__init__(**kwargs)
@@ -792,6 +795,7 @@ class City2Screen(Screen):
 class City3Screen(Screen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
+    transparency_color = ColorProperty([1, 1, 1, 0.35])
     
     def __init__(self, **kwargs):
         super().__init__(**kwargs)

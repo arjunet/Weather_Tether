@@ -142,10 +142,12 @@ def update_ui_background(self):
         self.bg_image = "images/sun_bg.jpg"
         self.icon_path = "images/sun_icon.png"
         self.app.theme = "White"
+        self.transparency_color = [1, 1, 1, 0.7]
 
     elif self.is_daytime == "False":
         self.bg_image = "images/night.jpg"
         self.icon_path = "images/moon.png"
+        self.transparency_color = [1, 1, 1, 0.35]
 
         self.app.theme = "Gray100"
 
@@ -154,6 +156,7 @@ def update_ui_background(self):
     elif "clear" in condition and self.is_daytime != "False":
         self.bg_image = "images/sun_bg.jpg"
         self.icon_path = "images/sun_icon.png"
+        self.transparency_color = [1, 1, 1, 0.7]
 
         self.app = App.get_running_app()
         self.app.theme = "White"
@@ -161,6 +164,7 @@ def update_ui_background(self):
     elif "cloud" in condition or "fog" in condition:
         self.bg_image = "images/cloud_bg.jpg"
         self.icon_path = "images/cloud_icon.png"
+        self.transparency_color = [1, 1, 1, 0.7]
 
         self.app = App.get_running_app()
         self.app.theme = "White"
@@ -168,6 +172,7 @@ def update_ui_background(self):
     elif "rain" in condition or "drizzle" in condition or "storm" in condition or "thunder" in condition or "shower" in condition:
         self.bg_image = "images/rain_bg.jpg"
         self.icon_path = "images/rain_icon.png"
+        self.transparency_color = [1, 1, 1, 0.7]
 
         self.app = App.get_running_app()
         self.app.theme = "White"
@@ -175,6 +180,7 @@ def update_ui_background(self):
     elif "snow" in condition or "sleet" in condition or "blizzard" in condition:
         self.bg_image = "images/snow_bg.jpg"
         self.icon_path = "images/snow_icon.png"
+        self.transparency_color = [1, 1, 1, 0.7]
 
         self.app = App.get_running_app()
         self.app.theme = "White"
