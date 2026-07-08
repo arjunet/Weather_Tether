@@ -14,7 +14,8 @@
     UIShellButton:
         text: "Settings"
         icon: "settings"
-        pos_hint: {"x": 0.2, "y": 0.1}
+        pos_hint: {"center_x": 0.5, "y": 0.1}
+        halign: 'left'
         on_press:
             app.sm.current_screen.manager.transition = FadeTransition()
             app.root.current = 'Settings'
@@ -22,7 +23,8 @@
     UIShellButton:
         text: "Refresh"
         icon: "restart"
-        pos_hint: {"x": 0.2, "y": 0.2}
+        pos_hint: {"center_x": 0.5, "y": 0.2}
+        halign: 'left'
         on_press:
             app.root.current_screen.start_load_weather()
             app.root.current_screen.ids.shell_menu_btn.active = not app.root.current_screen.ids.shell_menu_btn.active
