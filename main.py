@@ -9,6 +9,7 @@ from kivy.clock import Clock
 from kivy.properties import StringProperty
 from kivy.storage.jsonstore import JsonStore
 from kivy.properties import ColorProperty
+from kivy.clock import mainthread
 
 # Soft Input Config (For keyboard issue on android 15+):
 def set_softinput(*args) -> None:
@@ -1145,6 +1146,18 @@ class MainApp(CarbonApp):
             True, # pad_status: Adds a padding to top of content_view, Will take effect on Android 15+
             True, # pad_nav: Adds a padding to bottom of content_view, Will take effect on Android 15+
         )
+
+    def on_pause(self):
+        # MUST return True to tell the OS to keep the app alive in the background
+        return True
+
+    def on_resume(self):
+        # Force the engine to redraw the screen layout immediately upon returning
+        self.force_screen_refresh()
+
+    @mainthread
+    def force_screen_refresh(self):
+        Window.update_viewport()
 
 if __name__ == "__main__":
     MainApp().run()
