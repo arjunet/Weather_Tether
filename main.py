@@ -475,7 +475,10 @@ class VerifyScreen(Screen):
         self.manager.current = "Signup"
         notification_success(subtitle="You May Now Signup With The Correct Email").open()
 # ---------------------------------------------------------------------------------
-class AppScreen(Screen):
+class BaseScreen(Screen):
+    pass
+# ---------------------------------------------------------------------------------
+class AppScreen(BaseScreen):
     # Default background image
     bg_image = StringProperty("")
     icon_path = StringProperty("")
@@ -641,7 +644,7 @@ class AppScreen(Screen):
         modal.open()
         self._modal_ref = None
 # ---------------------------------------------------------------------------------
-class City2Screen(Screen):
+class City2Screen(BaseScreen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
     transparency_color = ColorProperty([1, 1, 1, 0.35])
@@ -793,7 +796,7 @@ class City2Screen(Screen):
         self.manager.current = "App"
         notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
-class City3Screen(Screen):
+class City3Screen(BaseScreen):
     icon_path = StringProperty("")
     bg_image = StringProperty("")
     transparency_color = ColorProperty([1, 1, 1, 0.35])
