@@ -302,7 +302,6 @@ class SetupScreen(Screen):
             self.pending_search = Clock.schedule_once(self.request, 0.5)
 
     def request(self, dt):
-        # 3. THE LOCK: Now we start the thread
         self.ids.loader.opacity = 1
 
         # Run in background to keep UI responsive
@@ -476,20 +475,18 @@ class VerifyScreen(Screen):
         notification_success(subtitle="You May Now Signup With The Correct Email").open()
 # ---------------------------------------------------------------------------------
 class BaseScreen(Screen):
-    pass
-# ---------------------------------------------------------------------------------
-class AppScreen(BaseScreen):
-    # Default background image
     bg_image = StringProperty("")
     icon_path = StringProperty("")
     transparency_color = ColorProperty([1, 1, 1, 0.35])
 
-    def __init__(self, **kw):
+    def __init__(self, city_number, **kw):
         super().__init__(**kw)
-        # Set default values to avoid Kivy warnings
+        self.city_number = city_number
         self.r = None
         self.result = None
         self.go_to_verify = False
+        self.current_lat = 0.0
+        self.current_lon = 0.0
         self.current_temp = None
         self.feels_like = None
         self.is_daytime = False
@@ -500,32 +497,42 @@ class AppScreen(BaseScreen):
         self.snow_fall = None
         self.weather_condition = None
         self.wind_chill = None
-        self.get_3 = False
-        self.get_2 = False
-        self.city1 = True
-        self.synced = False
         self.get_r = None
+        self.delete_done = None
+        self.delete_2 = False
+        self.delete_3 = False
+        self.city1 = self.city_number == 1
         self.background_city_sync_started = False
+
+    @property
+    def city_key(self):
+        return str(self.city_number)
 
     def on_enter(self):
         self.ids.shell_menu_btn.active = False
-
+        self.get_r = None
         self.ids.weather_icon.source = self.icon_path or ""
+
         if self.icon_path:
             self.ids.weather_icon.reload()
 
         store = JsonStore('session.json')
         self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
 
-        # Show loading spinner
-        self.ids.loader.opacity = 1
+        if self.city_number == 1:
+            self.ids.loader.opacity = 1
+            threading.Thread(
+                target=self.login,
+                daemon=True
+            ).start()
+            Clock.schedule_interval(self.stop_load, 0.1)
 
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.login,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load, 0.1)
+        elif not store.exists(self.city_key):
+            self.ids.loader.opacity = 0
+            self.open_add_modal()
+
+        else:
+            self.start_load_weather()
 
     def login(self):
         login_request_token(self)
@@ -533,27 +540,21 @@ class AppScreen(BaseScreen):
     def stop_load(self, *args):
         if self.r != "done":
             return True # Keep waiting
-        # Hide spinner and handle response
+
         Clock.unschedule(self.stop_load)
         self.ids.loader.opacity = 0
 
         if self.go_to_verify == True:
-            Clock.unschedule(self.stop_load)
-            self.ids.loader.opacity = 0
             self.manager.current = "Verify"
-
-        # If everything is good, load the weather data
         else:
             self.r = None
             self.start_load_weather()
-    
+
     def start_load_weather(self):
-        # Show loading spinner
         self.ids.loader.opacity = 1
-
         self.r = None
+        self.get_r = None
 
-        # Kick off the primary city request immediately.
         threading.Thread(
             target=self.get_user_dat,
             daemon=True
@@ -577,7 +578,7 @@ class AppScreen(BaseScreen):
             pass
         finally:
             Clock.schedule_once(lambda dt: self.refresh_city_panel(), 0)
-
+        
     def get_user_dat(self):
         get_dat(self)
 
@@ -589,20 +590,22 @@ class AppScreen(BaseScreen):
         if self.r != "weather_done":
             return True # Keep waiting
         
-        if not self.get_r == "Fail":
-            # Hide spinner and handle response
-            Clock.unschedule(self.stop_load_weather)
-            self.ids.loader.opacity = 0
-            save_city(self.city, 1)
+        Clock.unschedule(self.stop_load_weather)
+        self.ids.loader.opacity = 0
 
-        else:
-            Clock.unschedule(self.stop_load_weather)
-            self.manager.current = "Setup"
+        if self.get_r == "Fail":
+            if self.city_number == 1:
+                self.manager.current = "Setup"
+            else:
+                self.open_add_modal()
             return
-        
+
+        save_city(self.city, self.city_number)
         self.update_labels()
         self.update_background()
-        self.start_background_city_sync()
+
+        if self.city_number == 1:
+            self.start_background_city_sync()
 
     def update_labels(self):
         if self.r != "weather_done":
@@ -616,162 +619,45 @@ class AppScreen(BaseScreen):
         sidepanel = self.ids.SidePanel
         widget_container = sidepanel.ids.widgets
 
-        # Clear existing city widgets before adding new ones
         widget_container.clear_widgets()
 
-        def add_city_item(city_key, target_screen):
+        for city_number, target_screen in ((1, "App"), (2, "City2"), (3, "City3")):
+            city_key = str(city_number)
             if file.exists(city_key):
                 city_name = file.get(city_key)["name"]
                 item = CityPanelItem(text=city_name, right_icon="location")
                 item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
                 widget_container.add_widget(item)
 
-        add_city_item("city1", "App")
-        add_city_item("city2", "City2")
-        add_city_item("city3", "City3")
-
     def update_background(self):
         update_ui_background(self)
         self.add_buttons()
 
-    # Option button config
-    def add_buttons(self):
-        add_option_buttons(self)
-
-    def open_change_location_modal(self) -> None:
-        modal = ChangeLocationModal(city=self, update_type=1)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-# ---------------------------------------------------------------------------------
-class City2Screen(BaseScreen):
-    icon_path = StringProperty("")
-    bg_image = StringProperty("")
-    transparency_color = ColorProperty([1, 1, 1, 0.35])
-
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.r = None
-        self.result = None
-        self.go_to_verify = False
-
-        # Add null values so kivy will be quiet:
-        self.current_temp = None
-        self.feels_like = None
-        self.is_daytime = False
-        self.min_temp = None
-        self.max_temp = None
-        self.precip_percent = None
-        self.precip_type = None
-        self.snow_fall = None
-        self.weather_condition = None
-        self.wind_chill = None
-        self.delete_done = None
-        self.delete_2 = False
-        self.delete_3 = False
-        self.city1 = False
-        self.get_r = None
-
-    def on_enter(self):
-        self.ids.shell_menu_btn.active = False
-        
-        self.ids.weather_icon.source = self.icon_path or ""
-        if self.icon_path:
-            self.ids.weather_icon.reload()
-
-        store = JsonStore('session.json')
-        self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
-
-        if not store.exists("city2"):
-            self.open_add_modal()
-        else:
-            self.start_load_weather()
-
-    def start_load_weather(self):
-        self.get_2 = True
-        self.get_3 = False
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        self.r = None
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.get_user_dat,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_weather, 0.1)
-
-    def get_user_dat(self):
-        get_dat(self)
-
-    def get_weather(self, lat, lon):
-        get_user_weather(self, lat, lon)  
-
-    def stop_load_weather(self, *args):
-        # If weather has not been fetched yet:
-        if self.r != "weather_done":
-            return True # Keep waiting
-        
-        # Stops thread once done:
-        Clock.unschedule(self.stop_load_weather)
-        self.ids.loader.opacity = 0
-        self.update_labels()
-        self.update_background()
-
-    def update_labels(self):
-        update_ui_labels(self)
-        
-        file = JsonStore("session.json")
-        sidepanel = self.ids.SidePanel
-        widget_container = sidepanel.ids.widgets
-
-        # Remove any existing dynamic city widgets before adding fresh ones.
-        widget_container.clear_widgets()
-
-        def add_city_item(city_key, target_screen):
-            if file.exists(city_key):
-                city_name = file.get(city_key)["name"]
-                item = CityPanelItem(text=city_name, right_icon="location")
-                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
-                widget_container.add_widget(item)
-
-        add_city_item("city1", "App")
-        add_city_item("city2", "City2")
-        add_city_item("city3", "City3")
-
-    def update_background(self):
-        update_ui_background(self)
-        self.add_buttons()
-
-    # Option button config
     def add_buttons(self):
         add_option_buttons(self)
 
     def open_add_modal(self) -> None:
-        modal = AddCityModal(city=self, city_number=2)
+        modal = AddCityModal(city=self, city_number=self.city_number)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
 
     def open_change_location_modal(self) -> None:
-        modal = ChangeLocationModal(city=self, update_type=2)
+        modal = ChangeLocationModal(city=self, update_type=self.city_number)
         self._modal_ref = weakref.ref(modal)
         modal.open()
         self._modal_ref = None
 
     def open_delete_location_modal(self) -> None:
-        self.delete_modal = DeleteLocationModal(city_name="city2", screen_instance=self)
+        self.delete_modal = DeleteLocationModal(city_name=self.city_key, screen_instance=self)
         self._modal_ref = weakref.ref(self.delete_modal)
         self.delete_modal.open()
         self._modal_ref = None
 
     def start_delete_city(self):
         self.modal_loader = ModalLoader()
-
-        self.delete_2 = True
+        self.delete_2 = self.city_number == 2
+        self.delete_3 = self.city_number == 3
         self.delete_modal.add_widget(self.modal_loader)
 
         threading.Thread(
@@ -781,7 +667,8 @@ class City2Screen(BaseScreen):
         Clock.schedule_interval(self.stop_delete_city, 0.1)
 
     def delete_city_request(self):
-        self.delete_2 = True
+        self.delete_2 = self.city_number == 2
+        self.delete_3 = self.city_number == 3
         delete_city_request(self)
 
     def stop_delete_city(self, *args):
@@ -793,159 +680,6 @@ class City2Screen(BaseScreen):
         self.delete_modal.dismiss()
 
         self.manager.transition = FadeTransition()
-        self.manager.current = "App"
-        notification_success(subtitle="Successfully Deleted City").open()
-# ---------------------------------------------------------------------------------
-class City3Screen(BaseScreen):
-    icon_path = StringProperty("")
-    bg_image = StringProperty("")
-    transparency_color = ColorProperty([1, 1, 1, 0.35])
-    
-    def __init__(self, **kwargs):
-        super().__init__(**kwargs)
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.r = None
-        self.result = None
-        self.go_to_verify = False
-
-        # Add null values so kivy will be quiet:
-        self.current_temp = None
-        self.feels_like = None
-        self.is_daytime = False
-        self.min_temp = None
-        self.max_temp = None
-        self.precip_percent = None
-        self.precip_type = None
-        self.snow_fall = None
-        self.weather_condition = None
-        self.wind_chill = None
-        self.delete_2 = False
-        self.delete_3 = False
-        self.city1 = False
-        self.delete_done = None
-        self.get_r = None
-
-    # Runs every time you enter this screen
-    def on_enter(self):
-        self.ids.shell_menu_btn.active = False
-
-        self.ids.weather_icon.opacity = 0
-        self.ids.weather_icon.source = self.icon_path or ""
-        if self.icon_path:
-            self.ids.weather_icon.reload()
-
-        store = JsonStore('session.json')
-        self.toggle_state = store.get('toggle')['active'] if store.exists('toggle') else False
-
-        if not store.exists("city3"):
-            self.open_add_modal()
-        else:
-            self.start_load_weather()
-
-    def start_load_weather(self):
-        self.get_2 = False
-        self.get_3 = True
-        # Show loading spinner
-        self.ids.loader.opacity = 1
-
-        self.r = None
-
-        # Run in background to keep UI responsive
-        threading.Thread(
-            target=self.get_user_dat,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_load_weather, 0.1)
-
-    def get_user_dat(self):
-        get_dat(self)
-
-    def get_weather(self, lat, lon):
-        get_user_weather(self, lat, lon) 
-
-    def stop_load_weather(self, *args):
-        # If weather has not been fetched yet:
-        if self.r != "weather_done":
-            return True # Keep waiting
-        
-        # Stops thread once done:
-        Clock.unschedule(self.stop_load_weather)
-        self.ids.loader.opacity = 0
-        self.update_labels()
-        self.update_background()
-
-    def update_labels(self):
-        update_ui_labels(self)
-        
-        file = JsonStore("session.json")
-        sidepanel = self.ids.SidePanel
-        widget_container = sidepanel.ids.widgets
-
-        # Remove any existing dynamic city widgets before adding fresh ones.
-        widget_container.clear_widgets()
-
-        def add_city_item(city_key, target_screen):
-            if file.exists(city_key):
-                city_name = file.get(city_key)["name"]
-                item = CityPanelItem(text=city_name, right_icon="location")
-                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
-                widget_container.add_widget(item)
-
-        add_city_item("city1", "App")
-        add_city_item("city2", "City2")
-        add_city_item("city3", "City3")
-
-    def update_background(self):
-        update_ui_background(self)
-        self.add_buttons()
-
-    # Option button config
-    def add_buttons(self):
-        add_option_buttons(self)
-
-    def open_add_modal(self) -> None:
-        modal = AddCityModal(city=self, city_number=3)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-
-    def open_change_location_modal(self) -> None:
-        modal = ChangeLocationModal(city=self, update_type=3)
-        self._modal_ref = weakref.ref(modal)
-        modal.open()
-        self._modal_ref = None
-
-    def open_delete_location_modal(self) -> None:
-        self.delete_modal = DeleteLocationModal(city_name="city3", screen_instance=self)
-        self._modal_ref = weakref.ref(self.delete_modal)
-        self.delete_modal.open()
-        self._modal_ref = None
-
-    def start_delete_city(self):
-        self.modal_loader = ModalLoader()
-
-        self.delete_3 = True
-        self.delete_modal.add_widget(self.modal_loader)
-
-        threading.Thread(
-            target=self.delete_city_request,
-            daemon=True
-        ).start()
-        Clock.schedule_interval(self.stop_delete_city, 0.1)
-
-    def delete_city_request(self):
-        self.delete_3 = True
-        delete_city_request(self)
-
-    def stop_delete_city(self, *args):
-        if self.delete_done != "done":
-            return True
-    
-        Clock.unschedule(self.stop_delete_city)
-        self.delete_modal.remove_widget(self.modal_loader)
-        self.delete_modal.dismiss()
-
         self.manager.current = "App"
         notification_success(subtitle="Successfully Deleted City").open()
 # ---------------------------------------------------------------------------------
@@ -1038,10 +772,10 @@ class SettingsScreen(Screen):
     def open_add_city_modal(self):
         file = JsonStore("session.json")
 
-        if not file.exists("city2"):
+        if not file.exists("2"):
             self.manager.current = "City2"
 
-        elif not file.exists("city3"):
+        elif not file.exists("3"):
             self.manager.current = "City3"
 
         else:
@@ -1080,9 +814,9 @@ class MainApp(CarbonApp):
         self.sm.add_widget(ForgotScreen(name='Forgot'))
         self.sm.add_widget(SetupScreen(name='Setup'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
-        self.sm.add_widget(AppScreen(name='App'))
-        self.sm.add_widget(City2Screen(name='City2'))
-        self.sm.add_widget(City3Screen(name='City3'))
+        self.sm.add_widget(BaseScreen(name='App', city_number=1))
+        self.sm.add_widget(BaseScreen(name='City2', city_number=2))
+        self.sm.add_widget(BaseScreen(name='City3', city_number=3))
         self.sm.add_widget(SettingsScreen(name='Settings'))
         return self.sm
     

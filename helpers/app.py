@@ -16,13 +16,13 @@ def get_dat(self):
         id_token = self.manager.id_token
         headers = {"Authorization": f"Bearer {id_token}"}
 
-        if self.get_3 == True:
+        if self.city_number == 3:
              response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
 
-        elif self.get_2 == True:
+        elif self.city_number == 2:
              response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
 
-        else:
+        elif self.city_number == 1:
             response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
             self.city_1 = True
 
@@ -58,8 +58,8 @@ def get_new_device_data(self):
             self.get3 = "Fail"
             store = JsonStore("session.json")
 
-            if store.exists("city3"):
-                store.delete("city3")
+            if store.exists("3"):
+                store.delete("3")
 
         response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
         if response.status_code == 200:
@@ -71,8 +71,8 @@ def get_new_device_data(self):
             self.get2 = "Fail"
             store = JsonStore("session.json")
 
-            if store.exists("city2"):
-                 store.delete("city2")
+            if store.exists("2"):
+                 store.delete("2")
 
 def get_user_weather(self, lat, lon):
         if lat is None or lon is None:
@@ -193,17 +193,9 @@ def update_ui_background(self):
         self.ids.weather_icon.reload()
 
 def save_city(city_name, city_number):
-    # Normalize the city key
-    if city_number is None:
-        key = 'city1'
-    else:
-        if isinstance(city_number, int):
-            key = f"city{city_number}"
-        else:
-            s = str(city_number)
-            key = s if s.startswith('city') else f"city{s}"
-
+    key = str(city_number)
     store = JsonStore('session.json')
+    
     store.put(key, name=city_name)
 
 def delete_city_request(self):
@@ -239,12 +231,16 @@ def delete_city_request(self):
 
             self.deleted_2 = True
 
-            if self.deleted_2 == True and store.exists("city3"):
+            if self.deleted_2 == True and store.exists("3"):
                 # Shift city3 to city2:
 
                 # Get city3 data
-                self.get_3 = True
-                get_dat(self)
+                original_city_number = self.city_number
+                try:
+                    self.city_number = 3
+                    get_dat(self)
+                finally:
+                    self.city_number = original_city_number
 
                 # Delete city3 from Firestore
                 url = f"{FIREBASE_URL}/delete_location3"
@@ -269,7 +265,7 @@ def delete_city_request(self):
                 
                 r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers_add2)
 
-                store.delete("city3")
+                store.delete("3")
                 save_city(self.city, 2)
 
         elif self.delete_3 == True:
