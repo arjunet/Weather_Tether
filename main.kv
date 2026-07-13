@@ -1176,7 +1176,7 @@
                         role: "Small"
                         opacity: 0
 
-            CButtonPrimary:
+            CButtonCircular:
                 text: "Start typing"
                 id: address_button
                 role: "Large Productive"
@@ -1186,6 +1186,9 @@
                 length: 1
                 text_size: self.width - dp(20), None
                 disabled: True
+                bg_color: app.button_primary
+                hover_color: app.button_primary
+                radius: [self.height/2]
                 icon: "location--filled"
                 on_press:
                     root.on_address_button_press(self.text.strip())
@@ -1259,7 +1262,7 @@
                         role: "Small"
                         opacity: 0
 
-            CButtonPrimary:
+            CButtonCircular:
                 text: "Start typing"
                 id: address_button
                 role: "Large Productive"
@@ -1270,6 +1273,9 @@
                 text_size: self.width - dp(20), None
                 disabled: True
                 icon: "location--filled"
+                bg_color: app.button_primary
+                hover_color: app.button_primary
+                radius: [self.height/2]
                 on_press:
                     root.on_address_button_press(self.text.strip())
 
