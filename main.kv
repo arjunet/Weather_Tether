@@ -23,12 +23,13 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
                 hint_text_color: "#2c2c2c"
+                keyboard_suggestions: True
                 id: email_input
                 input_type: "mail"
                 multiline: False
@@ -43,12 +44,13 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
                 hint_text_color: "#2c2c2c"
+                keyboard_suggestions: True
                 password: True
                 id: password_input
                 multiline: False
@@ -149,12 +151,14 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.75}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
                 hint_text_color: "#2c2c2c"
+                keyboard_suggestions: True
+                input_type: "mail"
                 id: email_input
                 multiline: False
                 on_text_validate: password_input.focus = True
@@ -168,8 +172,8 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.55}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Password"
@@ -287,12 +291,13 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "Email"
                 hint_text_color: "#2c2c2c"
+                keyboard_suggestions: True
                 id: email_input
                 input_type: 'mail'
                 multiline: False
@@ -358,12 +363,13 @@
             pos_hint: {"center_x": 0.5, "center_y": 0.5}
             size_hint_x: None
             width: min(Window.width * 0.83, dp(400))
-            bg_color: [1, 1, 1, 0.3]
-            hover_color: [1, 1, 1, 0.3]
+            -bg_color: [1, 1, 1, 0.3]
+            -hover_color: [1, 1, 1, 0.3]
 
             CTextInput:
                 hint_text: "City or Zip Code"
                 hint_text_color: "#2c2c2c"
+                keyboard_suggestions: True
                 id: address_input
                 input_type: "address"
                 multiline: False
@@ -1062,14 +1068,17 @@
                 orientation: "vertical"
 
                 # Email Text Input:
-                CTextInputLayout:
+                CTextInputLayoutCircular:
                     pos_hint: {"center_x": 0.5}
+                    -bg_color: [1, 1, 1, 0.3]
+                    -hover_color: [1, 1, 1, 0.3]
 
                     CTextInput:
                         hint_text: "Email"
                         id: email_input
+                        hint_text_color: "#2c2c2c"
+                        keyboard_suggestions: True
                         input_type: "mail"
-                        bg_color: [1, 1, 1, 1]
                         multiline: False
                         on_text_validate: password_input.focus = True
 
@@ -1078,14 +1087,16 @@
                         color: "#000000"
 
                 # Password Text Input:
-                CTextInputLayout:
+                CTextInputLayoutCircular:
                     pos_hint: {"center_x": 0.5}
+                    -bg_color: [1, 1, 1, 0.3]
+                    -hover_color: [1, 1, 1, 0.3]
 
                     CTextInput:
                         hint_text: "Password"
+                        hint_text_color: "#2c2c2c"
                         password: True
                         id: password_input
-                        bg_color: [1, 1, 1, 1]
                         multiline: False
                         on_text_validate: self.focus = False
 
@@ -1143,14 +1154,17 @@
                 adaptive: [False, True]
                 padding: [0, dp(64)]
 
-                CTextInputLayout:
+                CTextInputLayoutCircular:
                     size_hint_x: 0.65
+                    -bg_color: [1, 1, 1, 0.3]
+                    -hover_color: [1, 1, 1, 0.3]
 
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
+                        hint_text_color: "#2c2c2c"
+                        keyboard_suggestions: True
                         input_type: "address"
-                        bg_color: [1, 1, 1, 1]
                         multiline: False
                         on_text: root.start_lookup()
                         on_text_validate: 
@@ -1227,13 +1241,17 @@
                 adaptive: [False, True]
                 padding: [0, dp(64)]
 
-                CTextInputLayout:
+                CTextInputLayoutCircular:
                     size_hint_x: 0.65
+                    -bg_color: [1, 1, 1, 0.3]
+                    -hover_color: [1, 1, 1, 0.3]
 
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
-                        bg_color: [1, 1, 1, 1]
+                        hint_text_color: "#2c2c2c"
+                        keyboard_suggestions: True
+                        input_type: "mail"
                         multiline: False
                         on_text: root.start_lookup()
                         on_text_validate: 
