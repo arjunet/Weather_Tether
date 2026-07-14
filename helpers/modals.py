@@ -149,15 +149,8 @@ class DeleteLocationModal(CModal):
     def delete_confirmed(self):
         store = JsonStore("session.json")
 
-        if self.city_name == "2":
-            store.delete("2")
-
-            self.screen_instance.start_delete_city()
-
-        elif self.city_name == "3":
-            store.delete("3")
-
-            self.screen_instance.start_delete_city()
+        store.delete(self.city_name)
+        self.screen_instance.start_delete_city()
 # ---------------------------------------------------------------------------------
 class AddCityModal(CModal):
     def __init__(self, screen, city_number, **kwargs):

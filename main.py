@@ -778,6 +778,11 @@ class SettingsScreen(Screen):
         file = JsonStore("session.json")
 
         self.greatest_city = max(int(key) for key in file.keys() if key.isdigit())
+
+        if self.greatest_city == 30:
+            notification_error("You Have Used All Of Your City Slots. However, You May Edit & Delete Your Locations.")
+            return
+        
         self.next_city_added = self.greatest_city + 1
 
         modal = AddCityModal(screen=self, city_number=self.next_city_added)
