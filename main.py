@@ -573,14 +573,14 @@ class BaseScreen(Screen):
 
     def sync_background_cities(self):
         try:
-            get_new_device_data(self)
+            get_new_device_data(self, self.city_number)
         except Exception:
             pass
         finally:
             Clock.schedule_once(lambda dt: self.refresh_city_panel(), 0)
         
     def get_user_dat(self):
-        get_dat(self)
+        get_dat(self, self.city_number)
 
     def get_weather(self, lat, lon):
         get_user_weather(self, lat, lon)
@@ -621,12 +621,21 @@ class BaseScreen(Screen):
 
         widget_container.clear_widgets()
 
-        for city_number, target_screen in ((1, "App"), (2, "City2"), (3, "City3")):
+        # Loop dynamically from city 1 all the way up to 30
+        for city_number in range(1, 31):
             city_key = str(city_number)
+            
             if file.exists(city_key):
                 city_name = file.get(city_key)["name"]
+                
+                # Match our dynamic ScreenManager naming convention:
+                target_screen = "App" if city_number == 1 else f"City{city_number}"
+                
                 item = CityPanelItem(text=city_name, right_icon="location")
+                
+                # The 'screen=target_screen' captures the current screen name for each specific button
                 item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
+                
                 widget_container.add_widget(item)
 
     def update_background(self):
@@ -656,8 +665,6 @@ class BaseScreen(Screen):
 
     def start_delete_city(self):
         self.modal_loader = ModalLoader()
-        self.delete_2 = self.city_number == 2
-        self.delete_3 = self.city_number == 3
         self.delete_modal.add_widget(self.modal_loader)
 
         threading.Thread(
@@ -667,8 +674,6 @@ class BaseScreen(Screen):
         Clock.schedule_interval(self.stop_delete_city, 0.1)
 
     def delete_city_request(self):
-        self.delete_2 = self.city_number == 2
-        self.delete_3 = self.city_number == 3
         delete_city_request(self)
 
     def stop_delete_city(self, *args):
@@ -772,15 +777,13 @@ class SettingsScreen(Screen):
     def open_add_city_modal(self):
         file = JsonStore("session.json")
 
-        if not file.exists("2"):
-            self.manager.current = "City2"
+        self.greatest_city = max(int(key) for key in file.keys() if key.isdigit())
+        self.next_city_added = self.greatest_city + 1
 
-        elif not file.exists("3"):
-            self.manager.current = "City3"
-
-        else:
-            notification_error(subtitle="You Have Used All Of Your City Slots. " \
-            "If You Would Like, You May Edit Or Delete An Existing Location").open()
+        modal = AddCityModal(screen=self, city_number=self.next_city_added)
+        self._modal_ref = weakref.ref(modal)
+        modal.open()
+        self._modal_ref = None
 
     def open_logout_modal(self) -> None:
         modal = LogoutModal(settings=self)
@@ -814,9 +817,13 @@ class MainApp(CarbonApp):
         self.sm.add_widget(ForgotScreen(name='Forgot'))
         self.sm.add_widget(SetupScreen(name='Setup'))
         self.sm.add_widget(VerifyScreen(name='Verify'))
-        self.sm.add_widget(BaseScreen(name='App', city_number=1))
-        self.sm.add_widget(BaseScreen(name='City2', city_number=2))
-        self.sm.add_widget(BaseScreen(name='City3', city_number=3))
+
+        for i in range(1, 31):
+            # Your first city uses the name 'App', the rest use 'City2', 'City3', etc.
+            screen_name = 'App' if i == 1 else f'City{i}'
+            
+            self.sm.add_widget(BaseScreen(name=screen_name, city_number=i))
+
         self.sm.add_widget(SettingsScreen(name='Settings'))
         return self.sm
     

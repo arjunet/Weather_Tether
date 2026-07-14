@@ -8,7 +8,7 @@ from .app import save_city
 from .modal_loader import ModalLoader
 
 import threading
-
+from num2words import num2words
 # ---------------------------------------------------------------------------------------
 
 class ChangeLocationModal(CModal):
@@ -160,9 +160,9 @@ class DeleteLocationModal(CModal):
             self.screen_instance.start_delete_city()
 # ---------------------------------------------------------------------------------
 class AddCityModal(CModal):
-    def __init__(self, city, city_number, **kwargs):
+    def __init__(self, screen, city_number, **kwargs):
         super().__init__(**kwargs)
-        self.city = city
+        self.screen = screen
         self.city_number = city_number
         # Timer setup
         self.pending_search = None
@@ -179,15 +179,10 @@ class AddCityModal(CModal):
         self.add_3 = False
         self.add_other = True
 
-        if self.city_number == 2:
-            self.ids.header_title.text = "Would You Like To Add A Second City To Your Account?"
-            self.ids.body.text = "Adding a second city to your account will allow you to easily switch between cities in the app without having to change your saved location."
-            self.add_2 = True
+        self.word_ordinal = num2words(city_number, to="ordinal").capitalize()
 
-        elif self.city_number == 3:
-            self.ids.header_title.text = "Would You Like To Add A Third City To Your Account?"
-            self.ids.body.text = "Adding a third city to your account will allow you to easily switch between cities in the app without having to change your saved location."
-            self.add_3 = True
+        self.ids.header_title.text = f"Would You Like To Add A {self.word_ordinal} City To Your Account?"
+        self.ids.body.text = f"Adding a {self.word_ordinal} city to your account will allow you to easily switch between cities in the app without having to change your saved location."
 
     def start_lookup(self, *args):
         self.city_found = False
@@ -249,7 +244,7 @@ class AddCityModal(CModal):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
-        save_location_request(self)
+        save_location_request(self, self.city_number)
 
     def stop_load_firestore(self, *args):
         # Check if background task finished
@@ -263,5 +258,6 @@ class AddCityModal(CModal):
         location_input = self.ids.address_input.text.strip()
         save_city(location_input, self.city_number)
 
+        target_screen_name = 'App' if self.city_number == 1 else f'City{self.city_number}'
         self.dismiss()
-        self.city.start_load_weather()
+        self.screen.manager.current = target_screen_name

@@ -1,5 +1,6 @@
 import requests
 import re
+import json
 
 from carbonkivy.app import App
 
@@ -11,46 +12,44 @@ from helpers.sidepanel import SidePanel
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
 
-def get_dat(self):
+def get_dat(self, city_number):
         # Get user dat:
         id_token = self.manager.id_token
         headers = {"Authorization": f"Bearer {id_token}"}
 
-        if self.city_number == 3:
-             response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
+        payload = {
+            "city_number": str(city_number)
+        }
 
-        elif self.city_number == 2:
-             response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
-
-        elif self.city_number == 1:
-            response = requests.get(f"{FIREBASE_URL}/get_location", headers=headers)
-            self.city_1 = True
+        response = requests.post(f"{FIREBASE_URL}/get_location", json=payload, headers=headers)
 
         if response.status_code == 200:
                 user_data = response.json()
                 
                 # Grab the Firestore location data:
-                lat = user_data.get("lat")
-                lon = user_data.get("lon")
-                self.current_lat = lat
-                self.current_lon = lon
+                self.current_lat = user_data.get("lat")
+                self.current_lon = user_data.get("lon")
                 self.city = user_data.get("location")
 
-                self.get_weather(lat, lon)
+                self.get_weather(self.current_lat, self.current_lon)
 
         else:
              self.get_r = "Fail"
 
         self.r = "weather_done"
 
-def get_new_device_data(self):
+def get_new_device_data(self, city_number):
         # Get user dat:
         id_token = self.manager.id_token
         headers = {"Authorization": f"Bearer {id_token}"}
 
-        response = requests.get(f"{FIREBASE_URL}/get_location3", headers=headers)
-        if response.status_code == 200:
-                user_data = response.json()
+        payload3 = {
+            "city_number": str(3)
+        }
+
+        response3 = requests.post(f"{FIREBASE_URL}/get_location", json=payload3, headers=headers)
+        if response3.status_code == 200:
+                user_data = response3.json()
                 self.city3 = user_data.get("location")
                 save_city(self.city3, 3)
 
@@ -61,9 +60,13 @@ def get_new_device_data(self):
             if store.exists("3"):
                 store.delete("3")
 
-        response = requests.get(f"{FIREBASE_URL}/get_location2", headers=headers)
-        if response.status_code == 200:
-                user_data = response.json()
+        payload2 = {
+            "city_number": str(2)
+        }
+
+        response2 = requests.post(f"{FIREBASE_URL}/get_location", json=payload2, headers=headers)
+        if response2.status_code == 200:
+                user_data = response2.json()
                 self.city2 = user_data.get("location")
                 save_city(self.city2, 2)
 
@@ -199,89 +202,61 @@ def save_city(city_name, city_number):
     store.put(key, name=city_name)
 
 def delete_city_request(self):
-        self.get_2 = False
-        self.get_3 = False
-        self.current_lat = 0.0
-        self.current_lon = 0.0
-        self.current_temp = None
-        self.feels_like = None
-        self.is_daytime = False
-        self.min_temp = None
-        self.max_temp = None
-        self.precip_percent = None
-        self.precip_type = None
-        self.snow_fall = None
-        self.weather_condition = None
-        self.wind_chill = None
+    payload = {
+        "city_number": self.city_number
+    }
+    
+    url = f"{FIREBASE_URL}/delete_location"
+    id_token = self.manager.id_token
+    headers = {"Authorization": f"Bearer {id_token}"}
 
-        if self.delete_2 == True:
-            url = f"{FIREBASE_URL}/delete_location2"
-            id_token = self.manager.id_token
-            headers = {"Authorization": f"Bearer {id_token}"}
+    try:
+        r = requests.post(url, json=payload, headers=headers, timeout=10)
+        self.delete_r = r
+        self.delete_result = r.json()
 
-            try:
-                r = requests.post(url, headers=headers, timeout=10)
-                self.delete_r = r
-                self.delete_result = r.json()
-            except Exception as e:
-                self.delete_r = "error"
-
-            # Shift city3 to city2 if it exists
-            store = JsonStore("session.json")
-
-            self.deleted_2 = True
-
-            if self.deleted_2 == True and store.exists("3"):
-                # Shift city3 to city2:
-
-                # Get city3 data
-                original_city_number = self.city_number
-                try:
-                    self.city_number = 3
-                    get_dat(self)
-                finally:
-                    self.city_number = original_city_number
-
-                # Delete city3 from Firestore
-                url = f"{FIREBASE_URL}/delete_location3"
-                id_token = self.manager.id_token
-                headers = {"Authorization": f"Bearer {id_token}"}
-
-                try:
-                    r = requests.post(url, headers=headers, timeout=10)
-                    self.delete_r = r
-                    self.delete_result = r.json()
-                except Exception as e:
-                    self.delete_r = "error"
-
-                # Save city3 data to city2 in Firestore
-                self.city_found = True
-                payload = {
-                    "location": str(self.city), 
-                    "lat": float(self.current_lat), 
-                    "lon": float(self.current_lon)
-                }
-                headers_add2 = {"Authorization": f"Bearer {id_token}"}
+        # --- LOCAL JSONSTORE SHIFTING ---
+        if r.status_code in (200, 201):
+            file = JsonStore("session.json")
+            
+            # 1. Extract all existing city entries into a temporary dict
+            temp_cities = {}
+            max_cities = 30
+            
+            for i in range(1, max_cities + 1):
+                key = str(i)
+                if file.exists(key):
+                    temp_cities[i] = file.get(key)
+            
+            # 2. Re-index and shift items down locally
+            shifted_cities = {}
+            deleted_idx = int(self.city_number)
+            
+            for i in range(1, max_cities + 1):
+                if i < deleted_idx:
+                    # Keep cities before the deleted index exactly where they are
+                    if i in temp_cities:
+                        shifted_cities[i] = temp_cities[i]
+                elif i > deleted_idx:
+                    # Shift everything after the deleted index down by 1
+                    if i in temp_cities:
+                        shifted_cities[i - 1] = temp_cities[i]
+            
+            # 3. Clear out all old city keys from JsonStore so there's no leftover duplicates
+            for i in range(1, max_cities + 1):
+                key = str(i)
+                if file.exists(key):
+                    file.delete(key)
+                    
+            # 4. Write the newly shifted layout structure back to the file
+            for new_idx, city_data in shifted_cities.items():
+                file.put(str(new_idx), **city_data)
                 
-                r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers_add2)
+    except Exception as e:
+        print(f"Error deleting city: {e}")
+        self.delete_r = "error"
 
-                store.delete("3")
-                save_city(self.city, 2)
-
-        elif self.delete_3 == True:
-            url = f"{FIREBASE_URL}/delete_location3"
-            id_token = self.manager.id_token
-            headers = {"Authorization": f"Bearer {id_token}"}
-        
-            try:
-                r = requests.post(url, headers=headers, timeout=10)
-                self.delete_r = r
-                self.delete_result = r.json()
-            except Exception as e:
-                self.delete_r = "error"
-
-        self.delete_done = "done"
-        self.delete_modal.dismiss()
+    self.delete_done = "done"
 
 def is_valid_email(email):
     pattern = r'^[\w.+\-]+@[\w.-]+\.[a-zA-Z]{2,}$'

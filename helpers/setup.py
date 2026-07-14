@@ -35,29 +35,23 @@ def Request_City(self):
             self.ids.address_button.disabled = True
             self.ids.address_button.text = "No results found."
 
-def save_location_request(self): 
+def save_location_request(self, city_number): 
         # Sends the location to Firestore:
         location_input = self.ids.address_input.text
         if self.add_other == True:
-            id_token = self.city.manager.id_token
+            id_token = self.screen.manager.id_token
 
         else:
              id_token = self.manager.id_token
         payload = {
             "location": str(location_input), 
             "lat": float(self.current_lat), 
-            "lon": float(self.current_lon)
+            "lon": float(self.current_lon),
+            "city_number": str(city_number)
         }
         headers = {"Authorization": f"Bearer {id_token}"}
         
-        if self.add_3 == True:
-             r = requests.post(f"{FIREBASE_URL}/save_location3", json=payload, headers=headers)
-
-        elif self.add_2 == True:
-             r = requests.post(f"{FIREBASE_URL}/save_location2", json=payload, headers=headers)
-        else: 
-             r = requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
-
+        requests.post(f"{FIREBASE_URL}/save_location", json=payload, headers=headers)
         self.firestore_done = True
 
 def update_location_request(self, update_type):
@@ -69,19 +63,12 @@ def update_location_request(self, update_type):
     payload = {
         "location": str(self.ids.address_input.text.strip()),
         "lat": float(self.current_lat),
-        "lon": float(self.current_lon)
+        "lon": float(self.current_lon),
+        "city_number": str(update_type)
     }
     headers = {"Authorization": f"Bearer {id_token}"}
 
-    if update_type == 1:
-        r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
-    elif update_type == 2:
-        r = requests.patch(f"{FIREBASE_URL}/update_location2", json=payload, headers=headers)
-    elif update_type == 3:
-        r = requests.patch(f"{FIREBASE_URL}/update_location3", json=payload, headers=headers)
-    else:
-        # Default to updating city1 if invalid type
-        r = requests.patch(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
+    requests.post(f"{FIREBASE_URL}/update_location", json=payload, headers=headers)
 
     self.firestore_done = True
 

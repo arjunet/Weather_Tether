@@ -37,7 +37,7 @@ A beautiful, modern weather application built with **CarbonKivy** UI framework f
 - 🌡️ Real-time weather data integration  
 - 📱 Responsive design optimized for mobile  
 - 🔐 Secure authentication system (Signup, Sign-in, Forgot Password)  
-- 🌍 Multi-city weather tracking (3 cities supported)    
+- 🌍 Multi-city weather tracking (30 cities supported)    
 - 🎨 Dynamic backgrounds based on weather conditions  
 - ⚙️ Comprehensive settings panel  
 - 🔔 Real-time notifications  
@@ -61,9 +61,7 @@ A beautiful, modern weather application built with **CarbonKivy** UI framework f
 <td>
   
 **Weather Display**
-- Main App Screen
-- City 2 Screen
-- City 3 Screen
+- Base Screens
   
 </td>
 <td>
