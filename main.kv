@@ -839,6 +839,35 @@
             panel_shell: left_panel_shell
             visibility: shell_menu_btn.active
 
+            scroll_layout: scrollview_layout
+
+            UIShellPanelLayout:
+                CBoxLayout:
+                    orientation: 'vertical'
+                    spacing: dp(10)
+                    padding: dp(10)
+
+                    # 2. The ScrollView takes up all the REMAINING vertical space
+                    CScrollView:
+                        size_hint_y: 1  # 1 means "take up all available space after fixed items"
+                        
+                        CBoxLayout:
+                            id: scrollview_layout
+                            orientation: 'vertical'
+                            size_hint_y: None
+                            height: self.minimum_height
+                            spacing: dp(5)
+
+                    # 3. Put your bottom buttons here! 
+                    # Give them a fixed height so the ScrollView knows exactly where to stop.
+                    CBoxLayout:
+                        id: button_area
+                        orientation: 'vertical'
+                        size_hint_y: None    # Do NOT let this scale dynamically
+                        height: dp(100)      # Give it a fixed height (e.g., 100dp for your buttons)
+                        spacing: dp(10)
+
+
     UIShell:
         id: header_shell
 

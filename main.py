@@ -617,8 +617,16 @@ class BaseScreen(Screen):
     def refresh_city_panel(self):
         file = JsonStore("session.json")
         sidepanel = self.ids.SidePanel
-        widget_container = sidepanel.ids.widgets
+        
+        # Safely get the bridge property we just made
+        if hasattr(sidepanel, 'scroll_layout') and sidepanel.scroll_layout:
+            widget_container = sidepanel.scroll_layout
+        else:
+            # Fallback just in case the property isn't bound yet
+            print("Error: scroll_layout reference is not available yet.")
+            return
 
+        # Clear the old layout items
         widget_container.clear_widgets()
 
         # Loop dynamically from city 1 all the way up to 30
@@ -628,7 +636,6 @@ class BaseScreen(Screen):
             if file.exists(city_key):
                 city_name = file.get(city_key)["name"]
                 
-                # Match our dynamic ScreenManager naming convention:
                 target_screen = "App" if city_number == 1 else f"City{city_number}"
                 
                 item = CityPanelItem(text=city_name, right_icon="location")
