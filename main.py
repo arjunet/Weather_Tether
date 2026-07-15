@@ -573,7 +573,7 @@ class BaseScreen(Screen):
 
     def sync_background_cities(self):
         try:
-            get_new_device_data(self, self.city_number)
+            get_new_device_data(self)
         except Exception:
             pass
         finally:

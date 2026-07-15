@@ -38,44 +38,43 @@ def get_dat(self, city_number):
 
         self.r = "weather_done"
 
-def get_new_device_data(self, city_number):
-        # Get user dat:
-        id_token = self.manager.id_token
-        headers = {"Authorization": f"Bearer {id_token}"}
+def get_new_device_data(self):
+    id_token = self.manager.id_token
+    headers = {"Authorization": f"Bearer {id_token}"}
+    store = JsonStore("session.json")
 
-        payload3 = {
-            "city_number": str(3)
-        }
+    try:
+        # 1. Fetch all city data from our new bulk endpoint in 1 request
+        response = requests.get(f"{FIREBASE_URL}/get_all_locations", headers=headers, timeout=10)
+        
+        if response.status_code == 200:
+            server_data = response.json()
+            remote_locations = server_data.get("locations", {})
 
-        response3 = requests.post(f"{FIREBASE_URL}/get_location", json=payload3, headers=headers)
-        if response3.status_code == 200:
-                user_data = response3.json()
-                self.city3 = user_data.get("location")
-                save_city(self.city3, 3)
-
+            # 2. Update our local JsonStore for all 30 slots
+            for i in range(1, 31):
+                key = str(i)
+                
+                if key in remote_locations:
+                    # City exists on server: save/update it locally
+                    city_data = remote_locations[key]
+                    
+                    # Assuming your save_city function writes to JsonStore,
+                    # pass it whatever payload structure save_city expects.
+                    # If save_city just takes name and city_number, do:
+                    save_city(city_data["name"], i)
+                else:
+                    # City doesn't exist on server: clean it up locally
+                    if store.exists(key):
+                        store.delete(key)
+                        
+            print("Successfully synced all cities from Cloud to Local!")
+            
         else:
-            self.get3 = "Fail"
-            store = JsonStore("session.json")
-
-            if store.exists("3"):
-                store.delete("3")
-
-        payload2 = {
-            "city_number": str(2)
-        }
-
-        response2 = requests.post(f"{FIREBASE_URL}/get_location", json=payload2, headers=headers)
-        if response2.status_code == 200:
-                user_data = response2.json()
-                self.city2 = user_data.get("location")
-                save_city(self.city2, 2)
-
-        else:
-            self.get2 = "Fail"
-            store = JsonStore("session.json")
-
-            if store.exists("2"):
-                 store.delete("2")
+            print(f"Failed to sync device data. Status: {response.status_code}")
+            
+    except Exception as e:
+        print(f"Error while syncing new device data: {e}")
 
 def get_user_weather(self, lat, lon):
         if lat is None or lon is None:
