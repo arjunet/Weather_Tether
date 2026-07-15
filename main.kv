@@ -847,9 +847,8 @@
                     spacing: dp(10)
                     padding: dp(10)
 
-                    # 2. The ScrollView takes up all the REMAINING vertical space
                     CScrollView:
-                        size_hint_y: 1  # 1 means "take up all available space after fixed items"
+                        size_hint_y: 1 
                         
                         CBoxLayout:
                             id: scrollview_layout
@@ -858,13 +857,11 @@
                             height: self.minimum_height
                             spacing: dp(5)
 
-                    # 3. Put your bottom buttons here! 
-                    # Give them a fixed height so the ScrollView knows exactly where to stop.
+                    # Empty blank zones for bottom sidepanel buttons
                     CBoxLayout:
-                        id: button_area
                         orientation: 'vertical'
-                        size_hint_y: None    # Do NOT let this scale dynamically
-                        height: dp(100)      # Give it a fixed height (e.g., 100dp for your buttons)
+                        size_hint_y: None
+                        height: dp(150)
                         spacing: dp(10)
 
 

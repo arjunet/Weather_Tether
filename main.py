@@ -618,13 +618,7 @@ class BaseScreen(Screen):
         file = JsonStore("session.json")
         sidepanel = self.ids.SidePanel
         
-        # Safely get the bridge property we just made
-        if hasattr(sidepanel, 'scroll_layout') and sidepanel.scroll_layout:
-            widget_container = sidepanel.scroll_layout
-        else:
-            # Fallback just in case the property isn't bound yet
-            print("Error: scroll_layout reference is not available yet.")
-            return
+        widget_container = sidepanel.scroll_layout
 
         # Clear the old layout items
         widget_container.clear_widgets()
