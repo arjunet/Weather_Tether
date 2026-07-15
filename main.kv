@@ -111,7 +111,7 @@
             weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Login'
+                app.go_to_screen('Login')
 
         # Signup Button:
         CButtonCircular:
@@ -238,7 +238,7 @@
             weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Signup'
+                app.go_to_screen('Signup')
 
         # Forgot Password Button:
         ClickableLabel:
@@ -251,7 +251,7 @@
             weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Forgot'
+                app.go_to_screen('Forgot')
 
         # Login Button:
         CButtonCircular:
@@ -305,7 +305,7 @@
                     self.focus: False
                     root.start_load(root.ids.email_input.text.strip())
                     root.manager.transition = FadeTransition()
-                    root.manager.current = 'Login'
+                    app.go_to_screen('Login')
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
@@ -322,7 +322,7 @@
             weight_style: "Medium"
             on_press:
                 root.manager.transition = FadeTransition()
-                root.manager.current = 'Login'
+                app.go_to_screen('Login')
 
         # Send Email Button:
         CButtonCircular:
@@ -866,7 +866,6 @@
                         height: dp(150)
                         spacing: dp(20)
 
-
     UIShell:
         id: header_shell
 
@@ -953,7 +952,7 @@
                 weight_style: "Medium"
                 on_press:
                     root.manager.transition = FadeTransition()
-                    root.manager.current = 'App'
+                    app.set_previous_screen()
 
         CToggle:
             id: unit_toggle

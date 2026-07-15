@@ -45,6 +45,9 @@ import weakref
 Builder.load_file("helpers/sidepanel.kv")
 Builder.load_file("helpers/modal_loader.kv")
 Builder.load_file("helpers/menu_buttons.kv")
+
+from kivy.config import Config
+Config.set('kivy', 'exit_on_escape', '0')
 # ---------------------------------------------------------------------------------
 class SignupScreen(Screen):
     def __init__(self, **kwargs):
@@ -629,13 +632,14 @@ class BaseScreen(Screen):
             
             if file.exists(city_key):
                 city_name = file.get(city_key)["name"]
+                app = App.get_running_app()
                 
                 target_screen = "App" if city_number == 1 else f"City{city_number}"
                 
                 item = CityPanelItem(text=city_name, right_icon="location")
                 
                 # The 'screen=target_screen' captures the current screen name for each specific button
-                item.bind(on_press=lambda instance, screen=target_screen: setattr(self.manager, "current", screen))
+                item.bind(on_press=lambda instance, screen=target_screen: app.go_to_screen(screen))
                 
                 widget_container.add_widget(item)
 
@@ -705,10 +709,15 @@ class SettingsScreen(Screen):
         self.ids.unit_toggle.active = toggle_state
 
     def logout(self):
+        app = App.get_running_app()
+        app.screen_history.clear()
+
         store = JsonStore("session.json")
         store.clear()
+
         self.manager.transition = FadeTransition()
-        self.manager.current = "Signup"
+        self.manager.current = "Login"
+
         notification_success(subtitle="Successfully Logged out").open()
 
     def start_delete_account(self, email_input, password_input):
@@ -742,6 +751,7 @@ class SettingsScreen(Screen):
         delete_request(self)
 
     def stop_delete_load(self, *args):
+        app = App.get_running_app()
         if self.delete_result is None or self.login_result is None:
             return True  # Keep waiting
 
@@ -762,6 +772,8 @@ class SettingsScreen(Screen):
 
         else:
             clear_json()
+            app.screen_history.clear()
+            
             self.manager.id_token = None
             self.manager.refresh_token = None
             
@@ -805,6 +817,7 @@ class SettingsScreen(Screen):
 # ---------------------------------------------------------------------------------
 # Build and run the app
 class MainApp(CarbonApp):
+    screen_history = []
     def __init__(self, *args, **kwargs) -> None:
         self.defaults = False
         super().__init__(*args, **kwargs)
@@ -833,24 +846,63 @@ class MainApp(CarbonApp):
         self.sm.add_widget(SettingsScreen(name='Settings'))
         return self.sm
     
-    def on_back_button(self, window, key, *args):
-        # check if the back button was pressed
-
-        if key == 27:  # 27 is the keycode for the back button
-            if self.sm.current in ["Login", "Forgot"]:
-                self.sm.current = "Signup"
-                return True  # Return True to indicate that we've handled the event
-            
-            elif self.sm.current in ["City2", "City3", "Settings"]:
-                self.sm.current = "App"
-                return True
-            
-            elif self.sm.current in ["Signup", "App", "Verify", "Setup"]:
-                return False  # Let Android close the app
-            
-            return True
+    def go_to_screen(self, screen_name):
+        current_screen = self.root.current
+        self.root.transition = FadeTransition()
         
-        return False  # For any other keys, do nothing
+        # Only add to history if going to different screen
+        if not self.screen_history or self.screen_history[-1] != current_screen:
+            self.screen_history.append(current_screen)
+            
+        self.root.current = screen_name
+
+    def on_back_button(self, window, key, *args):
+        if key == 27:
+            current = self.root.current
+            # Dont go anywhere if on main app screen
+            if current == "App":
+                return False
+
+            # Dont go anywhere if on signup or login screens if no history
+            if current in ["Signup", "Login"] and not self.screen_history:
+                return False  # Returning False tells Kivy/Android to close the app
+
+            # go to other screen
+            if (current.startswith("City") or 
+                current in ["Settings", "Login", "Forgot", "Signup"]):
+                
+                self.set_previous_screen()
+                return True
+                
+        return False  # Let the app exit for other keys
+
+    def set_previous_screen(self):
+        current = self.root.current
+
+        # 1. Back from Login -> Go to Signup
+        if current == "Login":
+            self.root.current = "Signup"
+
+        # 2. Back from Forgot -> Go to Login
+        elif current == "Forgot":
+            self.root.current = "Login"
+
+        # 3. Back from any City screen (except App) OR Settings -> Go to historical screen
+        elif current.startswith("City") or current == "Settings":
+            if self.screen_history:
+                previous_screen = self.screen_history.pop()
+                self.root.current = previous_screen
+            else:
+                self.root.current = "App"  # Fallback safety for logged-in users
+
+        # 4. Fallback for other screens
+        else:
+            if self.screen_history:
+                self.root.current = self.screen_history.pop()
+            else:
+                # If they somehow press back from elsewhere with no history, 
+                # safely default them back to the Signup gate instead of crashing on the App screen.
+                self.root.current = "Signup"
 
     def on_start(self):
         token = load_refresh_token()
