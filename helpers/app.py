@@ -1,13 +1,11 @@
 import requests
 import re
-import json
 
 from carbonkivy.app import App
 
 from kivy.storage.jsonstore import JsonStore
 
 from helpers.menu_buttons import Delete_Day, Delete_Night, Edit_Day, Edit_Night
-from helpers.sidepanel import SidePanel
 
 FIREBASE_URL = "https://firebase-auth-service-318359636878.us-central1.run.app"
 WEATHER_API_URL = "https://weather-backend-318359636878.us-central1.run.app"
@@ -149,8 +147,6 @@ def update_ui_background(self):
         self.transparency_color = [1, 1, 1, 0.35]
 
         self.app.theme = "Gray100"
-
-        self.sidepanel = SidePanel()
 
     elif "clear" in condition and self.is_daytime != "False":
         self.bg_image = "images/sun_bg.jpg"
