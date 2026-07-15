@@ -67,9 +67,6 @@ def get_new_device_data(self):
                     # City doesn't exist on server: clean it up locally
                     if store.exists(key):
                         store.delete(key)
-                        
-            print("Successfully synced all cities from Cloud to Local!")
-            
         else:
             print(f"Failed to sync device data. Status: {response.status_code}")
             
