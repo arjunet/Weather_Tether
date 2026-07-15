@@ -1,16 +1,12 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 
 <SidePanel>:
-    # Set the width of the panel
     size_hint_x: 0.5
-    
-    # We use a vertical BoxLayout to divide the panel into a scrollable area 
-    # and a fixed bottom section.
+
     BoxLayout:
         orientation: 'vertical'
         size_hint: 1, 1
 
-        # 1. The Scrollable Top Section
         ScrollView:
             do_scroll_x: False
             size_hint_y: None
@@ -21,12 +17,10 @@
                 UIShellPanelSelectionLayout:
                     id: widgets
 
-        # 2. The Fixed Bottom Section
         BoxLayout:
             id: bottom_bar
             orientation: 'vertical'
             size_hint_y: None
-            # Adjust height based on how many buttons you have (e.g., 2 buttons * 48dp height + spacing)
             height: dp(110) 
             padding: dp(10)
             spacing: dp(10)

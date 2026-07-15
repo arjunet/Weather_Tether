@@ -848,7 +848,9 @@
                     padding: dp(10)
 
                     CScrollView:
-                        size_hint_y: 1 
+                        size_hint_y: 1
+                        bar_width: dp(15)
+                        scroll_type: ['bars', 'content']
                         
                         CBoxLayout:
                             id: scrollview_layout
