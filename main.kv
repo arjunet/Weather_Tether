@@ -29,7 +29,7 @@
 
             CTextInput:
                 hint_text: "Email"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 keyboard_suggestions: True
                 id: email_input
                 input_type: "mail"
@@ -38,7 +38,7 @@
 
             CTextInputHelperText:
                 text: "Enter An Email That You Would Like to Use"
-                color: "#000000"
+                -color: "#000000"
 
         # Password Text Input:
         CTextInputLayoutCircular:
@@ -50,7 +50,7 @@
 
             CTextInput:
                 hint_text: "Password"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 keyboard_suggestions: True
                 password: True
                 id: password_input
@@ -60,7 +60,7 @@
 
             CTextInputHelperText:
                 text: "Enter A Password That You Would Like to Use"
-                color: "#000000"
+                -color: "#000000"
 
             CTextInputTrailingIconButton:
                 icon: "view--off" if password_input.password else "view"
@@ -157,7 +157,7 @@
 
             CTextInput:
                 hint_text: "Email"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 keyboard_suggestions: True
                 input_type: "mail"
                 id: email_input
@@ -166,7 +166,7 @@
 
             CTextInputHelperText:
                 text: "Enter Your Email"
-                color: "#000000"
+                -color: "#000000"
 
         # Password Text Input:
         CTextInputLayoutCircular:
@@ -178,7 +178,7 @@
 
             CTextInput:
                 hint_text: "Password"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 password: True
                 id: password_input
                 multiline: False
@@ -187,7 +187,7 @@
 
             CTextInputHelperText:
                 text: "Enter Your Password"
-                color: "#000000"
+                -color: "#000000"
 
             CTextInputTrailingIconButton:
                 icon: "view--off" if password_input.password else "view"
@@ -297,7 +297,7 @@
 
             CTextInput:
                 hint_text: "Email"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 keyboard_suggestions: True
                 id: email_input
                 input_type: 'mail'
@@ -310,7 +310,7 @@
 
             CTextInputHelperText:
                 text: "Enter Your Email And We'll Send You A Code"
-                color: "#000000"
+                -color: "#000000"
 
         # Back To Login Button:
         ClickableLabel:
@@ -369,7 +369,7 @@
 
             CTextInput:
                 hint_text: "City or Zip Code"
-                hint_text_color: "#2c2c2c"
+                -hint_text_color: "#2c2c2c"
                 keyboard_suggestions: True
                 id: address_input
                 input_type: "address"
@@ -381,7 +381,7 @@
 
             CTextInputHelperText:
                 text: "Enter Your City or Zip Code"
-                color: "#000000"
+                -color: "#000000"
 
         # Search Result Button:
         CButtonCircular:
@@ -467,7 +467,7 @@
             
             # Continue icon:
             ClickableIcon:
-                icon: "arrow--left"
+                icon: "arrow--right"
                 size_hint: None, None
                 font_size: min(Window.width * 0.09, dp(34))
                 on_press:

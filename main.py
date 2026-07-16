@@ -352,7 +352,7 @@ class SetupScreen(Screen):
         Clock.schedule_interval(self.stop_load_firestore, 0.1)
 
     def save_location(self):
-        save_location_request(self)
+        save_location_request(self, 1)
 
     def stop_load_firestore(self, *args):
         # Check if background task finished
@@ -773,7 +773,7 @@ class SettingsScreen(Screen):
         else:
             clear_json()
             app.screen_history.clear()
-            
+
             self.manager.id_token = None
             self.manager.refresh_token = None
             
