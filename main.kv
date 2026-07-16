@@ -395,8 +395,8 @@
             text_size: self.width - dp(20), None
             disabled: True
             icon: "location--filled"
-            bg_color: app.button_primary
-            hover_color: app.button_primary
+            -bg_color: app.button_primary
+            -hover_color: app.button_primary
             radius: [self.height/2]
             pos_hint: {'center_x': 0.5}
             on_press:
@@ -1180,8 +1180,8 @@
                 length: 1
                 text_size: self.width - dp(20), None
                 disabled: True
-                bg_color: app.button_primary
-                hover_color: app.button_primary
+                -bg_color: app.button_primary
+                -hover_color: app.button_primary
                 radius: [self.height/2]
                 icon: "location--filled"
                 on_press:
@@ -1267,8 +1267,8 @@
                 text_size: self.width - dp(20), None
                 disabled: True
                 icon: "location--filled"
-                bg_color: app.button_primary
-                hover_color: app.button_primary
+                -bg_color: app.button_primary
+                -hover_color: app.button_primary
                 radius: [self.height/2]
                 on_press:
                     root.on_address_button_press(self.text.strip())
