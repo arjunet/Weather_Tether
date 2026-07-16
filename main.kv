@@ -1,6 +1,7 @@
 #:import FadeTransition kivy.uix.screenmanager.FadeTransition
 #:import Window kivy.core.window.Window
-#:import ClickableLabel helpers.clickablelabel
+#:import ClickableLabel helpers.clickablecomponents
+#:import ClickableIcon helpers.clickablecomponents
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
@@ -404,27 +405,15 @@
         AnchorLayout:
             anchor_x: "right"
             anchor_y: "top"
-            padding: [dp(15), dp(15), dp(15), dp(15)]
-            
-            # Continue Button:
-            ClickableLabel:
-                text: "[u]Countinue[/u]       "
-                markup: True
-                color: [0, 0, 0, 1]
+            padding: [dp(15), dp(18), dp(15), dp(15)]
+
+            ClickableIcon:
+                icon: "arrow--right"
                 size_hint: None, None
-                font_size: min(Window.width * 0.05, sp(20))
-                weight_style: "Medium"
+                font_size: min(Window.width * 0.09, dp(34))
                 on_press:
                     root.manager.transition = FadeTransition()
                     root.countinue_pressed()
-
-        AnchorLayout:
-            anchor_x: "right"
-            anchor_y: "top"
-            padding: [dp(15), dp(18), dp(15), dp(15)]
-
-            CIcon:
-                icon: "arrow--right"
 
         CLoadingIndicator:
             role: "Large"
@@ -476,24 +465,13 @@
             anchor_y: "top"
             padding: [dp(15), dp(15), dp(15), dp(15)]
             
-            # Continue Button:
-            ClickableLabel:
-                text: "[u]Finish[/u]       "
-                markup: True
-                color: [0, 0, 0, 1]
+            # Continue icon:
+            ClickableIcon:
+                icon: "arrow--left"
                 size_hint: None, None
-                font_size: min(Window.width * 0.05, sp(20))
-                weight_style: "Medium"
+                font_size: min(Window.width * 0.09, dp(34))
                 on_press:
                     root.start_load_check()
-
-        AnchorLayout:
-            anchor_x: "right"
-            anchor_y: "top"
-            padding: [dp(15), dp(18), dp(15), dp(15)]
-
-            CIcon:
-                icon: "arrow--right"
 
         ClickableLabel:
             text: "Wrong Email?"
@@ -935,21 +913,10 @@
             anchor_y: "top"
             padding: [dp(15), dp(18), dp(15), dp(15)]
 
-            CIcon:
+            ClickableIcon:
                 icon: "arrow--left"
-
-        AnchorLayout:
-            anchor_x: "left"
-            anchor_y: "top"
-            padding: [dp(15), dp(15), dp(15), dp(15)]
-
-            ClickableLabel:
-                text: "       [u]Back[/u]"
-                markup: True
-                color: [0, 0, 0, 1]
                 size_hint: None, None
-                font_size: min(Window.width * 0.05, sp(20))
-                weight_style: "Medium"
+                font_size: min(Window.width * 0.09, dp(34))
                 on_press:
                     root.manager.transition = FadeTransition()
                     app.set_previous_screen()
