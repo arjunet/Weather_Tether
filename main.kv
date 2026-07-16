@@ -921,39 +921,42 @@
                     root.manager.transition = FadeTransition()
                     app.set_previous_screen()
 
-        CToggle:
-            id: unit_toggle
+        CBoxLayout:
+            size_hint: [None, None]
+            size: self.minimum_size
             pos_hint: {"center_x": 0.5, "center_y": 0.6}
-            on_active:
-                root.toggle_pressed()
+            orientation: "horizontal"
+            spacing: dp(15)
 
-        CLabel:
-            text: "Imperial Units"
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Regular"
-            halign: "center"
-            size_hint: None, None
-            size: self.texture_size
-            color: (0,0,0,1)
-            size_hint: 1, 1
-            center_x: unit_toggle.center_x - dp(80)
-            center_y: unit_toggle.center_y
-            font_size: sp(16)
+            CLabelNeutral:
+                text: "Imperial Units"
+                style: "heading_04"
+                typeface: "IBM Plex Sans"
+                weight_style: "Regular"
+                color: (0,0,0,1)
+                font_size: sp(16)
+                size_hint: [None, None]
+                size: self.texture_size
+                text_size: [None, None]
+                pos_hint: {"center_y": 0.48}
 
-        CLabel:
-            text: "Metric Units"
-            style: "heading_04"
-            typeface: "IBM Plex Sans"
-            weight_style: "Regular"
-            halign: "center"
-            size_hint: None, None
-            size: self.texture_size
-            color: (0,0,0,1)
-            size_hint: 1, 1
-            center_x: unit_toggle.center_x + dp(80)
-            center_y: unit_toggle.center_y
-            font_size: sp(16)
+            CToggle:
+                id: unit_toggle
+                size_hint: [None, None]
+                on_active:
+                    root.toggle_pressed()
+
+            CLabelNeutral:
+                text: "Metric Units"
+                style: "heading_04"
+                typeface: "IBM Plex Sans"
+                weight_style: "Regular"
+                color: (0,0,0,1)
+                font_size: sp(16)
+                size_hint: [None, None]
+                size: self.texture_size
+                text_size: [None, None]
+                pos_hint: {"center_y": 0.48}
 
         CLink:
             url: "https://arjunet.github.io/Weather_Tether/privacy_policy.html"
