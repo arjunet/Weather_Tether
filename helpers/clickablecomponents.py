@@ -1,6 +1,9 @@
 from carbonkivy.uix.label import CLabelNeutral
 from kivy.uix.behaviors import ButtonBehavior
 from carbonkivy.uix.icon import CIcon
+from carbonkivy.uix.button import CButtonCircular
+
+from kivy.properties import BooleanProperty
 
 class ClickableLabel(CLabelNeutral, ButtonBehavior):
     def __init__(self, **kwargs):
@@ -35,3 +38,6 @@ class ClickableIcon(CIcon, ButtonBehavior):
             self.dispatch('on_press')
             return True
         return super().on_touch_down(touch)
+    
+class RoundedHeaderMenuButton(CButtonCircular):
+    active = BooleanProperty(False)

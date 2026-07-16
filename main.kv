@@ -2,6 +2,7 @@
 #:import Window kivy.core.window.Window
 #:import ClickableLabel helpers.clickablecomponents
 #:import ClickableIcon helpers.clickablecomponents
+#:import RoundedHeaderMenuButton helpers.clickablecomponents
 # ---------------------------------------------------------------------------------
 <SignupScreen>:
     CRelativeLayout:
@@ -851,9 +852,13 @@
             id: shell_header
             -bg_color: app.transparent
 
-            UIShellHeaderMenuButton:
+            RoundedHeaderMenuButton:
                 id: shell_menu_btn
-                on_press: root.add_buttons()
+                radius: self.height
+                icon: "menu"
+                on_touch_down:
+                    self.active = (not self.active) if self.focus else self.active
+                    root.add_buttons()
 
             CAnchorLayout:
                 anchor_x: "right"
