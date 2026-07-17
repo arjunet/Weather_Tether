@@ -1,7 +1,9 @@
 from carbonkivy.uix.label import CLabelNeutral
-from kivy.uix.behaviors import ButtonBehavior
 from carbonkivy.uix.icon import CIcon
 from carbonkivy.uix.button import CButtonCircular
+
+from kivy.uix.behaviors import ButtonBehavior
+from kivy.properties import ColorProperty
 
 from kivy.properties import BooleanProperty
 
@@ -41,3 +43,6 @@ class ClickableIcon(CIcon, ButtonBehavior):
     
 class RoundedHeaderMenuButton(CButtonCircular):
     active = BooleanProperty(False)
+
+    text_color = ColorProperty([1, 1, 1, 0])
+    text_color_focus = ColorProperty([1, 1, 1, 0])

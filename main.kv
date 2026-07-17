@@ -857,6 +857,7 @@
                 radius: self.height
                 icon: "menu"
                 on_touch_down:
+                    self.text_color = rgba(0, 0, 0, 1) if root.is_daytime else (1, 1, 1, 1)
                     self.active = (not self.active) if self.focus else self.active
                     root.add_buttons()
 
