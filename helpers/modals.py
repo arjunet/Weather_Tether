@@ -1,5 +1,6 @@
 from kivy.clock import Clock
 from kivy.storage.jsonstore import JsonStore
+from kivy.properties import ObjectProperty
 
 from carbonkivy.uix.modal import CModal
 
@@ -12,8 +13,10 @@ from num2words import num2words
 # ---------------------------------------------------------------------------------------
 
 class ChangeLocationModal(CModal):
+    city = ObjectProperty(None)
+
     def __init__(self, city, update_type, **kwargs):
-        super().__init__(**kwargs)
+        super().__init__(city=city, **kwargs)
         self.suggestion_was_pressed = False
         self.city = city
         self.update_type = update_type

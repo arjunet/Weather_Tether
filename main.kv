@@ -1253,7 +1253,7 @@
                     CTextInput:
                         hint_text: "e.g. New York"
                         id: address_input
-                        hint_text_color: "#2c2c2c"
+                        hint_text_color: "#2c2c2c" if root.city.is_daytime == "True" else "#FFFFFF"
                         keyboard_suggestions: True
                         input_type: "mail"
                         multiline: False
