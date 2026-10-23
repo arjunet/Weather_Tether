@@ -892,7 +892,7 @@
             role: "Large Productive"
             icon: "add"
             text: "Add City"
-            pos_hint: {'center_x': 0.5, 'center_y': 0.43}
+            pos_hint: {'center_x': 0.5, 'center_y': 0.4}
             bg_color: [0, 0, 0, 1]
             radius: [self.height/2]
             on_press:
@@ -931,7 +931,7 @@
         CBoxLayout:
             size_hint: [None, None]
             size: self.minimum_size
-            pos_hint: {"center_x": 0.5, "center_y": 0.6}
+            pos_hint: {"center_x": 0.5, "center_y": 0.77}
             orientation: "horizontal"
             spacing: dp(15)
 
@@ -981,6 +981,50 @@
             role: "Large"
             opacity: 0
             id: loader
+
+    # Radio theme selector
+    CRadioGroupLayout:
+        pos_hint: {"center_x": 0.55, "center_y": 0.6}
+
+        CRadioGroupLabel:
+            text: "Choose Yor Mode"
+
+        CRadioGroupHelperText:
+            text: "Choose which mode you preffer"
+
+        CRadioGroup:
+            id: group_master
+            width: dp(200)
+
+            CRadioItem:
+
+                CRadioButton:
+                    pos_hint: {"center_y": 0.5}
+                    group_master: group_master
+
+                CRadioButtonLabel:
+                    text: "Light Mode"
+                    pos_hint: {"center_y": 0.5}
+
+            CRadioItem:
+
+                CRadioButton:
+                    pos_hint: {"center_y": 0.5}
+                    group_master: group_master
+
+                CRadioButtonLabel:
+                    text: "Adaptive"
+                    pos_hint: {"center_y": 0.5}
+
+            CRadioItem:
+
+                CRadioButton:
+                    pos_hint: {"center_y": 0.5}
+                    group_master: group_master
+
+                CRadioButtonLabel:
+                    text: "Dark Mode"
+                    pos_hint: {"center_y": 0.5}
 # ---------------------------------------------------------------------------------
 <LogoutModal>:
     CModalLayout:

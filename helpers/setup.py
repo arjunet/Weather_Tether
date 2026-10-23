@@ -83,4 +83,4 @@ def save_json(self, json_string):
     payload = {"json_string": json_string}
     headers = {"Authorization": f"Bearer {id_token}"}
     
-    r = requests.post(f"{FIREBASE_URL}/update_json", json=payload, headers=headers)
+    requests.post(f"{FIREBASE_URL}/update_json", json=payload, headers=headers)

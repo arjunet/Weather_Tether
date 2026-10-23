@@ -763,25 +763,32 @@ class SettingsScreen(Screen):
         result = self.login_result
 
         # Handle errors
-        if r.status_code == 400:
+        if r.status_code != 200:
             error_code = result.get("detail", "")
 
             if error_code == "INVALID_LOGIN_CREDENTIALS":
                 notification_error(subtitle="Invalid Email or Password").open()
                 return
 
-        else:
-            clear_json()
-            app.screen_history.clear()
+            else:
+                notification_error(subtitle="Unable to authenticate, please try again later").open()
+                return
 
-            self.manager.id_token = None
-            self.manager.refresh_token = None
-            
-            # Go back to signup
-            self.manager.transition = FadeTransition()
-            self.manager.current = "Signup"
-            
-            notification_success(subtitle="Successfully Deleted Account").open()
+        if self.delete_result != 200:
+            notification_error(subtitle="Unexpected error, please try again later").open()
+            return
+
+        clear_json()
+        app.screen_history.clear()
+
+        self.manager.id_token = None
+        self.manager.refresh_token = None
+        
+        # Go back to signup
+        self.manager.transition = FadeTransition()
+        self.manager.current = "Signup"
+        
+        notification_success(subtitle="Successfully Deleted Account").open()
 
     def toggle_pressed(self):
         toggle_state = self.ids.unit_toggle.active
@@ -838,7 +845,6 @@ class MainApp(CarbonApp):
         self.sm.add_widget(VerifyScreen(name='Verify'))
 
         for i in range(1, 31):
-            # Your first city uses the name 'App', the rest use 'City2', 'City3', etc.
             screen_name = 'App' if i == 1 else f'City{i}'
             
             self.sm.add_widget(BaseScreen(name=screen_name, city_number=i))
